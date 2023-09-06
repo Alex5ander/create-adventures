@@ -11,7 +11,7 @@ public class Slot : MonoBehaviour, IDropHandler, IBeginDragHandler, IDragHandler
     [SerializeField] Image UIBackground;
     [SerializeField] public Image UIImage;
     [SerializeField] TextMeshProUGUI UIText;
-    [SerializeField] SpriteManager SpriteManager;
+    [SerializeField] ObjectManager ObjectManager;
     CanvasGroup group;
     Item item;
     public int index = 0;
@@ -53,7 +53,7 @@ public class Slot : MonoBehaviour, IDropHandler, IBeginDragHandler, IDragHandler
         }
         UIImage.enabled = item != null;
         UIText.enabled = item != null;
-        UIImage.sprite = item != null ? SpriteManager.getItemSprite(item.type) : null;
+        UIImage.sprite = item != null ? ObjectManager.getItemSprite(item.type) : null;
         UIText.text = item != null ? item.amount.ToString() : "";
     }
 

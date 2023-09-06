@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[CreateAssetMenu(fileName ="SpriteManager", menuName = "SpriteManager")]
-public class SpriteManager : ScriptableObject
+[CreateAssetMenu(fileName = "ObjectManager", menuName = "ObjectManager")]
+public class ObjectManager : ScriptableObject
 {
     [SerializeField] List<BlockSprite> blocks = new();
 

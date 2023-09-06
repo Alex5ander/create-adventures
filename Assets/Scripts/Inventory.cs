@@ -87,7 +87,7 @@ public class Inventory : MonoBehaviour
 
     public bool IsOpen() => open;
 
-    void Toggle()
+    public void Toggle()
     {
         open = !open;
         group.interactable = open;

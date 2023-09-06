@@ -49,6 +49,9 @@ public class MainScene : MonoBehaviour
     [DllImport("__Internal")]
     private static extern string SaveData(string saveGame);
 
+    [DllImport("__Internal")]
+    public static extern bool IsMobile();
+
     static public Database database;
     static public World world;
 

@@ -6,7 +6,7 @@ public class MouseFollower : MonoBehaviour
 {
     [SerializeField] Image UIImage;
     [SerializeField] TextMeshProUGUI UIText;
-    [SerializeField] SpriteManager SpriteManager;
+    [SerializeField] ObjectManager ObjectManager;
     CanvasGroup group;
     public Item item;
     [SerializeField] Texture2D cursorTexture;
@@ -27,7 +27,7 @@ public class MouseFollower : MonoBehaviour
     {
         this.item = item;
         group.alpha = 1;
-        UIImage.sprite = SpriteManager.getItemSprite(item.type);
+        UIImage.sprite = ObjectManager.getItemSprite(item.type);
         UIText.text = item.amount.ToString();
     }
 

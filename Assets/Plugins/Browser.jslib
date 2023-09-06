@@ -19,4 +19,8 @@ mergeInto(LibraryManager.library, {
     //UTF8ToString
     localStorage.setItem('SaveGame', UTF8ToString(json));
   },
+
+  IsMobile: function() {
+    return Module.SystemInfo.mobile;
+  }
 });

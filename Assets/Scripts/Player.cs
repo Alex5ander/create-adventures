@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -15,25 +14,33 @@ public class Player : MonoBehaviour
     bool _jump = false;
 
     Animator animator;
-
+    bool mobile = false;
     // Start is called before the first frame update
     void Start()
     {
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        #if UNITY_WEBGL && !UNITY_EDITOR
+            mobile = MainScene.IsMobile();
+        #endif
     }
 
     // Update is called once per frame
     void Update()
     {
-        horizontal = Input.GetAxis("Horizontal");
+        if(!mobile)
+        {
+            horizontal = Input.GetAxis("Horizontal");
+        }
         bool isGrounded = IsGrounded();
+        Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        float distance = Vector2.Distance(transform.position, worldPos);
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             _jump = true;
         }
-        if(Input.GetMouseButton(0) && !inventory.IsOpen())
+        if(Input.GetMouseButton(0) && !inventory.IsOpen() && distance < 4)
         {
             animator.SetBool("Attack", true);
         }else
@@ -63,6 +70,15 @@ public class Player : MonoBehaviour
     void Jump()
     {
         body.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
+    }
+
+    public void OnDrag(float x, float y)
+    {
+        horizontal = x;
+        if(y > 0.5f && IsGrounded())
+        {
+            _jump = true;
+        }
     }
 
     bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.bounds.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.1f, layerMask);

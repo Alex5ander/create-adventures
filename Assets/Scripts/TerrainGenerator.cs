@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
-using static Unity.Collections.AllocatorManager;
 
 public class TerrainGenerator : MonoBehaviour
 {
@@ -15,7 +13,7 @@ public class TerrainGenerator : MonoBehaviour
 
     [SerializeField] Transform playerTransform;
     [SerializeField] Inventory inventory;
-    [SerializeField] SpriteManager SpriteManager;
+    [SerializeField] ObjectManager ObjectManager;
     [SerializeField] Block BlockPrefab;
     [SerializeField] Drop DropPrefab;
     [SerializeField] ParticleSystem particles;
@@ -56,7 +54,7 @@ public class TerrainGenerator : MonoBehaviour
                 if (Block.Selected)
                 {
                     particles.transform.position = Block.Selected.transform.position;
-                    particles.GetComponent<Renderer>().material.mainTexture = SpriteManager.getSprite(Block.Selected.type).texture;
+                    particles.GetComponent<Renderer>().material.mainTexture = ObjectManager.getSprite(Block.Selected.type).texture;
                     if (item.subtype == ItemSubType.TOOL)
                     {
                         if (particles.isStopped)
@@ -214,7 +212,7 @@ public class TerrainGenerator : MonoBehaviour
         {
             Block obj = Instantiate(BlockPrefab, new(x, y, 0), Quaternion.identity);
             obj.type = type;
-            obj.GetComponent<SpriteRenderer>().sprite = SpriteManager.getSprite(type, meta);
+            obj.GetComponent<SpriteRenderer>().sprite = ObjectManager.getSprite(type, meta);
             blocks[blockIndex] = obj;
 
             int chunkIndex = Mathf.FloorToInt(x / chunkSize);

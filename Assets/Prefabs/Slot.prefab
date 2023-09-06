@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8553531575371687770}
   - component: {fileID: 6141428562678465783}
   - component: {fileID: -3256601686523384896}
+  - component: {fileID: -2610518751465255987}
   m_Layer: 5
   m_Name: Slot
   m_TagString: Untagged
@@ -107,7 +108,29 @@ MonoBehaviour:
   UIBackground: {fileID: 8553531575371687770}
   UIImage: {fileID: 19352344274565334}
   UIText: {fileID: 7706127716545937711}
-  SpriteManager: {fileID: 11400000, guid: 606219beece99f641b309ff786198cc9, type: 2}
+  ObjectManager: {fileID: 11400000, guid: 606219beece99f641b309ff786198cc9, type: 2}
+  index: 0
+--- !u!95 &-2610518751465255987
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630775821269674682}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 033c743f159b8a34ebc5291368d70e9c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5406023635886321647
 GameObject:
   m_ObjectHideFlags: 0

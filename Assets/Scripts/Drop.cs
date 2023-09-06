@@ -3,11 +3,11 @@ using UnityEngine;
 public class Drop : MonoBehaviour
 {
     public ItemType type;
-    [SerializeField] SpriteManager spriteManager;
+    [SerializeField] ObjectManager ObjectManager;
 
     public void SetItem(ItemType type)
     {
         this.type  = type;
-        GetComponent<SpriteRenderer>().sprite = spriteManager.getItemSprite(type);
+        GetComponent<SpriteRenderer>().sprite = ObjectManager.getItemSprite(type);
     }
 }

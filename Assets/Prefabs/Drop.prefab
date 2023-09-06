@@ -101,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  spriteManager: {fileID: 11400000, guid: 606219beece99f641b309ff786198cc9, type: 2}
+  ObjectManager: {fileID: 11400000, guid: 606219beece99f641b309ff786198cc9, type: 2}
 --- !u!61 &2490247049003805677
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -162,7 +162,7 @@ BoxCollider2D:
     m_Bits: 8
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
