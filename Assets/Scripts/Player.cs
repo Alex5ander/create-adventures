@@ -119,6 +119,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void OnPointerMove(float x, float y)
+    {
+
+    }
+
     bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.bounds.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.1f, layerMask);
 
     private void OnTriggerEnter2D(Collider2D collision)
