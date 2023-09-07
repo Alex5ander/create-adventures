@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class Slot : MonoBehaviour, IDropHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
-    Color SelectedColor = new(1f, 1f, 1f);
-    Color DeSelectedColor = new(1f, 1f, 1f, 0.5f);
     [SerializeField] Image UIBackground;
     [SerializeField] public Image UIImage;
     [SerializeField] TextMeshProUGUI UIText;
@@ -19,11 +17,14 @@ public class Slot : MonoBehaviour, IDropHandler, IBeginDragHandler, IDragHandler
     public Action<Slot> _OnPointerClick;
     public Action<Slot> _OnBeginDrag;
     public Action _OnEndDrag;
+    [SerializeField] Sprite sprite;
+    Animator animator;
 
     // Start is called before the first frame update
     void Start()
     {
         group = GetComponent<CanvasGroup>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -34,12 +35,12 @@ public class Slot : MonoBehaviour, IDropHandler, IBeginDragHandler, IDragHandler
 
     public void Select()
     {
-        UIBackground.color = SelectedColor;
+        UIBackground.sprite = sprite;
     }
 
     public void DeSelect()
     {
-        UIBackground.color = DeSelectedColor;
+        UIBackground.sprite = null;
     }
 
     public Item GetItem() => item;
@@ -61,6 +62,7 @@ public class Slot : MonoBehaviour, IDropHandler, IBeginDragHandler, IDragHandler
     {
         item.amount += amount;
         UIText.text = item.amount.ToString();
+        animator.SetTrigger("Change");
     }
 
     public void Remove(int amount = 1) { 
@@ -74,6 +76,7 @@ public class Slot : MonoBehaviour, IDropHandler, IBeginDragHandler, IDragHandler
         {
             UIText.text = item.amount.ToString();
         }
+        animator.SetTrigger("Change");
     }
 
     public void OnDrop(PointerEventData eventData)

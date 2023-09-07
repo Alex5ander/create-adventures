@@ -7,14 +7,16 @@ public class Player : MonoBehaviour
     Rigidbody2D body;
     [SerializeField] LayerMask layerMask;
     [SerializeField] Inventory inventory;
+    [SerializeField] TerrainGenerator terrainGenerator;
+    [SerializeField] ParticleSystem particles;
 
     float jumpPower = 15.0f;
     float speed = 5.0f;
-    float horizontal = 0.0f;
-    bool _jump = false;
+    float horizontal = 0.0f;    
 
     Animator animator;
     bool mobile = false;
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -36,18 +38,56 @@ public class Player : MonoBehaviour
         bool isGrounded = IsGrounded();
         Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         float distance = Vector2.Distance(transform.position, worldPos);
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        
+        if(!inventory.IsOpen() && distance < 4)
         {
-            _jump = true;
+            if (Input.GetMouseButton(0))
+            {
+                Item item = inventory.GetItem();
+                int x = Mathf.RoundToInt(worldPos.x);
+                int y = Mathf.RoundToInt(worldPos.y);
+
+                Block block = terrainGenerator.GetBlock(x, y);
+
+                if (block)
+                {
+                    if (item?.subtype == ItemSubType.TOOL)
+                    {
+                        Block.Selected = block;
+                        particles.transform.position = Block.Selected.transform.position;
+                        particles.GetComponent<Renderer>().material.mainTexture = Block.Selected.GetComponent<SpriteRenderer>().sprite.texture;
+                        if(particles.isPlaying == false)
+                        {
+                            particles.Play();
+                        }
+                        Block.Selected.Hit(item.GetDamage());
+                        if (Block.Selected.GetLife() <= 0)
+                        {
+                            terrainGenerator.DestroyBlock(x, y);
+                        }
+                    }
+                }
+                else if(item?.subtype == ItemSubType.BLOCK)
+                {
+                    if (inventory.Remove(item.type))
+                    {
+                        terrainGenerator.PlaceBlock(x, y, item.type);
+                    }
+                }
+                animator.SetBool("Attack", true);
+            }
         }
-        if(Input.GetMouseButton(0) && !inventory.IsOpen() && distance < 4)
-        {
-            animator.SetBool("Attack", true);
-        }else
+
+        if(Input.GetMouseButtonUp(0))
         {
             animator.SetBool("Attack", false);
         }
-        if(horizontal != 0)
+
+        if (Input.GetButtonDown("Jump"))
+        {
+            Jump();
+        }
+        if (horizontal != 0)
         {
             Quaternion rotation = transform.rotation;
             rotation.y = horizontal > 0 ? 180 : 0;
@@ -60,24 +100,22 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         body.velocity = new(horizontal * speed, body.velocity.y);
-        if(_jump)
-        {
-            Jump();
-            _jump = false;
-        }
     }
 
     void Jump()
     {
-        body.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
+        if(IsGrounded())
+        {
+            body.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
+        }
     }
 
     public void OnDrag(float x, float y)
     {
         horizontal = x;
-        if(y > 0.5f && IsGrounded())
+        if(y > 0.5f)
         {
-            _jump = true;
+            Jump();
         }
     }
 

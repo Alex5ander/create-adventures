@@ -12,16 +12,10 @@ public class TerrainGenerator : MonoBehaviour
     float frequency = 0.01618f;
 
     [SerializeField] Transform playerTransform;
-    [SerializeField] Inventory inventory;
-    [SerializeField] ObjectManager ObjectManager;
+    
     [SerializeField] Block BlockPrefab;
-    [SerializeField] Drop DropPrefab;
-    [SerializeField] ParticleSystem particles;
-
     Dictionary<int, Block> blocks = new();
     Dictionary<int, GameObject> chunks = new();
-
-    float lastTime = 0f;
   
     // Start is called before the first frame update
     void Start()
@@ -34,61 +28,9 @@ public class TerrainGenerator : MonoBehaviour
     void Update()
     {
         UpdateChunks();
-
-        Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        float distance = Vector2.Distance(playerTransform.position, worldPos);        
-
-        if (Input.GetMouseButtonDown(0) && distance < 4)
-        {
-            lastTime = Time.time;
-        }
-        if (Input.GetMouseButton(0) && distance < 4 && Time.time - lastTime > 0.1f)
-        {
-            Item item = inventory.GetItem();
-            if(item != null)
-            {
-                int x = Mathf.RoundToInt(worldPos.x);
-                int y = Mathf.RoundToInt(worldPos.y);
-                int index = y * terrainWidth + x;
-                Block.Selected = blocks.ContainsKey(index) ? blocks[index] : null;
-                if (Block.Selected)
-                {
-                    particles.transform.position = Block.Selected.transform.position;
-                    particles.GetComponent<Renderer>().material.mainTexture = ObjectManager.getSprite(Block.Selected.type).texture;
-                    if (item.subtype == ItemSubType.TOOL)
-                    {
-                        if (particles.isStopped)
-                        {
-                            particles.Play();
-                        }
-                        ItemType type = Block.Selected.type;
-                        Block.Selected.Hit(item.GetDamage());
-                        if (Block.Selected.GetLife() <= 0)
-                        {
-                            Drop drop = Instantiate(DropPrefab, Block.Selected.transform.position, Quaternion.identity);
-                            drop.SetItem(blocks[index].type);
-                            DestroyBlock(index);
-                        }
-                    }
-                }
-                else if (inventory.IsOpen() == false && item.subtype == ItemSubType.BLOCK)
-                {
-                    if (inventory.Remove(item.type))
-                    {
-                        OnChange(item.type, index);
-                        CreateBlock(x, y, item.type);
-                    }
-                }
-            }
-        }
-
-        if (Block.Selected == null && particles.isPlaying)
-        {
-            particles.Stop();
-        }
     }
 
-    public void OnChange(ItemType type, int index)
+    public void OnChange(int index, ItemType type)
     {
         State state = MainScene.world.state.Find(e => e.index == index);
         if(state == null)
@@ -183,7 +125,7 @@ public class TerrainGenerator : MonoBehaviour
 
             if (blocks.ContainsKey(state.index) && blocks[state.index].type != state.type)
             {
-                DestroyBlock(state.index);   
+                DestroyBlock(x, y);   
             }
 
             if (state.type != ItemType.NONE)
@@ -211,8 +153,7 @@ public class TerrainGenerator : MonoBehaviour
         if (!blocks.ContainsKey(blockIndex))
         {
             Block obj = Instantiate(BlockPrefab, new(x, y, 0), Quaternion.identity);
-            obj.type = type;
-            obj.GetComponent<SpriteRenderer>().sprite = ObjectManager.getSprite(type, meta);
+            obj.SetType(type, meta);
             blocks[blockIndex] = obj;
 
             int chunkIndex = Mathf.FloorToInt(x / chunkSize);
@@ -228,15 +169,26 @@ public class TerrainGenerator : MonoBehaviour
         }
     }
 
-    public void DestroyBlock(int index)
+    public void PlaceBlock(int x, int y, ItemType type)
     {
+        CreateBlock(x, y, type);
+        OnChange(y * terrainWidth + x, type);
+    } 
+
+    public void DestroyBlock(int x, int y)
+    {
+        int index = y * terrainWidth + x;
         if(blocks.ContainsKey(index))
         {
-            Block block = blocks[index];
-            Destroy(block.gameObject);
             blocks.Remove(index);
-            OnChange(ItemType.NONE, index);
+            OnChange(index, ItemType.NONE);
         }
+    }
+
+    public Block GetBlock(int x, int y)
+    {
+        int index = y * terrainWidth + x;
+        return blocks.ContainsKey(index) ? blocks[index] : null;
     }
 
     public void CreateTree(int x, int y)

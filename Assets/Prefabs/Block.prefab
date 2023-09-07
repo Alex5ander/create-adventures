@@ -99,6 +99,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  DropPrefab: {fileID: 3140899486705495907, guid: 8f2976a05717a804682850635a73ec8d, type: 3}
+  objectManager: {fileID: 11400000, guid: 606219beece99f641b309ff786198cc9, type: 2}
 --- !u!61 &994470864922765401
 BoxCollider2D:
   m_ObjectHideFlags: 0
