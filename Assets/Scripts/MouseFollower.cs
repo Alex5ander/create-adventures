@@ -17,7 +17,7 @@ public class MouseFollower : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = Input.mousePosition;
+        transform.position = Camera.main.WorldToScreenPoint(Player.pointerPos);
     }
 
     public void OnBeginDrag(Item item)

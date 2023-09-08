@@ -16,7 +16,11 @@ public class Player : MonoBehaviour
 
     Animator animator;
     bool mobile = false;
-   
+    bool pointerDown = false;
+
+    static public Vector2 pointerPos = Vector2.zero;
+    [SerializeField] RectTransform TouchArea;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,62 +35,50 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!mobile)
+        bool isGrounded = IsGrounded();
+        if (!mobile)
         {
             horizontal = Input.GetAxis("Horizontal");
-        }
-        bool isGrounded = IsGrounded();
-        Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        float distance = Vector2.Distance(transform.position, worldPos);
-        
-        if(!inventory.IsOpen() && distance < 4)
-        {
-            if (Input.GetMouseButton(0))
+            if (Input.GetButtonDown("Jump"))
             {
-                Item item = inventory.GetItem();
-                int x = Mathf.RoundToInt(worldPos.x);
-                int y = Mathf.RoundToInt(worldPos.y);
-
-                Block block = terrainGenerator.GetBlock(x, y);
-
-                if (block)
-                {
-                    if (item?.subtype == ItemSubType.TOOL)
-                    {
-                        Block.Selected = block;
-                        particles.transform.position = Block.Selected.transform.position;
-                        particles.GetComponent<Renderer>().material.mainTexture = Block.Selected.GetComponent<SpriteRenderer>().sprite.texture;
-                        if(particles.isPlaying == false)
-                        {
-                            particles.Play();
-                        }
-                        Block.Selected.Hit(item.GetDamage());
-                        if (Block.Selected.GetLife() <= 0)
-                        {
-                            terrainGenerator.DestroyBlock(x, y);
-                        }
-                    }
-                }
-                else if(item?.subtype == ItemSubType.BLOCK)
-                {
-                    if (inventory.Remove(item.type))
-                    {
-                        terrainGenerator.PlaceBlock(x, y, item.type);
-                    }
-                }
-                animator.SetBool("Attack", true);
+                Jump();
             }
         }
 
-        if(Input.GetMouseButtonUp(0))
+        if(pointerDown)
         {
-            animator.SetBool("Attack", false);
+            Item item = inventory.GetItem();
+            int x = Mathf.RoundToInt(pointerPos.x);
+            int y = Mathf.RoundToInt(pointerPos.y);
+            Block.Selected = terrainGenerator.GetBlock(x, y);
+            if (Block.Selected && item?.subtype == ItemSubType.TOOL)
+            {
+                Mine(item.GetDamage());
+            }
+            else if (!Block.Selected && item?.subtype == ItemSubType.BLOCK)
+            {
+                PlaceBlock(x, y, item.type);
+            }else if(particles.isPlaying)
+            {
+                particles.Stop();
+            }
+            animator.SetBool("Attack", true);
+        }else
+        {
+            if(Block.Selected)
+            {
+                Block.Selected = null;
+            }
+            if(animator.GetBool("Attack"))
+            {
+                animator.SetBool("Attack", false);
+            }
+            if(particles.isPlaying) 
+            {
+                particles.Stop();
+            }
         }
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            Jump();
-        }
         if (horizontal != 0)
         {
             Quaternion rotation = transform.rotation;
@@ -97,6 +89,31 @@ public class Player : MonoBehaviour
         animator.SetBool("Jump", !isGrounded);
     }
 
+    public void PlaceBlock(int x, int y, ItemType type)
+    {
+        if (inventory.Remove(type))
+        {
+            terrainGenerator.PlaceBlock(x, y, type);
+        }
+    }
+
+    public void Mine(float damage)
+    {
+        Block.Selected.Hit(damage);
+        particles.transform.position = Block.Selected.transform.position;
+        particles.GetComponent<Renderer>().material.mainTexture = Block.Selected.GetComponent<SpriteRenderer>().sprite.texture;
+        if (particles.isPlaying == false)
+        {
+            particles.Play();
+        }
+        if (Block.Selected.GetLife() <= 0)
+        {
+            int x = Mathf.RoundToInt(Block.Selected.transform.position.x);
+            int y = Mathf.RoundToInt(Block.Selected.transform.position.y);
+            terrainGenerator.DestroyBlock(x, y);
+        }
+    }
+
     private void FixedUpdate()
     {
         body.velocity = new(horizontal * speed, body.velocity.y);
@@ -104,7 +121,7 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
-        if(IsGrounded())
+        if(IsGrounded() && body.velocity.y == 0)
         {
             body.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
         }
@@ -118,10 +135,54 @@ public class Player : MonoBehaviour
             Jump();
         }
     }
-
-    public void OnPointerMove(float x, float y)
+    
+    public void OnPointerDown()
     {
+        if (mobile)
+        {
+            foreach (Touch touch in Input.touches)
+            {
+                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(TouchArea, touch.position, Camera.main, out Vector2 v))
+                {
+                    pointerDown = true;
+                    pointerPos = Camera.main.ScreenToWorldPoint(touch.position);
+                    pointerPos.y += 4;
+                }
+            }
+        }
+        else
+        {
+            pointerDown = true;
+            pointerPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        }
+    }
 
+    public void OnPointerDrag()
+    {
+        if(mobile)
+        {
+            foreach(Touch touch in Input.touches)
+            {
+                if(RectTransformUtility.ScreenPointToLocalPointInRectangle(TouchArea, touch.position, Camera.main, out Vector2 v))
+                {
+                    pointerPos = Camera.main.ScreenToWorldPoint(touch.position);
+                    pointerPos.y += 4;
+                }
+            }
+        }else
+        {
+            pointerPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        }
+    }
+
+    public void OnPointerUp()
+    {
+        pointerDown = false;
+    }
+
+    public void OnPointerExit()
+    {
+        pointerDown = false;
     }
 
     bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.bounds.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.1f, layerMask);
