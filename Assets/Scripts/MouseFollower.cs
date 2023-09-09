@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class MouseFollower : MonoBehaviour
 {
+    [SerializeField] Image UICrosshair;
     [SerializeField] Image UIImage;
     [SerializeField] TextMeshProUGUI UIText;
     [SerializeField] ObjectManager ObjectManager;
@@ -11,13 +12,14 @@ public class MouseFollower : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        UICrosshair = GetComponent<Image>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.position = Camera.main.WorldToScreenPoint(Player.pointerPos);
+        transform.position = Inventory.open ? Input.mousePosition : Camera.main.WorldToScreenPoint(Player.pointerPos);
+        UICrosshair.enabled = !Inventory.open;
     }
 
     public void OnBeginDrag(Item item)

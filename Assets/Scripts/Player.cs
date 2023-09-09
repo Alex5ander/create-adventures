@@ -15,8 +15,7 @@ public class Player : MonoBehaviour
     float horizontal = 0.0f;    
 
     Animator animator;
-    bool mobile = false;
-    bool pointerDown = false;
+    bool mobile = false;    
 
     static public Vector2 pointerPos = Vector2.zero;
     [SerializeField] RectTransform TouchArea;
@@ -45,38 +44,42 @@ public class Player : MonoBehaviour
             }
         }
 
-        if(pointerDown)
+        bool pointerDown = false;
+
+        if (Input.GetMouseButton(0))
         {
-            Item item = inventory.GetItem();
-            int x = Mathf.RoundToInt(pointerPos.x);
-            int y = Mathf.RoundToInt(pointerPos.y);
-            Block.Selected = terrainGenerator.GetBlock(x, y);
-            if (Block.Selected && item?.subtype == ItemSubType.TOOL)
+            if (mobile)
             {
-                Mine(item.GetDamage());
+                foreach (Touch touch in Input.touches)
+                {
+                    if (RectTransformUtility.RectangleContainsScreenPoint(TouchArea, touch.position))
+                    {
+                        pointerPos = Camera.main.ScreenToWorldPoint(touch.position);
+                        pointerPos.y += 4;
+                        pointerDown = true;
+                        break;
+                    }
+                }
             }
-            else if (!Block.Selected && item?.subtype == ItemSubType.BLOCK)
+            else if (RectTransformUtility.RectangleContainsScreenPoint(TouchArea, Input.mousePosition))
             {
-                PlaceBlock(x, y, item.type);
-            }else if(particles.isPlaying)
-            {
-                particles.Stop();
+                pointerPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                pointerDown = true;
             }
-            animator.SetBool("Attack", true);
-        }else
+        }
+
+        if (pointerDown)
         {
-            if(Block.Selected)
-            {
-                Block.Selected = null;
-            }
-            if(animator.GetBool("Attack"))
-            {
-                animator.SetBool("Attack", false);
-            }
-            if(particles.isPlaying) 
-            {
-                particles.Stop();
-            }
+            OnPointerDown();
+        }
+        else
+        {
+            animator.SetBool("Attack", false);            
+        }
+
+        if(!Block.Selected && particles.isPlaying)
+        {
+            particles.Stop();
         }
 
         if (horizontal != 0)
@@ -87,6 +90,23 @@ public class Player : MonoBehaviour
         }
         animator.SetBool("Walk", horizontal != 0);
         animator.SetBool("Jump", !isGrounded);
+    }
+
+    public void OnPointerDown()
+    {
+        Item item = inventory.GetItem();
+        int x = Mathf.RoundToInt(pointerPos.x);
+        int y = Mathf.RoundToInt(pointerPos.y);
+        Block.Selected = terrainGenerator.GetBlock(x, y);
+        if (Block.Selected && item?.subtype == ItemSubType.TOOL)
+        {
+            Mine(item.GetDamage());
+        }
+        else if (!Block.Selected && item?.subtype == ItemSubType.BLOCK)
+        {
+            PlaceBlock(x, y, item.type);
+        }
+        animator.SetBool("Attack", true);
     }
 
     public void PlaceBlock(int x, int y, ItemType type)
@@ -134,55 +154,6 @@ public class Player : MonoBehaviour
         {
             Jump();
         }
-    }
-    
-    public void OnPointerDown()
-    {
-        if (mobile)
-        {
-            foreach (Touch touch in Input.touches)
-            {
-                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(TouchArea, touch.position, Camera.main, out Vector2 v))
-                {
-                    pointerDown = true;
-                    pointerPos = Camera.main.ScreenToWorldPoint(touch.position);
-                    pointerPos.y += 4;
-                }
-            }
-        }
-        else
-        {
-            pointerDown = true;
-            pointerPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        }
-    }
-
-    public void OnPointerDrag()
-    {
-        if(mobile)
-        {
-            foreach(Touch touch in Input.touches)
-            {
-                if(RectTransformUtility.ScreenPointToLocalPointInRectangle(TouchArea, touch.position, Camera.main, out Vector2 v))
-                {
-                    pointerPos = Camera.main.ScreenToWorldPoint(touch.position);
-                    pointerPos.y += 4;
-                }
-            }
-        }else
-        {
-            pointerPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        }
-    }
-
-    public void OnPointerUp()
-    {
-        pointerDown = false;
-    }
-
-    public void OnPointerExit()
-    {
-        pointerDown = false;
     }
 
     bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.bounds.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.1f, layerMask);

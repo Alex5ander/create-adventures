@@ -12,7 +12,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] MouseFollower mouseFollower;
     [SerializeField] GameObject Hand;
     public int selected = 0;
-    bool open = false;
+    public static bool open = false;
 
     Dictionary<KeyCode, int> keys = new()
     {
