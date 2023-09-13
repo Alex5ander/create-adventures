@@ -9183,15 +9183,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 525b7273fbe64204d935874a72df13db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UICrosshair: {fileID: 0}
+  UICrosshair: {fileID: 1200429144}
   UIImage: {fileID: 601535921}
   UIText: {fileID: 222851856}
   ObjectManager: {fileID: 11400000, guid: 606219beece99f641b309ff786198cc9, type: 2}
-  item:
-    index: 0
-    type: 0
-    subtype: 0
-    amount: 0
 --- !u!1 &1205804877
 GameObject:
   m_ObjectHideFlags: 0

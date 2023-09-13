@@ -8,11 +8,11 @@ public class MouseFollower : MonoBehaviour
     [SerializeField] Image UIImage;
     [SerializeField] TextMeshProUGUI UIText;
     [SerializeField] ObjectManager ObjectManager;
-    public Item item = null;
+    Item item = null;
     // Start is called before the first frame update
     void Start()
     {
-        UICrosshair = GetComponent<Image>();
+        
     }
 
     // Update is called once per frame
