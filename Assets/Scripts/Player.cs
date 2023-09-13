@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
         
         if (pointerDown)
         {
-            IsPointerDown();
+            GetPointer();
             if (Time.time - clickTime > 0.5f)
             {
                 OnPointerDown();
@@ -70,8 +70,8 @@ public class Player : MonoBehaviour
     {
         clickTime = Time.time;
         pointerDown = true;
+        GetPointer();
         OnPointerDown();
-        IsPointerDown();
     }
 
     public void PointerUp()
@@ -81,7 +81,7 @@ public class Player : MonoBehaviour
         pointerDown = false;
     }
 
-    bool IsPointerDown()
+    bool GetPointer()
     {
         if (MainScene.isMobile)
         {
