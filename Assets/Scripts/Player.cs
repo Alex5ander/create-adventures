@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     float speed = 5.0f;
     float horizontal = 0.0f;
     float clickTime = 0.0f;
+    bool pointerDown = false;
 
     Animator animator;    
 
@@ -40,24 +41,14 @@ public class Player : MonoBehaviour
                 Jump();
             }
         }
-
-        bool pointerDown = IsPointerDown();
-
-        if (Input.GetMouseButtonDown(0) && pointerDown)
-        {
-            clickTime = Time.time;
-            OnPointerDown();
-        }
-
-        if (Input.GetMouseButton(0) && pointerDown && Time.time - clickTime > 0.5f)
-        {
-            OnPointerDown();
-        }
         
-        if(Input.GetMouseButtonUp(0)) 
+        if (pointerDown)
         {
-            clickTime = Time.time;
-            animator.SetBool("Attack", false);
+            IsPointerDown();
+            if (Time.time - clickTime > 0.5f)
+            {
+                OnPointerDown();
+            }
         }
 
         if(!Block.Selected)
@@ -73,6 +64,21 @@ public class Player : MonoBehaviour
         }
         animator.SetBool("Walk", horizontal != 0);
         animator.SetBool("Jump", !isGrounded);
+    }
+    
+    public void PointerDown()
+    {
+        clickTime = Time.time;
+        pointerDown = true;
+        OnPointerDown();
+        IsPointerDown();
+    }
+
+    public void PointerUp()
+    {
+        clickTime = Time.time;
+        animator.SetBool("Attack", false);
+        pointerDown = false;
     }
 
     bool IsPointerDown()
@@ -97,7 +103,7 @@ public class Player : MonoBehaviour
         return false;
     }
 
-    public void OnPointerDown()
+    void OnPointerDown()
     {
         Item item = inventory.GetItem();
         int x = Mathf.RoundToInt(pointerPos.x);
