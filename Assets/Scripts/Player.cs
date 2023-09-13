@@ -54,7 +54,7 @@ public class Player : MonoBehaviour
             OnPointerDown();
         }
         
-        if(Input.GetMouseButtonUp(0) && pointerDown) 
+        if(Input.GetMouseButtonUp(0)) 
         {
             clickTime = Time.time;
             animator.SetBool("Attack", false);
