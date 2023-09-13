@@ -18,8 +18,8 @@ public class MouseFollower : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = Inventory.open ? Input.mousePosition : Camera.main.WorldToScreenPoint(Player.pointerPos);
-        UICrosshair.enabled = !Inventory.open;
+        transform.position = item != null ? Input.mousePosition : Camera.main.WorldToScreenPoint(Player.pointerPos);
+        UICrosshair.enabled = item == null;
     }
 
     public void OnBeginDrag(Item item)

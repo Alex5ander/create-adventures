@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 public class TerrainGenerator : MonoBehaviour
 {
 
-    int terrainWidth = 800;
+    int terrainWidth = 320;
     int terrainHeight = 384;
     int chunkSize = 16;
     int seed = 0;
@@ -64,22 +64,26 @@ public class TerrainGenerator : MonoBehaviour
                     type = temperature > 0.5f ? ItemType.SAND : temperature > 0.3f ? ItemType.DIRT : ItemType.SNOW;
                     if (j == height - 1)
                     {
-                        float feactureNoise = Mathf.PerlinNoise(((float)i + seed) * frequency * 25f, ((float)j + seed) * frequency * 25f);
-                        if (feactureNoise > 0.7f)
+                        if (temperature > 0.8f && temperature < 0.9f && type == ItemType.SAND)
                         {
-                            if (type == ItemType.SAND)
-                            {
-                                GenerateCactus(i, j);
-                            }
-                            else
-                            {
-                                CreateTree(i, j);
-                            }
+                            GenerateCactus(i, j);
                         }
 
                         if (type == ItemType.DIRT)
                         {
                             meta = temperature > 0.4f ? 1 : 2;
+
+                            if(temperature > 0.41f)
+                            {
+                                if (temperature > 0.42f && temperature < 0.44f)
+                                {
+                                    CreateBlock(i, j + 1, ItemType.GRASS);
+                                }
+                                else
+                                {
+                                    CreateTree(i, j);
+                                }
+                            }
                         }
                     }
                 }else
@@ -146,7 +150,8 @@ public class TerrainGenerator : MonoBehaviour
             index = index < 1 ? 1 : index > chunks.Count - 2 ? chunks.Count - 2 : index;
             int start = index - 1;
             int end = index + 1;
-            chunk.SetActive(chunk == chunks[index] || chunk == chunks[start] || chunk == chunks[end]);
+            bool visible = chunk == chunks[index] || chunk == chunks[start] || chunk == chunks[end];
+            chunk.SetActive(visible);
         }
     }
 

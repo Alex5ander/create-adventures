@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     float jumpPower = 15.0f;
     float speed = 5.0f;
     float horizontal = 0.0f;
+    float clickTime = 0.0f;
 
     Animator animator;    
 
@@ -42,26 +43,19 @@ public class Player : MonoBehaviour
 
         bool pointerDown = false;
 
-        if (Input.GetMouseButton(0))
+        if(Input.GetMouseButtonDown(0) && PointerIsDown())
         {
-            if (MainScene.isMobile)
-            {
-                foreach (Touch touch in Input.touches)
-                {
-                    if (RectTransformUtility.RectangleContainsScreenPoint(TouchArea, touch.position))
-                    {
-                        pointerPos = Camera.main.ScreenToWorldPoint(touch.position);
-                        pointerPos.y += 4;
-                        pointerDown = true;
-                        break;
-                    }
-                }
-            }
-            else if (RectTransformUtility.RectangleContainsScreenPoint(TouchArea, Input.mousePosition))
-            {
-                pointerPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                pointerDown = true;
-            }
+           clickTime = Time.time;
+        }
+
+        if (Input.GetMouseButton(0) && PointerIsDown() && Time.time - clickTime > 0.3f)
+        {
+            pointerDown = PointerIsDown();
+        }
+        
+        if(Input.GetMouseButtonUp(0)) 
+        {
+            clickTime = Time.time;
         }
 
         if (pointerDown)
@@ -86,6 +80,28 @@ public class Player : MonoBehaviour
         }
         animator.SetBool("Walk", horizontal != 0);
         animator.SetBool("Jump", !isGrounded);
+    }
+
+    bool PointerIsDown()
+    {
+        if (MainScene.isMobile)
+        {
+            foreach (Touch touch in Input.touches)
+            {
+                if (RectTransformUtility.RectangleContainsScreenPoint(TouchArea, touch.position))
+                {
+                    pointerPos = Camera.main.ScreenToWorldPoint(touch.position);
+                    pointerPos.y += 4;
+                    return true;
+                }
+            }
+        }
+        else if (RectTransformUtility.RectangleContainsScreenPoint(TouchArea, Input.mousePosition))
+        {
+            pointerPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            return true;
+        }
+        return false;
     }
 
     public void OnPointerDown()

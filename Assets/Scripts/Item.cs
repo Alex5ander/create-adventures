@@ -25,7 +25,8 @@ public enum ItemType
     LEAVES,
     WATER,
     CACTUS,
-    SNOW
+    SNOW,
+    GRASS
 }
 
 public enum ItemSubType

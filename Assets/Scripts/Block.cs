@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class Block : MonoBehaviour
@@ -9,15 +10,19 @@ public class Block : MonoBehaviour
     SpriteRenderer spriteRenderer;
     [SerializeField] Drop DropPrefab;
     [SerializeField] ObjectManager objectManager;
+    static ItemType[] NoSolid = new ItemType[]
+    {
+        ItemType.WOOD,
+        ItemType.LEAVES,
+        ItemType.CACTUS,
+        ItemType.GRASS
+    };
     // Start is called before the first frame update
     void Start()
     {
-        if(type == ItemType.WOOD || type == ItemType.LEAVES || type == ItemType.CACTUS)
+        if(NoSolid.Contains(type))
         {
             GetComponent<BoxCollider2D>().enabled = false;
-        }else if(type == ItemType.WATER)
-        {
-            gameObject.GetComponent<BoxCollider2D>().enabled = false;
         }
     }
 
