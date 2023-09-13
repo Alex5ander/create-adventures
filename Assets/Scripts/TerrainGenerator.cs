@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 public class TerrainGenerator : MonoBehaviour
 {
 
-    int terrainWidth = 320;
-    int terrainHeight = 100;
+    int terrainWidth = 800;
+    int terrainHeight = 384;
     int chunkSize = 16;
     int seed = 0;
     float frequency = 0.01618f;
@@ -48,7 +48,7 @@ public class TerrainGenerator : MonoBehaviour
     {
         for(int i = 0; i < terrainWidth; i++)
         {
-            int height = Mathf.RoundToInt(Mathf.PerlinNoise1D((i + seed) * frequency) * terrainHeight / 2) + (terrainHeight / 2);
+            int height = Mathf.RoundToInt(Mathf.PerlinNoise1D(((float)i + seed) * frequency) * terrainHeight / 2) + (terrainHeight / 2);
             for(int j = 0; j < height; j++) {
                 if(i == terrainWidth / 2 && j == height - 1)
                 {
@@ -60,13 +60,12 @@ public class TerrainGenerator : MonoBehaviour
 
                 if(j > height * 0.75f)
                 {
-                    float temperature = Mathf.PerlinNoise((i + seed) * frequency * 1.2f, (j + seed) * frequency * 1.3f);
-                    type = temperature > 0.5f ? ItemType.SAND : temperature > 0.25f ? ItemType.DIRT : ItemType.SNOW;
+                    float temperature = Mathf.PerlinNoise(((float)i + seed) * frequency * 1.5f, ((float)j + seed) * frequency * 1.5f);
+                    type = temperature > 0.5f ? ItemType.SAND : temperature > 0.3f ? ItemType.DIRT : ItemType.SNOW;
                     if (j == height - 1)
                     {
-                        float feactureNoise = Mathf.PerlinNoise((i + seed) * frequency * 25f, (j + seed) * frequency * 25f);
-                        meta = type == ItemType.SAND ? 0 : type == ItemType.DIRT ? 1: 2;
-                        if (feactureNoise > 0.6f)
+                        float feactureNoise = Mathf.PerlinNoise(((float)i + seed) * frequency * 25f, ((float)j + seed) * frequency * 25f);
+                        if (feactureNoise > 0.7f)
                         {
                             if (type == ItemType.SAND)
                             {
@@ -77,20 +76,25 @@ public class TerrainGenerator : MonoBehaviour
                                 CreateTree(i, j);
                             }
                         }
+
+                        if (type == ItemType.DIRT)
+                        {
+                            meta = temperature > 0.4f ? 1 : 2;
+                        }
                     }
                 }else
                 {
                     float coalFrequency = 10f * frequency;
-                    float coal = Mathf.PerlinNoise((i + seed) * coalFrequency, (j + seed) * coalFrequency);
+                    float coal = Mathf.PerlinNoise(((float)i + seed) * coalFrequency, ((float)j + seed) * coalFrequency);
 
                     float ironFrequency = 15f * frequency;
-                    float iron = Mathf.PerlinNoise((i + seed) * ironFrequency, (j + seed) * ironFrequency);
+                    float iron = Mathf.PerlinNoise(((float)i + seed) * ironFrequency, ((float)j + seed) * ironFrequency);
 
                     float goldFrequency = 20f * frequency;
-                    float gold = Mathf.PerlinNoise((i + seed) * goldFrequency, (j + seed) * goldFrequency);
+                    float gold = Mathf.PerlinNoise(((float)i + seed) * goldFrequency, ((float)j + seed) * goldFrequency);
 
                     float diamondFrequency = 25f * frequency;
-                    float diamond = Mathf.PerlinNoise((i + seed) * diamondFrequency, (j + seed) * diamondFrequency);
+                    float diamond = Mathf.PerlinNoise(((float)i + seed) * diamondFrequency, ((float)j + seed) * diamondFrequency);
 
                     if(coal > 0.7f)
                     {
@@ -195,7 +199,7 @@ public class TerrainGenerator : MonoBehaviour
         int height = Mathf.RoundToInt(Mathf.PerlinNoise(x * frequency, y * frequency) * 5);
         for (int i = 0; i < height; i++)
         {
-            int meta = i == 0 ? 1 : 0;
+            int meta = i == 0 ? 2 : 1;
             CreateBlock(x, y + i + 1, ItemType.WOOD, meta);
 
             if(i == height - 1)
