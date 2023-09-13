@@ -6,10 +6,10 @@ public class TerrainGenerator : MonoBehaviour
 {
 
     int terrainWidth = 320;
-    int terrainHeight = 384;
+    int terrainHeight = 100;
     int chunkSize = 16;
     int seed = 0;
-    float frequency = 0.01618f;
+    float frequency = 0.0199f;
 
     [SerializeField] Transform playerTransform;
     
