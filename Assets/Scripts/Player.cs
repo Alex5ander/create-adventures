@@ -48,7 +48,7 @@ public class Player : MonoBehaviour
            clickTime = Time.time;
         }
 
-        if (Input.GetMouseButton(0) && PointerIsDown() && Time.time - clickTime > 0.3f)
+        if (Input.GetMouseButton(0) && PointerIsDown() && Time.time - clickTime > 0.5f)
         {
             pointerDown = PointerIsDown();
         }

@@ -8,7 +8,7 @@ public class MouseFollower : MonoBehaviour
     [SerializeField] Image UIImage;
     [SerializeField] TextMeshProUGUI UIText;
     [SerializeField] ObjectManager ObjectManager;
-    public Item item;
+    public Item item = null;
     // Start is called before the first frame update
     void Start()
     {
