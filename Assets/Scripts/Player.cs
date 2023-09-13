@@ -41,30 +41,23 @@ public class Player : MonoBehaviour
             }
         }
 
-        bool pointerDown = false;
+        bool pointerDown = PointerIsDown();
 
-        if(Input.GetMouseButtonDown(0) && PointerIsDown())
+        if(Input.GetMouseButtonDown(0) && pointerDown)
         {
            clickTime = Time.time;
+           OnPointerDown();
         }
 
-        if (Input.GetMouseButton(0) && PointerIsDown() && Time.time - clickTime > 0.5f)
-        {
-            pointerDown = PointerIsDown();
-        }
-        
-        if(Input.GetMouseButtonUp(0)) 
-        {
-            clickTime = Time.time;
-        }
-
-        if (pointerDown)
+        if (Input.GetMouseButton(0) && pointerDown && Time.time - clickTime > 0.5f)
         {
             OnPointerDown();
         }
-        else
+        
+        if(Input.GetMouseButtonUp(0) && pointerDown) 
         {
-            animator.SetBool("Attack", false);            
+            clickTime = Time.time;
+            animator.SetBool("Attack", false);
         }
 
         if(!Block.Selected)
