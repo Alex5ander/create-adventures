@@ -41,12 +41,12 @@ public class Player : MonoBehaviour
             }
         }
 
-        bool pointerDown = PointerIsDown();
+        bool pointerDown = IsPointerDown();
 
-        if(Input.GetMouseButtonDown(0) && pointerDown)
+        if (Input.GetMouseButtonDown(0) && pointerDown)
         {
-           clickTime = Time.time;
-           OnPointerDown();
+            clickTime = Time.time;
+            OnPointerDown();
         }
 
         if (Input.GetMouseButton(0) && pointerDown && Time.time - clickTime > 0.5f)
@@ -75,7 +75,7 @@ public class Player : MonoBehaviour
         animator.SetBool("Jump", !isGrounded);
     }
 
-    bool PointerIsDown()
+    bool IsPointerDown()
     {
         if (MainScene.isMobile)
         {
