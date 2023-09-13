@@ -39,9 +39,7 @@ public class Thumb : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHan
     // Start is called before the first frame update
     void Start()
     {
-        #if UNITY_WEBGL && !UNITY_EDITOR
-        Parent.SetActive(MainScene.IsMobile());
-        #endif
+        Parent.SetActive(MainScene.isMobile);
     }
 
     // Update is called once per frame

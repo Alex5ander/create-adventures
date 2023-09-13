@@ -60,22 +60,21 @@ public class TerrainGenerator : MonoBehaviour
 
                 if(j > height * 0.75f)
                 {
-                    float temperature = Mathf.PerlinNoise((i + seed) * frequency * 1.3f, (j + seed) * frequency * 1.3f);
+                    float temperature = Mathf.PerlinNoise((i + seed) * frequency * 1.2f, (j + seed) * frequency * 1.3f);
                     type = temperature > 0.5f ? ItemType.SAND : temperature > 0.25f ? ItemType.DIRT : ItemType.SNOW;
                     if (j == height - 1)
                     {
                         float feactureNoise = Mathf.PerlinNoise((i + seed) * frequency * 25f, (j + seed) * frequency * 25f);
-    
+                        meta = type == ItemType.SAND ? 0 : type == ItemType.DIRT ? 1: 2;
                         if (feactureNoise > 0.6f)
                         {
                             if (type == ItemType.SAND)
                             {
                                 GenerateCactus(i, j);
                             }
-                            else if(type == ItemType.DIRT)
+                            else
                             {
                                 CreateTree(i, j);
-                                meta = temperature < 0.35f ? 2 : 1;
                             }
                         }
                     }

@@ -12,10 +12,9 @@ public class Player : MonoBehaviour
 
     float jumpPower = 15.0f;
     float speed = 5.0f;
-    float horizontal = 0.0f;    
+    float horizontal = 0.0f;
 
-    Animator animator;
-    bool mobile = false;    
+    Animator animator;    
 
     static public Vector2 pointerPos = Vector2.zero;
     [SerializeField] RectTransform TouchArea;
@@ -26,16 +25,13 @@ public class Player : MonoBehaviour
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        #if UNITY_WEBGL && !UNITY_EDITOR
-            mobile = MainScene.IsMobile();
-        #endif
     }
 
     // Update is called once per frame
     void Update()
     {
         bool isGrounded = IsGrounded();
-        if (!mobile)
+        if (!MainScene.isMobile)
         {
             horizontal = Input.GetAxis("Horizontal");
             if (Input.GetButtonDown("Jump"))
@@ -48,7 +44,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetMouseButton(0))
         {
-            if (mobile)
+            if (MainScene.isMobile)
             {
                 foreach (Touch touch in Input.touches)
                 {
@@ -77,9 +73,9 @@ public class Player : MonoBehaviour
             animator.SetBool("Attack", false);            
         }
 
-        if(!Block.Selected && particles.isPlaying)
+        if(!Block.Selected)
         {
-            particles.Stop();
+            particles.gameObject.SetActive(false);
         }
 
         if (horizontal != 0)
@@ -122,10 +118,7 @@ public class Player : MonoBehaviour
         Block.Selected.Hit(damage);
         particles.transform.position = Block.Selected.transform.position;
         particles.GetComponent<Renderer>().material.mainTexture = Block.Selected.GetComponent<SpriteRenderer>().sprite.texture;
-        if (particles.isPlaying == false)
-        {
-            particles.Play();
-        }
+        particles.gameObject.SetActive(true);
         if (Block.Selected.GetLife() <= 0)
         {
             int x = Mathf.RoundToInt(Block.Selected.transform.position.x);

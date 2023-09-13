@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -54,6 +53,7 @@ public class MainScene : MonoBehaviour
 
     static public Database database;
     static public World world;
+    static public bool isMobile;
 
     [SerializeField] GameObject worldButtonsContainer;
     [SerializeField] WorldButton worldButtonPrefab;
@@ -62,7 +62,10 @@ public class MainScene : MonoBehaviour
     string json = null;
     // Start is called before the first frame update
     void Start()
-    {
+    { 
+#if UNITY_WEBGL && !UNITY_EDITOR
+            isMobile = MainScene.IsMobile();
+#endif
         Load();
     }
 
