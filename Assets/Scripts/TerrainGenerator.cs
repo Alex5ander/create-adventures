@@ -12,11 +12,11 @@ public class TerrainGenerator : MonoBehaviour
     float frequency = 0.0199f;
 
     [SerializeField] Transform playerTransform;
-    
+
     [SerializeField] Block BlockPrefab;
     Dictionary<int, Block> blocks = new();
     Dictionary<int, GameObject> chunks = new();
-  
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,10 +33,11 @@ public class TerrainGenerator : MonoBehaviour
     public void OnChange(int index, ItemType type)
     {
         State state = MainScene.world.state.Find(e => e.index == index);
-        if(state == null)
+        if (state == null)
         {
             MainScene.world.state.Add(new(type, index));
-        }else
+        }
+        else
         {
             state.type = type;
             state.index = index;
@@ -46,19 +47,20 @@ public class TerrainGenerator : MonoBehaviour
 
     void GenerateTerrain()
     {
-        for(int i = 0; i < terrainWidth; i++)
+        for (int i = 0; i < terrainWidth; i++)
         {
             int height = Mathf.RoundToInt(Mathf.PerlinNoise1D(((float)i + seed) * frequency) * terrainHeight / 2) + (terrainHeight / 2);
-            for(int j = 0; j < height; j++) {
-                if(i == terrainWidth / 2 && j == height - 1)
+            for (int j = 0; j < height; j++)
+            {
+                if (i == terrainWidth / 2 && j == height - 1)
                 {
                     playerTransform.position = new(i, j + 1, -1);
                 }
-                
+
                 int meta = 0;
                 ItemType type = ItemType.STONE;
 
-                if(j > height * 0.75f)
+                if (j > height * 0.75f)
                 {
                     float temperature = Mathf.PerlinNoise(((float)i + seed) * frequency * 1.5f, ((float)j + seed) * frequency * 1.5f);
                     type = temperature > 0.5f ? ItemType.SAND : temperature > 0.3f ? ItemType.DIRT : ItemType.SNOW;
@@ -73,7 +75,7 @@ public class TerrainGenerator : MonoBehaviour
                         {
                             meta = temperature > 0.4f ? 1 : 2;
 
-                            if(temperature > 0.41f)
+                            if (temperature > 0.41f)
                             {
                                 if (temperature > 0.42f && temperature < 0.44f)
                                 {
@@ -86,7 +88,8 @@ public class TerrainGenerator : MonoBehaviour
                             }
                         }
                     }
-                }else
+                }
+                else
                 {
                     float coalFrequency = 10f * frequency;
                     float coal = Mathf.PerlinNoise(((float)i + seed) * coalFrequency, ((float)j + seed) * coalFrequency);
@@ -100,11 +103,12 @@ public class TerrainGenerator : MonoBehaviour
                     float diamondFrequency = 25f * frequency;
                     float diamond = Mathf.PerlinNoise(((float)i + seed) * diamondFrequency, ((float)j + seed) * diamondFrequency);
 
-                    if(coal > 0.7f)
+                    if (coal > 0.7f)
                     {
                         type = ItemType.COAL;
                         meta = coal > 0.75 ? 1 : 0;
-                    }else if(iron > 0.7f && j < height * 0.5f)
+                    }
+                    else if (iron > 0.7f && j < height * 0.5f)
                     {
                         type = ItemType.IRON;
                         meta = iron > 0.75 ? 1 : 0;
@@ -124,7 +128,7 @@ public class TerrainGenerator : MonoBehaviour
             }
         }
 
-        for(int i = 0; i < MainScene.world.state.Count; i++)
+        for (int i = 0; i < MainScene.world.state.Count; i++)
         {
             State state = MainScene.world.state[i];
             int x = state.index % terrainWidth;
@@ -132,7 +136,8 @@ public class TerrainGenerator : MonoBehaviour
 
             if (blocks.ContainsKey(state.index) && blocks[state.index].type != state.type)
             {
-                DestroyBlock(x, y);   
+                Destroy(blocks[state.index].gameObject);
+                blocks.Remove(state.index);
             }
 
             if (state.type != ItemType.NONE)
@@ -181,13 +186,14 @@ public class TerrainGenerator : MonoBehaviour
     {
         CreateBlock(x, y, type);
         OnChange(y * terrainWidth + x, type);
-    } 
+    }
 
     public void DestroyBlock(int x, int y)
     {
         int index = y * terrainWidth + x;
-        if(blocks.ContainsKey(index))
+        if (blocks.ContainsKey(index))
         {
+            Destroy(blocks[index].gameObject);
             blocks.Remove(index);
             OnChange(index, ItemType.NONE);
         }
@@ -207,7 +213,7 @@ public class TerrainGenerator : MonoBehaviour
             int meta = i == 0 ? 2 : 1;
             CreateBlock(x, y + i + 1, ItemType.WOOD, meta);
 
-            if(i == height - 1)
+            if (i == height - 1)
             {
                 CreateBlock(x, y + i + 2, ItemType.LEAVES);
                 CreateBlock(x, y + i + 3, ItemType.LEAVES);
@@ -216,7 +222,7 @@ public class TerrainGenerator : MonoBehaviour
                 CreateBlock(x - 1, y + i + 2, ItemType.LEAVES);
                 CreateBlock(x + 1, y + i + 2, ItemType.LEAVES);
 
-                CreateBlock(x -1, y + i + 3, ItemType.LEAVES);
+                CreateBlock(x - 1, y + i + 3, ItemType.LEAVES);
                 CreateBlock(x + 1, y + i + 3, ItemType.LEAVES);
 
                 CreateBlock(x - 1, y + i + 4, ItemType.LEAVES);
@@ -229,7 +235,7 @@ public class TerrainGenerator : MonoBehaviour
     {
         int height = Mathf.RoundToInt(Mathf.PerlinNoise(x * frequency, y * frequency) * 5);
         for (int i = 0; i < height; i++)
-        {             
+        {
             CreateBlock(x, y + i + 1, ItemType.CACTUS);
         }
     }

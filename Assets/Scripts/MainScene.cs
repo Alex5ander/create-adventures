@@ -57,12 +57,12 @@ public class MainScene : MonoBehaviour
 
     [SerializeField] GameObject worldButtonsContainer;
     [SerializeField] WorldButton worldButtonPrefab;
-    [SerializeField] TextMeshProUGUI worldNameTextInput;    
+    [SerializeField] TextMeshProUGUI worldNameTextInput;
 
     string json = null;
     // Start is called before the first frame update
     void Start()
-    { 
+    {
 #if UNITY_WEBGL && !UNITY_EDITOR
             isMobile = MainScene.IsMobile();
 #endif
@@ -72,15 +72,15 @@ public class MainScene : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void Load()
     {
-    #if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL && !UNITY_EDITOR
         json = LoadData();
         database = JsonUtility.FromJson<Database>(json);
-    #endif
+#endif
         if (database != null)
         {
             for (int i = 0; i < database.worlds.Count; i++)
@@ -114,7 +114,8 @@ public class MainScene : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
-    static public void SelectWorld(World w) {
+    static public void SelectWorld(World w)
+    {
         world = w;
         SceneManager.LoadScene(1);
     }
@@ -125,7 +126,8 @@ public class MainScene : MonoBehaviour
         Save();
     }
 
-    static public void Save() {
+    static public void Save()
+    {
         string json = JsonUtility.ToJson(database);
 #if UNITY_EDITOR
         Debug.Log(json);
