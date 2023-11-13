@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class TerrainGenerator : MonoBehaviour
 {
-
     int terrainWidth = 320;
     int terrainHeight = 100;
     int chunkSize = 16;
     int seed = 0;
-    float frequency = 0.0199f;
+    float frequency = 1.61803398875f * 2.5f;
 
     [SerializeField] Transform playerTransform;
 
@@ -49,7 +49,8 @@ public class TerrainGenerator : MonoBehaviour
     {
         for (int i = 0; i < terrainWidth; i++)
         {
-            int height = Mathf.RoundToInt(Mathf.PerlinNoise1D(((float)i + seed) * frequency) * terrainHeight / 2) + (terrainHeight / 2);
+            float x = (float)i / terrainWidth;
+            int height = Mathf.RoundToInt(Mathf.PerlinNoise1D(x * frequency + seed) * (terrainHeight / 2) + (terrainHeight / 2));
             for (int j = 0; j < height; j++)
             {
                 if (i == terrainWidth / 2 && j == height - 1)
@@ -57,34 +58,32 @@ public class TerrainGenerator : MonoBehaviour
                     playerTransform.position = new(i, j + 1, -1);
                 }
 
+                float y = (float)j / height;
+
                 int meta = 0;
                 ItemType type = ItemType.STONE;
+                float temperature = Mathf.PerlinNoise(x * frequency + seed, y * frequency + seed) * 100f;
 
                 if (j > height * 0.75f)
                 {
-                    float temperature = Mathf.PerlinNoise(((float)i + seed) * frequency * 1.5f, ((float)j + seed) * frequency * 1.5f);
-                    type = temperature > 0.5f ? ItemType.SAND : temperature > 0.3f ? ItemType.DIRT : ItemType.SNOW;
+                    type = temperature > 50 ? ItemType.SAND : temperature > 20 ? ItemType.DIRT : ItemType.SNOW;
                     if (j == height - 1)
                     {
-                        if (temperature > 0.8f && temperature < 0.9f && type == ItemType.SAND)
+                        if (temperature > 55 && temperature < 65 && type == ItemType.SAND)
                         {
                             GenerateCactus(i, j);
                         }
-
-                        if (type == ItemType.DIRT)
+                        else if (type == ItemType.DIRT)
                         {
-                            meta = temperature > 0.4f ? 1 : 2;
+                            meta = temperature > 20 ? 1 : 2;
 
-                            if (temperature > 0.41f)
+                            if (temperature > 20 && temperature < 35)
                             {
-                                if (temperature > 0.42f && temperature < 0.44f)
-                                {
-                                    CreateBlock(i, j + 1, ItemType.GRASS);
-                                }
-                                else
-                                {
-                                    CreateTree(i, j);
-                                }
+                                CreateTree(i, j);
+                            }
+                            else
+                            {
+                                CreateBlock(i, j + 1, ItemType.GRASS);
                             }
                         }
                     }
@@ -92,16 +91,16 @@ public class TerrainGenerator : MonoBehaviour
                 else
                 {
                     float coalFrequency = 10f * frequency;
-                    float coal = Mathf.PerlinNoise(((float)i + seed) * coalFrequency, ((float)j + seed) * coalFrequency);
+                    float coal = Mathf.PerlinNoise(x * coalFrequency + seed, y * coalFrequency + seed);
 
                     float ironFrequency = 15f * frequency;
-                    float iron = Mathf.PerlinNoise(((float)i + seed) * ironFrequency, ((float)j + seed) * ironFrequency);
+                    float iron = Mathf.PerlinNoise(x * ironFrequency + seed, y * ironFrequency + seed);
 
                     float goldFrequency = 20f * frequency;
-                    float gold = Mathf.PerlinNoise(((float)i + seed) * goldFrequency, ((float)j + seed) * goldFrequency);
+                    float gold = Mathf.PerlinNoise(x * goldFrequency + seed, y * goldFrequency + seed);
 
                     float diamondFrequency = 25f * frequency;
-                    float diamond = Mathf.PerlinNoise(((float)i + seed) * diamondFrequency, ((float)j + seed) * diamondFrequency);
+                    float diamond = Mathf.PerlinNoise(x * diamondFrequency + seed, y * diamondFrequency + seed);
 
                     if (coal > 0.7f)
                     {

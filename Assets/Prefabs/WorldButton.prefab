@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 320300205423704378}
   - component: {fileID: 6228671958624366568}
   - component: {fileID: 5355843849818512404}
-  - component: {fileID: -8844886190680734159}
+  - component: {fileID: 7120965801417015552}
   m_Layer: 5
   m_Name: WorldButton
   m_TagString: Untagged
@@ -35,7 +35,6 @@ RectTransform:
   - {fileID: 7996437143070423001}
   - {fileID: 2421440184755007058}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -106,7 +105,7 @@ MonoBehaviour:
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1
   m_ReverseArrangement: 0
---- !u!114 &-8844886190680734159
+--- !u!114 &7120965801417015552
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -169,7 +168,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8230506082358407742}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -231,7 +229,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: -8844886190680734159}
+        - m_Target: {fileID: 7120965801417015552}
           m_TargetAssemblyTypeName: WorldButton, Assembly-CSharp
           m_MethodName: OnDeletePressed
           m_Mode: 1
@@ -274,7 +272,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7996437143070423001}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -411,7 +408,6 @@ RectTransform:
   m_Children:
   - {fileID: 6538142206272336910}
   m_Father: {fileID: 8230506082358407742}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -500,7 +496,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: -8844886190680734159}
+      - m_Target: {fileID: 7120965801417015552}
         m_TargetAssemblyTypeName: WorldButton, Assembly-CSharp
         m_MethodName: OnWorldPressed
         m_Mode: 1

@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    
     CapsuleCollider2D capsuleCollider2D;
     Rigidbody2D body;
     [SerializeField] LayerMask layerMask;
@@ -14,12 +13,8 @@ public class Player : MonoBehaviour
     float speed = 5.0f;
     float horizontal = 0.0f;
     float clickTime = 0.0f;
-    bool pointerDown = false;
 
-    Animator animator;    
-
-    static public Vector2 pointerPos = Vector2.zero;
-    [SerializeField] RectTransform TouchArea;
+    Animator animator;
 
     // Start is called before the first frame update
     void Start()
@@ -41,17 +36,51 @@ public class Player : MonoBehaviour
                 Jump();
             }
         }
-        
-        if (pointerDown)
+
+        if (MainScene.isMobile)
         {
-            GetPointer();
-            if (Time.time - clickTime > 0.5f)
+            for (int i = 0; i < Input.touchCount; i++)
             {
-                OnPointerDown();
+                Touch touch = Input.GetTouch(i);
+                if (touch.fingerId == MouseFollower.fingerId)
+                {
+                    if (touch.phase == TouchPhase.Began)
+                    {
+                        clickTime = Time.time;
+                    }
+                    else if (touch.phase == TouchPhase.Ended)
+                    {
+                        clickTime = Time.time;
+                        Block.Selected = null;
+                        animator.SetBool("Attack", false);
+                    }
+                    else
+                    {
+                        HandleInput(new(touch.position.x, touch.position.y + Camera.main.scaledPixelHeight / 4f));
+                    }
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                clickTime = Time.time;
+            }
+            else if (Input.GetMouseButton(0))
+            {
+                HandleInput(Input.mousePosition);
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                clickTime = Time.time;
+                Block.Selected = null;
+                animator.SetBool("Attack", false);
             }
         }
 
-        if(!Block.Selected)
+        if (!Block.Selected)
         {
             particles.gameObject.SetActive(false);
         }
@@ -65,59 +94,36 @@ public class Player : MonoBehaviour
         animator.SetBool("Walk", horizontal != 0);
         animator.SetBool("Jump", !isGrounded);
     }
-    
-    public void PointerDown()
-    {
-        clickTime = Time.time;
-        pointerDown = true;
-        GetPointer();
-        OnPointerDown();
-    }
 
-    public void PointerUp()
+    public void HandleInput(Vector2 vector)
     {
-        clickTime = Time.time;
-        animator.SetBool("Attack", false);
-        pointerDown = false;
-    }
+        Vector2 pos = Camera.main.ScreenToWorldPoint(vector);
+        int x = Mathf.RoundToInt(pos.x);
+        int y = Mathf.RoundToInt(pos.y);
 
-    bool GetPointer()
-    {
-        if (MainScene.isMobile)
+        float distance = Vector2.Distance(transform.position, pos);
+        if (distance > 1 && distance < 4 && Time.time - clickTime > 0.3f)
         {
-            foreach (Touch touch in Input.touches)
+            Item item = inventory.GetItem();
+            if (item != null)
             {
-                if (RectTransformUtility.RectangleContainsScreenPoint(TouchArea, touch.position))
+                Block.Selected = terrainGenerator.GetBlock(x, y);
+                if (item.subtype == ItemSubType.BLOCK && Block.Selected == null)
                 {
-                    pointerPos = Camera.main.ScreenToWorldPoint(touch.position);
-                    pointerPos.y += 4;
-                    return true;
+                    PlaceBlock(x, y, item.type);
                 }
+                else if (item.subtype == ItemSubType.TOOL && Block.Selected != null)
+                {
+                    Mine(inventory.GetItem().GetDamage());
+                }
+                animator.SetBool("Attack", true);
             }
         }
-        else if (RectTransformUtility.RectangleContainsScreenPoint(TouchArea, Input.mousePosition))
+        else
         {
-            pointerPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            return true;
+            Block.Selected = null;
+            animator.SetBool("Attack", false);
         }
-        return false;
-    }
-
-    void OnPointerDown()
-    {
-        Item item = inventory.GetItem();
-        int x = Mathf.RoundToInt(pointerPos.x);
-        int y = Mathf.RoundToInt(pointerPos.y);
-        Block.Selected = terrainGenerator.GetBlock(x, y);
-        if (Block.Selected && item?.subtype == ItemSubType.TOOL)
-        {
-            Mine(item.GetDamage());
-        }
-        else if (!Block.Selected && item?.subtype == ItemSubType.BLOCK)
-        {
-            PlaceBlock(x, y, item.type);
-        }
-        animator.SetBool("Attack", true);
     }
 
     public void PlaceBlock(int x, int y, ItemType type)
@@ -149,7 +155,7 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
-        if(IsGrounded() && body.velocity.y == 0)
+        if (IsGrounded() && body.velocity.y == 0)
         {
             body.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
         }
@@ -158,7 +164,7 @@ public class Player : MonoBehaviour
     public void OnDrag(float x, float y)
     {
         horizontal = x;
-        if(y > 0.5f)
+        if (y > 0.5f)
         {
             Jump();
         }
@@ -171,7 +177,7 @@ public class Player : MonoBehaviour
         Drop drop = collision.GetComponent<Drop>();
         if (drop != null)
         {
-            if(inventory.Add(drop.type))
+            if (inventory.Add(drop.type))
             {
                 Destroy(collision.gameObject);
             }

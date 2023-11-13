@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 [Serializable]
 public class State
@@ -59,6 +59,8 @@ public class MainScene : MonoBehaviour
     [SerializeField] WorldButton worldButtonPrefab;
     [SerializeField] TextMeshProUGUI worldNameTextInput;
 
+    [SerializeField] UnityEvent OnEnterWorld;
+
     string json = null;
     // Start is called before the first frame update
     void Start()
@@ -87,11 +89,11 @@ public class MainScene : MonoBehaviour
             {
                 World world = database.worlds[i];
                 WorldButton gameObject = Instantiate(worldButtonPrefab);
+                gameObject._OnClick = SelectWorld;
                 gameObject.text.text = world.name;
                 gameObject.world = world;
                 gameObject.transform.SetParent(worldButtonsContainer.transform, false);
             }
-
             Save();
         }
         else
@@ -101,7 +103,7 @@ public class MainScene : MonoBehaviour
         }
     }
 
-    static public void NewWorldPressed(TMP_InputField input)
+    public void NewWorldPressed(TMP_InputField input)
     {
         world = new()
         {
@@ -112,12 +114,14 @@ public class MainScene : MonoBehaviour
         database.worlds.Add(world);
         Save();
         SceneManager.LoadScene(1);
+        OnEnterWorld.Invoke();
     }
 
-    static public void SelectWorld(World w)
+    public void SelectWorld(World w)
     {
         world = w;
         SceneManager.LoadScene(1);
+        OnEnterWorld.Invoke();
     }
 
     static public void DeleteWorld(World w)

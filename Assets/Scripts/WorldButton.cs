@@ -1,23 +1,15 @@
+using System;
 using TMPro;
 using UnityEngine;
 
 public class WorldButton : MonoBehaviour
 {
-    [SerializeField] public TextMeshProUGUI text;    
+    [SerializeField] public TextMeshProUGUI text;
+    [SerializeField] public Action<World> _OnClick;
+
     public World world;
-    // Start is called before the first frame update
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    public void OnWorldPressed() => MainScene.SelectWorld(world);
+    public void OnWorldPressed() => _OnClick.Invoke(world);
 
     public void OnDeletePressed()
     {
