@@ -1,64 +1,42 @@
-using System.Linq;
 using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    public ItemType type;
-    float life = 5;
-    float maxLife = 5;
-    public static Block Selected = null;
-    SpriteRenderer spriteRenderer;
+    [SerializeField] GameState gameState;
     [SerializeField] Drop DropPrefab;
-    [SerializeField] ObjectManager objectManager;
-    static ItemType[] NoSolid = new ItemType[]
-    {
-        ItemType.WOOD,
-        ItemType.LEAVES,
-        ItemType.CACTUS,
-        ItemType.GRASS
-    };
+    public Item item;
+    public bool destroy;
+    SpriteRenderer spriteRenderer;
     // Start is called before the first frame update
     void Start()
     {
-        if(NoSolid.Contains(type))
-        {
-            GetComponent<BoxCollider2D>().enabled = false;
-        }
-    }
-
-    public void SetType(ItemType type, int meta = 0)
-    {
-        this.type = type;
         spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = objectManager.getSprite(type, meta);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Selected != this && life != maxLife)
+        if (gameState.selectedBlock == this)
         {
-            life = maxLife;
-            spriteRenderer.color = Color.white;
+            Item item = gameState.inventory.GetByIndex(gameState.hotBarSelectedIndex);
+            if (item != null)
+            {
+                spriteRenderer.color -= new Color(0, 0, 0, item.damage * Time.deltaTime);
+                if (spriteRenderer.color.a <= 0)
+                {
+                    destroy = true;
+                }
+            }
         }
-        if(Input.GetMouseButtonUp(0))
+        else
         {
-            Selected = null;
+            spriteRenderer.color = Color.white;
         }
     }
 
-    public float GetLife() => life;
-
-    public void Hit(float damage)
+    public void CreateDrop()
     {
-        life -= damage * Time.deltaTime;
-        float color = life / maxLife;
-        spriteRenderer.color = new(color, color, color);
-        if(life <= 0)
-        {
-            Destroy(gameObject);
-            Drop drop = Instantiate(DropPrefab, transform.position, Quaternion.identity);
-            drop.SetItem(type);
-        }
+        Drop drop = Instantiate(DropPrefab, transform.position, Quaternion.identity);
+        drop.Set(item);
     }
 }

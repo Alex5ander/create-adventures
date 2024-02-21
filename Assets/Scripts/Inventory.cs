@@ -1,182 +1,79 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
-public class Inventory : MonoBehaviour
+public class Inventory : MonoBehaviour, ISaveManager
 {
-
-    int maxStack = 64;
-    CanvasGroup group;
-    [SerializeField] List<Slot> slots = new();
-    [SerializeField] MouseFollower mouseFollower;
-    [SerializeField] GameObject Hand;
-    public int selected = 0;
-    public static bool open = false;
-
-    Dictionary<KeyCode, int> keys = new()
+    public List<Slot> Slots;
+    public Action _OnChange;
+    public bool Open;
+    public void Add(int type, int amount)
     {
-        [KeyCode.Keypad1] = 0,
-        [KeyCode.Keypad2] = 1,
-        [KeyCode.Keypad3] = 2,
-        [KeyCode.Keypad4] = 3,
-        [KeyCode.Keypad5] = 4,
-        [KeyCode.Keypad6] = 5,
-        [KeyCode.Keypad7] = 6,
-        [KeyCode.Keypad8] = 7,
-        [KeyCode.Keypad9] = 8,
-        [KeyCode.Alpha1] = 0,
-        [KeyCode.Alpha2] = 1,
-        [KeyCode.Alpha3] = 2,
-        [KeyCode.Alpha4] = 3,
-        [KeyCode.Alpha5] = 4,
-        [KeyCode.Alpha6] = 5,
-        [KeyCode.Alpha7] = 6,
-        [KeyCode.Alpha8] = 7,
-        [KeyCode.Alpha9] = 8,
-    };
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        group = GetComponent<CanvasGroup>();
-        foreach (Slot slot in slots)
+        Slot availableSlot = Slots.Find(Slot => Slot.type == type);
+        Slot emptySlot = Slots.Find(Slot => Slot.amount == 0);
+        if (availableSlot != null)
         {
+            availableSlot.amount += amount;
+            OnChange();
+        }
+        else
+        {
+            emptySlot.type = type;
+            emptySlot.amount = amount;
+            OnChange();
+        }
+    }
+    public void Remove(int index, int amount)
+    {
+        Slot availableSlot = Slots.ElementAt(index);
+        if (availableSlot.type != -1)
+        {
+            availableSlot.amount -= amount;
+            if (availableSlot.amount == 0)
             {
-                slot._OnBeginDrag = (Slot s) => mouseFollower.OnBeginDrag(s.GetItem());
-
-                slot._OnEndDrag = () =>
-                {
-                    mouseFollower.OnEndDrag();
-                    SelectItem(selected);
-                };
-
-                if(slots.IndexOf(slot) < 9)
-                {
-                    slot._OnPointerClick = (Slot s) => SelectItem(slots.IndexOf(s));
-                }
+                availableSlot.type = -1;
             }
-            slot.index = slots.IndexOf(slot);
-        }
-
-        foreach(Item item in MainScene.world.items)
-        {
-            Slot slot = slots[item.index];
-            slot.SetItem(item);
-        }
-
-        SelectItem(MainScene.world.selected);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Toggle();
-        }
-
-        foreach (KeyCode key in keys.Keys)
-        {
-            if (Input.GetKeyDown(key))
-            {
-                SelectItem(keys[key]);
-            }
+            OnChange();
         }
     }
 
-    public bool IsOpen() => open;
+    public Item GetByIndex(int index) => GameManager.Instance.items.Find(e => e.type == Slots[index].type);
 
-    public void Toggle()
+    public void Swap(int old, int slot)
     {
-        open = !open;
-        group.interactable = open;
-        group.alpha = open ? 1 : 0;
-        group.blocksRaycasts = open;
-    }
+        int oldType = Slots[old].type;
+        int oldAmount = Slots[old].amount;
+        int type = Slots[slot].type;
+        int amount = Slots[slot].amount;
 
-    void SelectItem(int index)
-    {
-        Slot oldSlot = slots[selected];
-        oldSlot.DeSelect();
-        selected = index;
-        Slot currentSlot = slots[selected];
-        currentSlot.Select();
-
-        Item item = currentSlot.GetItem();
-        SpriteRenderer sprite = Hand.GetComponent<SpriteRenderer>();
-        sprite.sprite = item != null ? currentSlot.UIImage.sprite : null;
-        Hand.transform.localScale = item != null && item.subtype == ItemSubType.BLOCK ? new(0.5f, 0.5f, 0.5f) : Vector3.one;
-
+        Slots[old].type = type;
+        Slots[old].amount = amount;
+        Slots[slot].type = oldType;
+        Slots[slot].amount = oldAmount;
         OnChange();
     }
-
-    public Item GetItem() => slots[selected].GetItem();
-
-    public List<Item> GetItems() => slots.FindAll(slot => slot.GetItem() != null).Select(e => e.GetItem()).ToList();
-
-    public bool Add(ItemType type, int amount = 1)
-    {
-        for (int i = 0; i < slots.Count; i++)
-        {
-            Slot slot = slots[i];
-            Item item = slot.GetItem();
-            if (item != null && item.type == type && item.amount < maxStack)
-            {
-                slot.Add(amount);
-                if (i == selected)
-                {
-                    SelectItem(i);
-                }
-                OnChange();
-                return true;
-            }
-        }
-
-        for (int i = 0; i < slots.Count; i++)
-        {
-            Slot slot = slots[i];
-            Item item = slot.GetItem();
-            if (item == null)
-            {
-                slot.SetItem(new(i, type, amount));
-                if (i == selected)
-                {
-                    SelectItem(i);
-                }
-                OnChange();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public bool Remove(ItemType type, int amount = 1)
-    {
-        for (int i = 0; i < slots.Count; i++)
-        {
-            Slot slot = slots[i];
-            Item item = slot.GetItem();
-            if (item != null && item.type == type && item.amount >= amount)
-            {
-                slot.Remove(amount);
-                if(i == selected)
-                {
-                    SelectItem(i);
-                }
-                OnChange();
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public void OnChange()
     {
-        MainScene.world.items = GetItems();
-        MainScene.world.selected = selected;
-        MainScene.Save();
+        _OnChange.Invoke();
+        World world = SaveManger.saveGame.GetWorld();
+        world.Slots = Slots;
+    }
+    public void Load(SaveGame saveGame)
+    {
+        Slots = saveGame.GetWorld().Slots;
+        _OnChange.Invoke();
+    }
+}
+
+[Serializable]
+public class Slot
+{
+    public int type;
+    public int amount;
+    public Slot(int type, int amount)
+    {
+        this.type = type;
+        this.amount = amount;
     }
 }

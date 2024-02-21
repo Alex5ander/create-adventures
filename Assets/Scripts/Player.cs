@@ -1,156 +1,170 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, ISaveManager
 {
+    [SerializeField] GameState gameState;
+    [SerializeField] Inventory inventory;
+    [SerializeField] LayerMask layerMask;
+    [SerializeField] TerrainGenerator terrainGenerator;
+    [SerializeField] SpriteRenderer Hand;
     CapsuleCollider2D capsuleCollider2D;
     Rigidbody2D body;
-    [SerializeField] LayerMask layerMask;
-    [SerializeField] Inventory inventory;
-    [SerializeField] TerrainGenerator terrainGenerator;
-    [SerializeField] ParticleSystem particles;
-
-    float jumpPower = 15.0f;
-    float speed = 5.0f;
+    readonly float jumpPower = 15.0f;
+    readonly float speed = 5.0f;
     float horizontal = 0.0f;
-    float clickTime = 0.0f;
-
     Animator animator;
-
+    Dictionary<KeyCode, int> keyCodes = new()
+    {
+        [KeyCode.Keypad1] = 0,
+        [KeyCode.Keypad2] = 1,
+        [KeyCode.Keypad3] = 2,
+        [KeyCode.Keypad4] = 3,
+        [KeyCode.Keypad5] = 4,
+        [KeyCode.Keypad6] = 5,
+        [KeyCode.Keypad7] = 6,
+        [KeyCode.Keypad8] = 7,
+        [KeyCode.Keypad9] = 8,
+        [KeyCode.Alpha1] = 0,
+        [KeyCode.Alpha2] = 1,
+        [KeyCode.Alpha3] = 2,
+        [KeyCode.Alpha4] = 3,
+        [KeyCode.Alpha5] = 4,
+        [KeyCode.Alpha6] = 5,
+        [KeyCode.Alpha7] = 6,
+        [KeyCode.Alpha8] = 7,
+        [KeyCode.Alpha9] = 8,
+    };
     // Start is called before the first frame update
     void Start()
     {
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        gameState.inventory = inventory;
     }
 
     // Update is called once per frame
     void Update()
     {
         bool isGrounded = IsGrounded();
-        if (!MainScene.isMobile)
+        if (!inventory.Open)
         {
-            horizontal = Input.GetAxis("Horizontal");
-            if (Input.GetButtonDown("Jump"))
+            if (GameManager.isMobile)
             {
-                Jump();
+                HandleTouch();
+            }
+            else
+            {
+                HandleMouse();
             }
         }
-
-        if (MainScene.isMobile)
+        if (!GameManager.isMobile)
         {
-            for (int i = 0; i < Input.touchCount; i++)
-            {
-                Touch touch = Input.GetTouch(i);
-                if (touch.fingerId == MouseFollower.fingerId)
-                {
-                    if (touch.phase == TouchPhase.Began)
-                    {
-                        clickTime = Time.time;
-                    }
-                    else if (touch.phase == TouchPhase.Ended)
-                    {
-                        clickTime = Time.time;
-                        Block.Selected = null;
-                        animator.SetBool("Attack", false);
-                    }
-                    else
-                    {
-                        HandleInput(new(touch.position.x, touch.position.y + Camera.main.scaledPixelHeight / 4f));
-                    }
-                    break;
-                }
-            }
+            HandleKeyBoard();
         }
-        else
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                clickTime = Time.time;
-            }
-            else if (Input.GetMouseButton(0))
-            {
-                HandleInput(Input.mousePosition);
-            }
-            else if (Input.GetMouseButtonUp(0))
-            {
-                clickTime = Time.time;
-                Block.Selected = null;
-                animator.SetBool("Attack", false);
-            }
-        }
-
-        if (!Block.Selected)
-        {
-            particles.gameObject.SetActive(false);
-        }
-
         if (horizontal != 0)
         {
-            Quaternion rotation = transform.rotation;
-            rotation.y = horizontal > 0 ? 180 : 0;
-            transform.rotation = rotation;
+            transform.rotation = Quaternion.AngleAxis(horizontal > 0 ? 180 : 0, Vector3.up);
         }
         animator.SetBool("Walk", horizontal != 0);
         animator.SetBool("Jump", !isGrounded);
+        gameState.position = transform.position;
+
+        World world = SaveManger.saveGame.GetWorld();
+        world.playerPosition = gameState.position;
+        world.playerRotation = transform.rotation;
+        world.hotBarSelectedIndex = gameState.hotBarSelectedIndex;
+        SaveManger.Instance.Save();
+    }
+    private void FixedUpdate()
+    {
+        body.velocity = new(horizontal * speed, body.velocity.y);
+    }
+    void HandleKeyBoard()
+    {
+        horizontal = Input.GetAxis("Horizontal");
+        if (Input.GetButtonDown("Jump"))
+        {
+            Jump();
+        }
+        foreach (KeyCode keyCode in keyCodes.Keys)
+        {
+            if (Input.GetKeyDown(keyCode))
+            {
+                gameState.hotBarSelectedIndex = keyCodes[keyCode];
+            }
+        }
     }
 
-    public void HandleInput(Vector2 vector)
+    void PointerDown(Vector3 position)
     {
-        Vector2 pos = Camera.main.ScreenToWorldPoint(vector);
-        int x = Mathf.RoundToInt(pos.x);
-        int y = Mathf.RoundToInt(pos.y);
-
-        float distance = Vector2.Distance(transform.position, pos);
-        if (distance > 1 && distance < 4 && Time.time - clickTime > 0.3f)
+        Vector3 vector3 = Camera.main.ScreenToWorldPoint(position);
+        int x = Mathf.RoundToInt(vector3.x);
+        int y = Mathf.RoundToInt(vector3.y);
+        float distance = Vector2.Distance(vector3, transform.position);
+        Block block = terrainGenerator.GetBlock(x, y);
+        gameState.selectedBlock = block;
+        if (distance < 4)
         {
-            Item item = inventory.GetItem();
-            if (item != null)
+            Item item = inventory.GetByIndex(gameState.hotBarSelectedIndex);
+            animator.SetBool("Attack", true);
+            if (gameState.selectedBlock == null)
             {
-                Block.Selected = terrainGenerator.GetBlock(x, y);
-                if (item.subtype == ItemSubType.BLOCK && Block.Selected == null)
+                if (item != null && item.placeable)
                 {
-                    PlaceBlock(x, y, item.type);
+                    terrainGenerator.CreateBlock(x, y, item.type, 0, true);
+                    inventory.Remove(gameState.hotBarSelectedIndex, 1);
                 }
-                else if (item.subtype == ItemSubType.TOOL && Block.Selected != null)
-                {
-                    Mine(inventory.GetItem().GetDamage());
-                }
-                animator.SetBool("Attack", true);
+            }
+            if (gameState.selectedBlock != null && gameState.selectedBlock.destroy)
+            {
+                terrainGenerator.Remove(x, y, true);
+                gameState.selectedBlock = null;
             }
         }
         else
         {
-            Block.Selected = null;
+            gameState.selectedBlock = null;
             animator.SetBool("Attack", false);
         }
     }
 
-    public void PlaceBlock(int x, int y, ItemType type)
+    void PointerUp()
     {
-        if (inventory.Remove(type))
+        gameState.selectedBlock = null;
+        animator.SetBool("Attack", false);
+    }
+    void HandleMouse()
+    {
+        if (Input.GetMouseButton(0))
         {
-            terrainGenerator.PlaceBlock(x, y, type);
+            PointerDown(Input.mousePosition);
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            PointerUp();
         }
     }
 
-    public void Mine(float damage)
+    void HandleTouch()
     {
-        Block.Selected.Hit(damage);
-        particles.transform.position = Block.Selected.transform.position;
-        particles.GetComponent<Renderer>().material.mainTexture = Block.Selected.GetComponent<SpriteRenderer>().sprite.texture;
-        particles.gameObject.SetActive(true);
-        if (Block.Selected.GetLife() <= 0)
+        for (int i = 0; i < Input.touchCount; i++)
         {
-            int x = Mathf.RoundToInt(Block.Selected.transform.position.x);
-            int y = Mathf.RoundToInt(Block.Selected.transform.position.y);
-            terrainGenerator.DestroyBlock(x, y);
+            Touch touch = Input.GetTouch(i);
+            if (touch.fingerId == MouseFollower.fingerId)
+            {
+                if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
+                {
+                    PointerDown(touch.position);
+                }
+                else if (touch.phase == TouchPhase.Ended)
+                {
+                    PointerUp();
+                }
+                break;
+            }
         }
-    }
-
-    private void FixedUpdate()
-    {
-        body.velocity = new(horizontal * speed, body.velocity.y);
     }
 
     void Jump()
@@ -172,15 +186,10 @@ public class Player : MonoBehaviour
 
     bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.bounds.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.1f, layerMask);
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public void Load(SaveGame saveGame)
     {
-        Drop drop = collision.GetComponent<Drop>();
-        if (drop != null)
-        {
-            if (inventory.Add(drop.type))
-            {
-                Destroy(collision.gameObject);
-            }
-        }
+        World world = saveGame.GetWorld();
+        transform.SetPositionAndRotation(world.playerPosition, world.playerRotation);
+        gameState.hotBarSelectedIndex = world.hotBarSelectedIndex;
     }
 }

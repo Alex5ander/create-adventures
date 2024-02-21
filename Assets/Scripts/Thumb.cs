@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 
 public class Thumb : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
+    [SerializeField] GameState gameState;
     [SerializeField] GameObject Parent;
     [SerializeField] UnityEvent<float, float> _OnDrag;
     public static int fingerId = -1;
@@ -15,7 +16,7 @@ public class Thumb : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDra
             Touch touch = Input.GetTouch(i);
             if (touch.fingerId == fingerId && touch.phase == TouchPhase.Moved)
             {
-                Vector2 parentSize = Parent.GetComponent<RectTransform>().sizeDelta;
+                Vector2 parentSize = Parent.GetComponent<RectTransform>().sizeDelta / 2;
                 Vector2 center = Parent.transform.position;
                 Vector2 normal = (touch.position - center).normalized;
                 Vector2 thumbSize = GetComponent<RectTransform>().sizeDelta;
@@ -32,7 +33,7 @@ public class Thumb : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDra
         for (int i = 0; i < Input.touchCount; i++)
         {
             Touch touch = Input.GetTouch(i);
-            if (touch.fingerId != MouseFollower.fingerId && touch.phase == TouchPhase.Began)
+            if (touch.fingerId != MouseFollower.fingerId && (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Stationary))
             {
                 fingerId = touch.fingerId;
                 transform.position = touch.position;
@@ -46,7 +47,7 @@ public class Thumb : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDra
         for (int i = 0; i < Input.touchCount; i++)
         {
             Touch touch = Input.GetTouch(i);
-            if (touch.fingerId != MouseFollower.fingerId && touch.phase == TouchPhase.Ended)
+            if (touch.fingerId == fingerId && touch.phase == TouchPhase.Ended)
             {
                 fingerId = -1;
                 transform.position = Parent.transform.position;
@@ -59,7 +60,7 @@ public class Thumb : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDra
     // Start is called before the first frame update
     void Start()
     {
-        Parent.SetActive(MainScene.isMobile);
+        Parent.SetActive(GameManager.isMobile);
     }
 
     // Update is called once per frame

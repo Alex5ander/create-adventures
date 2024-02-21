@@ -1,24 +1,27 @@
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MouseFollower : MonoBehaviour
 {
-    [SerializeField] Image UICrosshair;
-    [SerializeField] Image UIImage;
-    [SerializeField] TextMeshProUGUI UIText;
-    [SerializeField] ObjectManager ObjectManager;
-    Item item = null;
+    [SerializeField] GameState gameState;
+    [SerializeField] Inventory inventory;
+    [SerializeField] CanvasGroup canvasGroup;
+    [SerializeField] Image image;
+    [SerializeField] TextMeshProUGUI text;
+    [SerializeField] Sprite defaultSprite;
+    static public int fingerId = -1;
     // Start is called before the first frame update
     void Start()
     {
 
     }
-    public static int fingerId = -1;
+
     // Update is called once per frame
     void Update()
     {
-        if (MainScene.isMobile)
+        if (GameManager.isMobile)
         {
             for (int i = 0; i < Input.touchCount; i++)
             {
@@ -26,18 +29,19 @@ public class MouseFollower : MonoBehaviour
                 if (touch.fingerId != Thumb.fingerId && touch.phase == TouchPhase.Began)
                 {
                     fingerId = touch.fingerId;
+                    transform.position = touch.position;
+                    break;
                 }
-
-                if (touch.fingerId == fingerId)
+                if (touch.fingerId == fingerId && touch.phase == TouchPhase.Moved)
                 {
-                    if (touch.phase == TouchPhase.Ended)
-                    {
-                        fingerId = -1;
-                    }
-                    else
-                    {
-                        transform.position = new(touch.position.x, touch.position.y + Camera.main.scaledPixelHeight / 4f);
-                    }
+                    transform.position = touch.position;
+                    break;
+                }
+                if (touch.fingerId == fingerId && touch.phase == TouchPhase.Ended)
+                {
+                    fingerId = -1;
+                    transform.position = touch.position;
+                    break;
                 }
             }
         }
@@ -45,23 +49,21 @@ public class MouseFollower : MonoBehaviour
         {
             transform.position = Input.mousePosition;
         }
-        UICrosshair.enabled = item == null;
-    }
-
-    public void OnBeginDrag(Item item)
-    {
-        this.item = item;
-        UIImage.sprite = ObjectManager.getItemSprite(item.type);
-        UIText.text = item.amount.ToString();
-
-        UIImage.enabled = true;
-        UIText.enabled = true;
-    }
-
-    public void OnEndDrag()
-    {
-        item = null;
-        UIImage.enabled = false;
-        UIText.enabled = false;
+        if (inventory.Open && gameState.inventorySelectedIndex != -1)
+        {
+            Slot slot = inventory.Slots[gameState.inventorySelectedIndex];
+            Item item = inventory.GetByIndex(gameState.inventorySelectedIndex);
+            if (item != null && slot.amount > 0)
+            {
+                text.alpha = 1;
+                text.text = slot.amount.ToString();
+                image.sprite = item.dropSprite;
+            }
+        }
+        else
+        {
+            text.alpha = 0;
+            image.sprite = defaultSprite;
+        }
     }
 }
