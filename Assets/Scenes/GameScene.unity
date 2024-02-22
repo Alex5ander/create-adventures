@@ -2149,6 +2149,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameState: {fileID: 11400000, guid: 180577598f03a0c4a9a95cbc9cb6c0e5, type: 2}
   OptimizedBlockPrefab: {fileID: 2386666061740416500, guid: bbd5fef988ae1eb4da8760e77220ff8e, type: 3}
+  Dirt: {fileID: 11400000, guid: 2a954ff063454394c8e3ebaecc495e59, type: 2}
+  Stone: {fileID: 11400000, guid: bc9b22d7fd6952c4280e0411e04b2918, type: 2}
+  Wood: {fileID: 11400000, guid: a345a9963fbbdb34faf209ac8913e143, type: 2}
+  Leaves: {fileID: 11400000, guid: 4d6466e9a5e983f429c845f74ebd623d, type: 2}
+  Coal: {fileID: 11400000, guid: a190232fd3d75714cb74afbf54c33d62, type: 2}
+  Iron: {fileID: 11400000, guid: 10f042ed7340f7441bce99e1cc949c88, type: 2}
+  Gold: {fileID: 11400000, guid: 8be4d9b1b14d42446aa0bce117cd8c20, type: 2}
+  Diamond: {fileID: 11400000, guid: 5911cb9d318cb354482ca442a211e7c6, type: 2}
 --- !u!1 &788454255
 GameObject:
   m_ObjectHideFlags: 0

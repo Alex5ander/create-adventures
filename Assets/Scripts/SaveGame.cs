@@ -7,10 +7,10 @@ public class ModifiedBlock
 {
   public int x;
   public int y;
-  public int type;
+  public Item type;
   public int meta;
 
-  public ModifiedBlock(int type, int x, int y)
+  public ModifiedBlock(Item type, int x, int y)
   {
     this.type = type;
     this.x = x;
@@ -27,21 +27,20 @@ public class World
   public Vector2 playerPosition = new(20, 100);
   public Quaternion playerRotation = Quaternion.identity;
   public List<ModifiedBlock> modifiedBlocks = new();
-  public World(int seed)
+  public World(int seed, Item[] items)
   {
     this.seed = seed;
     for (int i = 0; i < 36; i++)
     {
-      Slots.Add(new Slot(-1, 0));
+      if (i < items.Length)
+      {
+        Slots.Add(new Slot(items[i], 1));
+      }
+      else
+      {
+        Slots.Add(new Slot(null, 0));
+      }
     }
-    Slots[0].type = 11;
-    Slots[0].amount = 1;
-
-    Slots[1].type = 10;
-    Slots[1].amount = 1;
-
-    Slots[2].type = 12;
-    Slots[2].amount = 1;
   }
 }
 

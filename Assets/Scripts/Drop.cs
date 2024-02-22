@@ -13,7 +13,7 @@ public class Drop : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            gameState.inventory.Add(item.type, 1);
+            gameState.inventory.Add(item, 1);
             Destroy(gameObject);
         }
     }

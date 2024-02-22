@@ -8,6 +8,14 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     float frequency = 1.61803398875f * 2.5f;
     [SerializeField] GameState gameState;
     [SerializeField] OptimizedBlock OptimizedBlockPrefab;
+    [SerializeField] Item Dirt;
+    [SerializeField] Item Stone;
+    [SerializeField] Item Wood;
+    [SerializeField] Item Leaves;
+    [SerializeField] Item Coal;
+    [SerializeField] Item Iron;
+    [SerializeField] Item Gold;
+    [SerializeField] Item Diamond;
     public void GenerateTerrain(int seed)
     {
         gameState.blocks = new Block[terrainWidth, terrainHeight];
@@ -35,7 +43,7 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
                 noise /= t;
                 if (j == height - 1)
                 {
-                    CreateBlock(i, j, 0, 1);
+                    CreateBlock(i, j, Dirt, 1);
 
                     if (noise > 0.5f)
                     {
@@ -44,51 +52,50 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
                 }
                 else if (j > height * 0.8f)
                 {
-                    CreateBlock(i, j, 0);
+                    CreateBlock(i, j, Dirt);
                 }
                 else
                 {
                     if (noise > 0.4f)
                     {
-                        CreateBlock(i, j, 1);
+                        CreateBlock(i, j, Stone);
                     }
                     else if (j < 30)
                     {
                         if (noise > 0.38f)
                         {
-                            CreateBlock(i, j, 5);
+                            CreateBlock(i, j, Coal);
                         }
                         else if (noise > 0.3f)
                         {
-                            CreateBlock(i, j, 6);
+                            CreateBlock(i, j, Iron);
                         }
                         else if (noise > 0.25f)
                         {
-                            CreateBlock(i, j, 7);
+                            CreateBlock(i, j, Gold);
                         }
                         else if (noise < 0.2f)
                         {
-                            CreateBlock(i, j, 8);
+                            CreateBlock(i, j, Diamond);
                         }
                     }
                 }
             }
         }
     }
-    public void CreateBlock(int x, int y, int type, int meta = 0, bool save = false)
+    public void CreateBlock(int x, int y, Item item, int meta = 0, bool save = false)
     {
         if (x < 0 || x > gameState.blocks.GetLength(0) - 1 || y < 0 || y > gameState.blocks.GetLength(1) - 1) { return; }
         if (gameState.blocks[x, y] == null)
         {
             OptimizedBlock optimizer = Instantiate(OptimizedBlockPrefab, new(x, y, 0), Quaternion.identity);
             SpriteRenderer spriteRenderer = optimizer.block.GetComponent<SpriteRenderer>();
-            Item item = GameManager.Instance.items.Find(e => e.type == type);
             optimizer.block.item = item;
             spriteRenderer.sprite = item.sprites[meta];
             gameState.blocks[x, y] = optimizer.block;
             if (save)
             {
-                SaveManger.SaveWorld(type, x, y);
+                SaveManger.SaveWorld(item, x, y);
             }
         }
     }
@@ -108,7 +115,7 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
             if (save)
             {
                 block.CreateDrop();
-                SaveManger.SaveWorld(-1, x, y);
+                SaveManger.SaveWorld(null, x, y);
             }
             Destroy(block.transform.parent.gameObject);
             gameState.blocks[x, y] = null;
@@ -118,25 +125,25 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     void CreateTree(int x, int y)
     {
         int height = 4 + Mathf.RoundToInt(Mathf.PerlinNoise(x * frequency + x, y * frequency + x)) * 4;
-        CreateBlock(x, y + height, 4, 0);
-        CreateBlock(x + 1, y + height, 4, 0);
-        CreateBlock(x - 1, y + height, 4, 0);
+        CreateBlock(x, y + height, Leaves, 0);
+        CreateBlock(x + 1, y + height, Leaves, 0);
+        CreateBlock(x - 1, y + height, Leaves, 0);
 
-        CreateBlock(x, y + height + 1, 4, 0);
-        CreateBlock(x + 1, y + height + 1, 4, 0);
-        CreateBlock(x - 1, y + height + 1, 4, 0);
+        CreateBlock(x, y + height + 1, Leaves, 0);
+        CreateBlock(x + 1, y + height + 1, Leaves, 0);
+        CreateBlock(x - 1, y + height + 1, Leaves, 0);
 
-        CreateBlock(x, y + height + 2, 4, 0);
+        CreateBlock(x, y + height + 2, Leaves, 0);
 
         for (int i = 0; i < height; i++)
         {
             if (i == 0)
             {
-                CreateBlock(x, y + i, 3, 1);
+                CreateBlock(x, y + i, Wood, 1);
             }
             else
             {
-                CreateBlock(x, y + i, 3, 0);
+                CreateBlock(x, y + i, Wood, 0);
             }
         }
     }
@@ -149,7 +156,7 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
         foreach (ModifiedBlock modifiedBlock in modifiedBlocks)
         {
             Block block = gameState.blocks[modifiedBlock.x, modifiedBlock.y];
-            if (modifiedBlock.type == -1)
+            if (modifiedBlock.type == null)
             {
                 if (block != null)
                 {

@@ -12,6 +12,7 @@ public class SaveManger : MonoBehaviour
     [DllImport("__Internal")]
     private static extern string SaveData(string saveGame);
     string json = null;
+    [SerializeField] Item[] InitialItems;
     static public SaveGame saveGame;
     static public SaveManger Instance;
     void Awake()
@@ -54,7 +55,7 @@ public class SaveManger : MonoBehaviour
 
     public void NewWorld()
     {
-        saveGame.worlds.Add(new World(Random.Range(-1000, 1000)));
+        saveGame.worlds.Add(new World(Random.Range(-1000, 1000), InitialItems));
         saveGame.worldIndex = saveGame.worlds.Count - 1;
         SceneManager.LoadScene(1);
     }
@@ -80,7 +81,7 @@ public class SaveManger : MonoBehaviour
         }
     }
 
-    static public void SaveWorld(int type, int x, int y)
+    static public void SaveWorld(Item type, int x, int y)
     {
         World world = saveGame.GetWorld();
         ModifiedBlock modifiedBlock = world.modifiedBlocks.Find(e => e.x == x && e.y == y);

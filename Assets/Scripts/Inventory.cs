@@ -8,9 +8,9 @@ public class Inventory : MonoBehaviour, ISaveManager
     public List<Slot> Slots;
     public Action _OnChange;
     public bool Open;
-    public void Add(int type, int amount)
+    public void Add(Item item, int amount)
     {
-        Slot availableSlot = Slots.Find(Slot => Slot.type == type);
+        Slot availableSlot = Slots.Find(Slot => Slot.item == item);
         Slot emptySlot = Slots.Find(Slot => Slot.amount == 0);
         if (availableSlot != null)
         {
@@ -19,7 +19,7 @@ public class Inventory : MonoBehaviour, ISaveManager
         }
         else
         {
-            emptySlot.type = type;
+            emptySlot.item = item;
             emptySlot.amount = amount;
             OnChange();
         }
@@ -27,37 +27,22 @@ public class Inventory : MonoBehaviour, ISaveManager
     public void Remove(int index, int amount)
     {
         Slot availableSlot = Slots.ElementAt(index);
-        if (availableSlot.type != -1)
+        if (availableSlot != null)
         {
             availableSlot.amount -= amount;
             if (availableSlot.amount == 0)
             {
-                availableSlot.type = -1;
+                availableSlot.item = null;
             }
             OnChange();
         }
     }
 
-    public Item GetByIndex(int index)
-    {
-        if (Slots[index] != null && Slots[index].type != -1)
-        {
-            return GameManager.Instance.items.Find(e => e.type == Slots[index].type);
-        }
-        return null;
-    }
+    public Item GetByIndex(int index) => Slots[index].item;
 
     public void Swap(int old, int slot)
     {
-        int oldType = Slots[old].type;
-        int oldAmount = Slots[old].amount;
-        int type = Slots[slot].type;
-        int amount = Slots[slot].amount;
-
-        Slots[old].type = type;
-        Slots[old].amount = amount;
-        Slots[slot].type = oldType;
-        Slots[slot].amount = oldAmount;
+        (Slots[slot], Slots[old]) = (Slots[old], Slots[slot]);
         OnChange();
     }
     public void OnChange()
@@ -76,11 +61,11 @@ public class Inventory : MonoBehaviour, ISaveManager
 [Serializable]
 public class Slot
 {
-    public int type;
+    public Item item;
     public int amount;
-    public Slot(int type, int amount)
+    public Slot(Item item, int amount)
     {
-        this.type = type;
+        this.item = item;
         this.amount = amount;
     }
 }

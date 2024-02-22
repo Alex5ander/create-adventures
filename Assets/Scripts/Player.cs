@@ -118,7 +118,7 @@ public class Player : MonoBehaviour, ISaveManager
             {
                 if (item != null && item.placeable)
                 {
-                    terrainGenerator.CreateBlock(x, y, item.type, 0, true);
+                    terrainGenerator.CreateBlock(x, y, item, 0, true);
                     inventory.Remove(gameState.hotBarSelectedIndex, 1);
                 }
             }
