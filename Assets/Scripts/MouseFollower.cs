@@ -21,7 +21,7 @@ public class MouseFollower : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameManager.isMobile)
+        if (MainScene.isMobile)
         {
             for (int i = 0; i < Input.touchCount; i++)
             {

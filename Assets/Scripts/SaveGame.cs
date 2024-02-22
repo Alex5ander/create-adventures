@@ -34,8 +34,14 @@ public class World
     {
       Slots.Add(new Slot(-1, 0));
     }
-    Slots[0].type = 10;
+    Slots[0].type = 11;
     Slots[0].amount = 1;
+
+    Slots[1].type = 10;
+    Slots[1].amount = 1;
+
+    Slots[2].type = 12;
+    Slots[2].amount = 1;
   }
 }
 

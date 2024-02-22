@@ -35,6 +35,7 @@ public class Player : MonoBehaviour, ISaveManager
         [KeyCode.Alpha8] = 7,
         [KeyCode.Alpha9] = 8,
     };
+    float lastSaveTime = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -50,7 +51,7 @@ public class Player : MonoBehaviour, ISaveManager
         bool isGrounded = IsGrounded();
         if (!inventory.Open)
         {
-            if (GameManager.isMobile)
+            if (MainScene.isMobile)
             {
                 HandleTouch();
             }
@@ -59,7 +60,7 @@ public class Player : MonoBehaviour, ISaveManager
                 HandleMouse();
             }
         }
-        if (!GameManager.isMobile)
+        if (!MainScene.isMobile)
         {
             HandleKeyBoard();
         }
@@ -75,7 +76,11 @@ public class Player : MonoBehaviour, ISaveManager
         world.playerPosition = gameState.position;
         world.playerRotation = transform.rotation;
         world.hotBarSelectedIndex = gameState.hotBarSelectedIndex;
-        SaveManger.Instance.Save();
+        if (Time.time - lastSaveTime > 5)
+        {
+            SaveManger.Instance.Save();
+            lastSaveTime = Time.time;
+        }
     }
     private void FixedUpdate()
     {
@@ -105,10 +110,10 @@ public class Player : MonoBehaviour, ISaveManager
         float distance = Vector2.Distance(vector3, transform.position);
         Block block = terrainGenerator.GetBlock(x, y);
         gameState.selectedBlock = block;
+        animator.SetBool("Attack", true);
         if (distance < 4)
         {
             Item item = inventory.GetByIndex(gameState.hotBarSelectedIndex);
-            animator.SetBool("Attack", true);
             if (gameState.selectedBlock == null)
             {
                 if (item != null && item.placeable)

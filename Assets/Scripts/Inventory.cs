@@ -38,7 +38,14 @@ public class Inventory : MonoBehaviour, ISaveManager
         }
     }
 
-    public Item GetByIndex(int index) => GameManager.Instance.items.Find(e => e.type == Slots[index].type);
+    public Item GetByIndex(int index)
+    {
+        if (Slots[index] != null && Slots[index].type != -1)
+        {
+            return GameManager.Instance.items.Find(e => e.type == Slots[index].type);
+        }
+        return null;
+    }
 
     public void Swap(int old, int slot)
     {

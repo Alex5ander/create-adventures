@@ -9,4 +9,5 @@ public class Item : ScriptableObject
   public int type;
   public float damage;
   public bool placeable;
+  public bool solid;
 }

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class TerrainGenerator : MonoBehaviour, ISaveManager
 {
@@ -19,24 +18,58 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
             for (int j = 0; j < height; j++)
             {
                 float y = (float)j / height;
+
+                float noise = 0;
+                int octaves = 3;
+                float lacunarity = frequency;
+                float persistance = 50f;
+                float t = 0;
+                for (int k = 0; k < octaves; k++)
+                {
+                    float f = Mathf.Pow(lacunarity, octaves);
+                    float a = Mathf.Pow(persistance, octaves);
+                    persistance *= 0.5f;
+                    t += a;
+                    noise += Mathf.PerlinNoise(x * f + seed, y * f + seed) * a;
+                }
+                noise /= t;
                 if (j == height - 1)
                 {
                     CreateBlock(i, j, 0, 1);
+
+                    if (noise > 0.5f)
+                    {
+                        CreateTree(i, j + 1);
+                    }
                 }
-                else if (j > height * 0.75f)
+                else if (j > height * 0.8f)
                 {
                     CreateBlock(i, j, 0);
                 }
                 else
                 {
-                    float noise2d = Mathf.PerlinNoise(x * frequency + seed, y * frequency + seed) * 100f;
-                    if (noise2d > 60f)
+                    if (noise > 0.4f)
                     {
                         CreateBlock(i, j, 1);
                     }
-                    else
+                    else if (j < 30)
                     {
-                        CreateBlock(i, j, 2);
+                        if (noise > 0.38f)
+                        {
+                            CreateBlock(i, j, 5);
+                        }
+                        else if (noise > 0.3f)
+                        {
+                            CreateBlock(i, j, 6);
+                        }
+                        else if (noise > 0.25f)
+                        {
+                            CreateBlock(i, j, 7);
+                        }
+                        else if (noise < 0.2f)
+                        {
+                            CreateBlock(i, j, 8);
+                        }
                     }
                 }
             }
@@ -44,6 +77,7 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     }
     public void CreateBlock(int x, int y, int type, int meta = 0, bool save = false)
     {
+        if (x < 0 || x > gameState.blocks.GetLength(0) - 1 || y < 0 || y > gameState.blocks.GetLength(1) - 1) { return; }
         if (gameState.blocks[x, y] == null)
         {
             OptimizedBlock optimizer = Instantiate(OptimizedBlockPrefab, new(x, y, 0), Quaternion.identity);
@@ -80,7 +114,32 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
             gameState.blocks[x, y] = null;
         }
     }
-    static public void Exit() => SceneManager.LoadScene(0);
+
+    void CreateTree(int x, int y)
+    {
+        int height = 4 + Mathf.RoundToInt(Mathf.PerlinNoise(x * frequency + x, y * frequency + x)) * 4;
+        CreateBlock(x, y + height, 4, 0);
+        CreateBlock(x + 1, y + height, 4, 0);
+        CreateBlock(x - 1, y + height, 4, 0);
+
+        CreateBlock(x, y + height + 1, 4, 0);
+        CreateBlock(x + 1, y + height + 1, 4, 0);
+        CreateBlock(x - 1, y + height + 1, 4, 0);
+
+        CreateBlock(x, y + height + 2, 4, 0);
+
+        for (int i = 0; i < height; i++)
+        {
+            if (i == 0)
+            {
+                CreateBlock(x, y + i, 3, 1);
+            }
+            else
+            {
+                CreateBlock(x, y + i, 3, 0);
+            }
+        }
+    }
 
     public void Load(SaveGame saveGame)
     {

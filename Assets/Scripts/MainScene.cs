@@ -1,15 +1,21 @@
+using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class MainScene : MonoBehaviour, ISaveManager
 {
+    [DllImport("__Internal")]
+    static extern bool IsMobile();
+    static public bool isMobile;
     [SerializeField] VerticalLayoutGroup verticalLayoutGroup;
     [SerializeField] WorldButton ButtonPrefab;
     // Start is called before the first frame update
     void Start()
     {
-
+#if UNITY_WEBGL && !UNITY_EDITOR
+            isMobile = IsMobile();
+#endif
     }
 
     // Update is called once per frame

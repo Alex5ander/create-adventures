@@ -60,7 +60,7 @@ public class Thumb : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDra
     // Start is called before the first frame update
     void Start()
     {
-        Parent.SetActive(GameManager.isMobile);
+        Parent.SetActive(MainScene.isMobile);
     }
 
     // Update is called once per frame

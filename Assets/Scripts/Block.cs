@@ -11,6 +11,7 @@ public class Block : MonoBehaviour
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        GetComponent<BoxCollider2D>().enabled = item.solid;
     }
 
     // Update is called once per frame
