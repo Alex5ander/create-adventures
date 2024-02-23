@@ -32,13 +32,16 @@ class ItemEditor : Editor
     base.OnInspectorGUI();
     Item item = (Item)target;
     EditorGUILayout.Space();
-    Rect rect = GUILayoutUtility.GetLastRect();
+    Rect rect;
     int i = 0;
     foreach (Sprite sprite in item.sprites)
     {
-      EditorGUI.DrawTextureTransparent(new Rect(rect.size.x / 2 - 64, rect.position.y + i * 136, 128, 128), sprite.texture);
+      rect = GUILayoutUtility.GetLastRect();
+      EditorGUI.DrawTextureTransparent(new Rect(rect.size.x / 2 - 64, rect.position.y + i * 128, 128, 128), sprite.texture);
+      EditorGUILayout.Space();
       i++;
-      EditorGUI.DrawTextureTransparent(new Rect(rect.size.x / 2 - 64, rect.position.y + i * 136, 128, 128), item.dropSprite.texture);
     }
+    rect = GUILayoutUtility.GetLastRect();
+    EditorGUI.DrawTextureTransparent(new Rect(rect.size.x / 2 - 64, rect.position.y + i * 128, 128, 128), item.dropSprite.texture);
   }
 }
