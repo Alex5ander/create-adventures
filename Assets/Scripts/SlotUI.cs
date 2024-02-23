@@ -40,14 +40,17 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHa
     // Update is called once per frame
     void Update()
     {
-        if (gameState.hotBarSelectedIndex == index)
+        if (index < 9)
         {
-            background.sprite = SelectedSprite;
-        }
-        else
-        {
-            background.sprite = null;
-            background.color = new(1, 1, 1, 0.5f);
+            if (gameState.hotBarSelectedIndex == index)
+            {
+                background.sprite = SelectedSprite;
+            }
+            else
+            {
+                background.sprite = null;
+                background.color = new(1, 1, 1, 0.5f);
+            }
         }
     }
 
@@ -62,6 +65,9 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHa
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        gameState.hotBarSelectedIndex = index;
+        if (index < 9)
+        {
+            gameState.hotBarSelectedIndex = index;
+        }
     }
 }
