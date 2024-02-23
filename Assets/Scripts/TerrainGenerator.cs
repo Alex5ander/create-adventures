@@ -56,25 +56,25 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
                 }
                 else
                 {
-                    if (noise > 0.4f)
+                    if (noise > 0.35f)
                     {
                         CreateBlock(i, j, Stone);
                     }
-                    else if (j < 30)
+                    else
                     {
-                        if (noise > 0.38f)
+                        if (noise > 0.3f)
                         {
                             CreateBlock(i, j, Coal);
                         }
-                        else if (noise > 0.3f)
+                        else if (noise > 0.26f)
                         {
                             CreateBlock(i, j, Iron);
                         }
-                        else if (noise > 0.25f)
+                        else if (noise > 0.15f && noise < 0.26f && j < 20)
                         {
                             CreateBlock(i, j, Gold);
                         }
-                        else if (noise < 0.2f)
+                        else if (noise > 0.1f && noise < 0.15f && j < 10)
                         {
                             CreateBlock(i, j, Diamond);
                         }
