@@ -1,4 +1,3 @@
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,22 +25,22 @@ public class MouseFollower : MonoBehaviour
             for (int i = 0; i < Input.touchCount; i++)
             {
                 Touch touch = Input.GetTouch(i);
-                if (touch.fingerId != Thumb.fingerId && touch.phase == TouchPhase.Began)
+                if (touch.fingerId != Thumb.fingerId && fingerId == -1)
                 {
-                    fingerId = touch.fingerId;
-                    transform.position = touch.position;
-                    break;
+                    if (touch.phase == TouchPhase.Began)
+                    {
+                        fingerId = touch.fingerId;
+                    }
                 }
-                if (touch.fingerId == fingerId && touch.phase == TouchPhase.Moved)
+
+                if (touch.fingerId == fingerId)
                 {
                     transform.position = touch.position;
-                    break;
-                }
-                if (touch.fingerId == fingerId && touch.phase == TouchPhase.Ended)
-                {
-                    fingerId = -1;
-                    transform.position = touch.position;
-                    break;
+                    if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+                    {
+                        fingerId = -1;
+                        break;
+                    }
                 }
             }
         }

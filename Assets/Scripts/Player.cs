@@ -49,16 +49,13 @@ public class Player : MonoBehaviour, ISaveManager
     void Update()
     {
         bool isGrounded = IsGrounded();
-        if (!inventory.Open)
+        if (MainScene.isMobile)
         {
-            if (MainScene.isMobile)
-            {
-                HandleTouch();
-            }
-            else
-            {
-                HandleMouse();
-            }
+            HandleTouch();
+        }
+        else
+        {
+            HandleMouse();
         }
         if (!MainScene.isMobile)
         {
@@ -104,27 +101,34 @@ public class Player : MonoBehaviour, ISaveManager
 
     void PointerDown(Vector3 position)
     {
-        Vector3 vector3 = Camera.main.ScreenToWorldPoint(position);
-        int x = Mathf.RoundToInt(vector3.x);
-        int y = Mathf.RoundToInt(vector3.y);
-        float distance = Vector2.Distance(vector3, transform.position);
-        Block block = terrainGenerator.GetBlock(x, y);
-        gameState.selectedBlock = block;
-        animator.SetBool("Attack", true);
-        if (distance < 4)
+        if (!inventory.Open)
         {
-            Item item = inventory.GetByIndex(gameState.hotBarSelectedIndex);
-            if (gameState.selectedBlock == null)
+            Vector3 vector3 = Camera.main.ScreenToWorldPoint(position);
+            int x = Mathf.RoundToInt(vector3.x);
+            int y = Mathf.RoundToInt(vector3.y);
+            float distance = Vector2.Distance(vector3, transform.position);
+            Block block = terrainGenerator.GetBlock(x, y);
+            gameState.selectedBlock = block;
+            animator.SetBool("Attack", true);
+            if (distance < 4)
             {
-                if (item != null && item.placeable)
+                Item item = inventory.GetByIndex(gameState.hotBarSelectedIndex);
+                if (gameState.selectedBlock == null)
                 {
-                    terrainGenerator.CreateBlock(x, y, item, 0, true);
-                    inventory.Remove(gameState.hotBarSelectedIndex, 1);
+                    if (item != null && item.placeable)
+                    {
+                        terrainGenerator.CreateBlock(x, y, item, 0, true);
+                        inventory.Remove(gameState.hotBarSelectedIndex, 1);
+                    }
+                }
+                if (gameState.selectedBlock != null && gameState.selectedBlock.destroy)
+                {
+                    terrainGenerator.Remove(x, y, true);
+                    gameState.selectedBlock = null;
                 }
             }
-            if (gameState.selectedBlock != null && gameState.selectedBlock.destroy)
+            else
             {
-                terrainGenerator.Remove(x, y, true);
                 gameState.selectedBlock = null;
             }
         }
@@ -163,11 +167,10 @@ public class Player : MonoBehaviour, ISaveManager
                 {
                     PointerDown(touch.position);
                 }
-                else if (touch.phase == TouchPhase.Ended)
+                else
                 {
                     PointerUp();
                 }
-                break;
             }
         }
     }

@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +12,7 @@ public class MainScene : MonoBehaviour, ISaveManager
     // Start is called before the first frame update
     void Start()
     {
-#if UNITY_WEBGL && !UNITY_EDITOR
+#if UNITY_WEBGL && !UNITY_EDITOR && !UNITY_ANDROID
             isMobile = IsMobile();
 #endif
     }
