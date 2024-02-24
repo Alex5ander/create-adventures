@@ -4,8 +4,10 @@ using UnityEngine.UI;
 
 public class MainScene : MonoBehaviour, ISaveManager
 {
+#if !UNITY_ANDROID
     [DllImport("__Internal")]
     static extern bool IsMobile();
+#endif
     static public bool isMobile;
     [SerializeField] VerticalLayoutGroup verticalLayoutGroup;
     [SerializeField] WorldButton ButtonPrefab;
@@ -14,6 +16,9 @@ public class MainScene : MonoBehaviour, ISaveManager
     {
 #if UNITY_WEBGL && !UNITY_EDITOR && !UNITY_ANDROID
             isMobile = IsMobile();
+#endif
+#if UNITY_ANDROID
+        isMobile = true;
 #endif
     }
 

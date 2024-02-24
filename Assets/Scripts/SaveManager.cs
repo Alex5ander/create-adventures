@@ -6,11 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class SaveManger : MonoBehaviour
 {
+#if !UNITY_ANDROID
     [DllImport("__Internal")]
     private static extern string LoadData();
 
     [DllImport("__Internal")]
     private static extern string SaveData(string saveGame);
+#endif
     string json = null;
     [SerializeField] Item[] InitialItems;
     static public SaveGame saveGame;
