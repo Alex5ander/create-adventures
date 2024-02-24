@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+# endif
 using UnityEngine;
 
 [CreateAssetMenu]
@@ -12,6 +14,7 @@ public class Item : ScriptableObject
   public bool solid;
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(Item))]
 class ItemEditor : Editor
 {
@@ -45,3 +48,4 @@ class ItemEditor : Editor
     EditorGUI.DrawTextureTransparent(new Rect(rect.size.x / 2 - 64, rect.position.y + i * 128, 128, 128), item.dropSprite.texture);
   }
 }
+#endif
