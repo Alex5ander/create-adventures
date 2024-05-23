@@ -13,6 +13,7 @@ public class Player : MonoBehaviour, ISaveManager
     readonly float jumpPower = 15.0f;
     readonly float speed = 5.0f;
     float horizontal = 0.0f;
+    bool isGrounded = false;
     Animator animator;
     Dictionary<KeyCode, int> keyCodes = new()
     {
@@ -48,7 +49,7 @@ public class Player : MonoBehaviour, ISaveManager
     // Update is called once per frame
     void Update()
     {
-        bool isGrounded = IsGrounded();
+        isGrounded = IsGrounded();
         if (MainScene.isMobile)
         {
             HandleTouch();
@@ -177,7 +178,7 @@ public class Player : MonoBehaviour, ISaveManager
 
     void Jump()
     {
-        if (IsGrounded() && body.velocity.y == 0)
+        if (isGrounded && body.velocity.y == 0)
         {
             body.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
         }
@@ -189,6 +190,18 @@ public class Player : MonoBehaviour, ISaveManager
         if (y > 0.5f)
         {
             Jump();
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.name == "hand_right")
+        {
+            gameState.life -= 1;
+            animator.SetTrigger("Hurt");
+
+            float x = -(other.gameObject.transform.position - transform.position).normalized.x;
+            body.AddForce(new Vector2(x * jumpPower, jumpPower), ForceMode2D.Impulse);
         }
     }
 
