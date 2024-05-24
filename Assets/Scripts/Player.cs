@@ -10,8 +10,8 @@ public class Player : MonoBehaviour, ISaveManager
     [SerializeField] SpriteRenderer Hand;
     CapsuleCollider2D capsuleCollider2D;
     Rigidbody2D body;
-    readonly float jumpPower = 15.0f;
-    readonly float speed = 5.0f;
+    float jumpPower = 15;
+    float speed = 5f;
     float horizontal = 0.0f;
     bool isGrounded = false;
     Animator animator;
@@ -82,7 +82,10 @@ public class Player : MonoBehaviour, ISaveManager
     }
     private void FixedUpdate()
     {
-        body.velocity = new(horizontal * speed, body.velocity.y);
+        float targetSpeed = speed * horizontal;
+        float acceleration = targetSpeed - body.velocity.x;
+        float friction = body.velocity.x * 0.5f;
+        body.AddForce((acceleration - friction) * Vector2.right);
     }
     void HandleKeyBoard()
     {
@@ -192,16 +195,18 @@ public class Player : MonoBehaviour, ISaveManager
             Jump();
         }
     }
-
-    void OnTriggerEnter2D(Collider2D other)
+    float invencibleTime = 0;
+    void OnTriggerStay2D(Collider2D other)
     {
-        if (other.name == "hand_right")
+        other.gameObject.transform.parent.TryGetComponent(out Zombie zombie);
+        if (zombie && Time.time - invencibleTime > 1)
         {
-            gameState.life -= 1;
+            gameState.life -= zombie.damage;
             animator.SetTrigger("Hurt");
 
-            float x = -(other.gameObject.transform.position - transform.position).normalized.x;
-            body.AddForce(new Vector2(x * jumpPower, jumpPower), ForceMode2D.Impulse);
+            Vector2 forceDirection = -(other.transform.position - transform.position).normalized;
+            body.AddForce(forceDirection * zombie.knockback, ForceMode2D.Impulse);
+            invencibleTime = Time.time;
         }
     }
 

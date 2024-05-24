@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   block: {fileID: 8022337861885828957}
+  zombie: {fileID: 3452439381306380291, guid: 4a8b9d13a70e8a34b8dab5f14c29b0cb, type: 3}
 --- !u!1 &8156085440611808649
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,7 +245,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameState: {fileID: 11400000, guid: 180577598f03a0c4a9a95cbc9cb6c0e5, type: 2}
-  inventory: {fileID: 11400000, guid: 8d3be387b336c174caa9481595fe0635, type: 2}
   DropPrefab: {fileID: 3140899486705495907, guid: 8f2976a05717a804682850635a73ec8d, type: 3}
   item: {fileID: 0}
   destroy: 0
