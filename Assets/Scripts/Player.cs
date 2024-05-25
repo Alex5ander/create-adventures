@@ -7,11 +7,10 @@ public class Player : MonoBehaviour, ISaveManager
     [SerializeField] Inventory inventory;
     [SerializeField] LayerMask layerMask;
     [SerializeField] TerrainGenerator terrainGenerator;
-    [SerializeField] SpriteRenderer Hand;
     CapsuleCollider2D capsuleCollider2D;
     Rigidbody2D body;
     float jumpPower = 15;
-    float speed = 5f;
+    float speed = 10f;
     float horizontal = 0.0f;
     bool isGrounded = false;
     Animator animator;
@@ -198,14 +197,14 @@ public class Player : MonoBehaviour, ISaveManager
     float invencibleTime = 0;
     void OnTriggerStay2D(Collider2D other)
     {
-        other.gameObject.transform.parent.TryGetComponent(out Zombie zombie);
-        if (zombie && Time.time - invencibleTime > 1)
+        other.TryGetComponent(out Damageable damageable);
+        if (damageable != null && Time.time - invencibleTime > 1)
         {
-            gameState.life -= zombie.damage;
+            gameState.life -= damageable.damage;
             animator.SetTrigger("Hurt");
 
             Vector2 forceDirection = -(other.transform.position - transform.position).normalized;
-            body.AddForce(forceDirection * zombie.knockback, ForceMode2D.Impulse);
+            body.AddForce(forceDirection * damageable.knockback, ForceMode2D.Impulse);
             invencibleTime = Time.time;
         }
     }

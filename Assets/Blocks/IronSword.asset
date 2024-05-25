@@ -15,7 +15,8 @@ MonoBehaviour:
   sprites:
   - {fileID: 21300000, guid: 46ee1ebc57a838e42b52ab0aa9661bf1, type: 3}
   dropSprite: {fileID: 21300000, guid: 46ee1ebc57a838e42b52ab0aa9661bf1, type: 3}
-  type: 11
+  pickaxePower: 1
   damage: 1
+  knockback: 10
   placeable: 0
   solid: 0

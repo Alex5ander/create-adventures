@@ -22,7 +22,7 @@ public class Block : MonoBehaviour
             Item item = gameState.inventory.GetByIndex(gameState.hotBarSelectedIndex);
             if (item != null)
             {
-                spriteRenderer.color -= new Color(0, 0, 0, item.damage * Time.deltaTime);
+                spriteRenderer.color -= new Color(0, 0, 0, item.pickaxePower * Time.deltaTime);
                 if (spriteRenderer.color.a <= 0)
                 {
                     destroy = true;

@@ -9,7 +9,9 @@ public class Item : ScriptableObject
 {
   public List<Sprite> sprites;
   public Sprite dropSprite;
-  public float damage;
+  public float pickaxePower;
+  public int damage = 1;
+  public float knockback = 1;
   public bool placeable;
   public bool solid;
 }

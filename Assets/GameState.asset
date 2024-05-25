@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameState
   m_EditorClassIdentifier: 
   life: 100
-  position: {x: 22.987307, y: 80.04089, z: 0}
+  position: {x: 10.387857, y: 73.65344, z: 0}
   hotBarSelectedIndex: 0
   inventorySelectedIndex: -1
   selectedBlock: {fileID: 0}

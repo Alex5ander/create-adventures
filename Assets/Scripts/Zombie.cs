@@ -16,8 +16,7 @@ public class Zombie : MonoBehaviour
     [Header("Stats")]
     float jumpPower = 15f;
     float speed = 5;
-    public int damage = 1;
-    public float knockback = 10;
+    float life = 10;
     // Start is called before the first frame update
     void Start()
     {
@@ -54,6 +53,24 @@ public class Zombie : MonoBehaviour
             if (Physics2D.OverlapCircle(transform.position, 0.5f, layerMask))
             {
                 body.AddForceY(jumpPower, ForceMode2D.Impulse);
+            }
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        other.TryGetComponent(out Damageable damageable);
+        if (damageable)
+        {
+            life -= damageable.damage;
+            gameState.life -= damageable.damage;
+            animator.SetTrigger("Hurt");
+
+            Vector2 forceDirection = -(other.transform.position - transform.position).normalized;
+            body.AddForce(forceDirection * damageable.knockback, ForceMode2D.Impulse);
+            if (life <= 0)
+            {
+                Destroy(gameObject);
             }
         }
     }
