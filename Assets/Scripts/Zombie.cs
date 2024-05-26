@@ -15,8 +15,9 @@ public class Zombie : MonoBehaviour
     bool isGrounded = false;
     [Header("Stats")]
     float jumpPower = 15f;
-    float speed = 5;
+    float speed = 20;
     float life = 10;
+    float invencibleTime = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -48,9 +49,9 @@ public class Zombie : MonoBehaviour
         {
             float target = speed * Mathf.Sign(direction);
             float acceleration = target - body.velocity.x;
-            float friction = body.velocity.x * 0.5f;
+            float friction = body.velocity.x * 4f;
             body.AddForce((acceleration - friction) * Vector2.right);
-            if (Physics2D.OverlapCircle(transform.position, 0.5f, layerMask))
+            if (Physics2D.OverlapCircle(transform.position + new Vector3(direction * 5f, 0), 0.5f, layerMask))
             {
                 body.AddForceY(jumpPower, ForceMode2D.Impulse);
             }
@@ -60,7 +61,7 @@ public class Zombie : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         other.TryGetComponent(out Damageable damageable);
-        if (damageable)
+        if (damageable && Time.time - invencibleTime > 1)
         {
             life -= damageable.damage;
             gameState.life -= damageable.damage;
@@ -72,9 +73,14 @@ public class Zombie : MonoBehaviour
             {
                 Destroy(gameObject);
             }
+            invencibleTime = Time.time;
         }
     }
 
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position + new Vector3(direction * 5, 0), 0.5f);
+    }
     bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.size, capsuleCollider2D.direction, 0, Vector2.down, 0.1f, layerMask);
     float RandomDirection() => Mathf.Sign(Random.Range(-1, 0));
 }

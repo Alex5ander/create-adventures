@@ -10,7 +10,7 @@ public class Player : MonoBehaviour, ISaveManager
     CapsuleCollider2D capsuleCollider2D;
     Rigidbody2D body;
     float jumpPower = 15;
-    float speed = 10f;
+    float speed = 20f;
     float horizontal = 0.0f;
     bool isGrounded = false;
     Animator animator;
@@ -36,6 +36,7 @@ public class Player : MonoBehaviour, ISaveManager
         [KeyCode.Alpha9] = 8,
     };
     float lastSaveTime = 0;
+    float invencibleTime = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -81,10 +82,13 @@ public class Player : MonoBehaviour, ISaveManager
     }
     private void FixedUpdate()
     {
-        float targetSpeed = speed * horizontal;
-        float acceleration = targetSpeed - body.velocity.x;
-        float friction = body.velocity.x * 0.5f;
-        body.AddForce((acceleration - friction) * Vector2.right);
+        if (isGrounded)
+        {
+            float targetSpeed = speed * horizontal;
+            float acceleration = targetSpeed - body.velocity.x;
+            float friction = body.velocity.x * 4f;
+            body.AddForce((acceleration - friction) * Vector2.right);
+        }
     }
     void HandleKeyBoard()
     {
@@ -194,7 +198,7 @@ public class Player : MonoBehaviour, ISaveManager
             Jump();
         }
     }
-    float invencibleTime = 0;
+
     void OnTriggerStay2D(Collider2D other)
     {
         other.TryGetComponent(out Damageable damageable);

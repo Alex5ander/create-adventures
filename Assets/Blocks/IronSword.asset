@@ -17,6 +17,6 @@ MonoBehaviour:
   dropSprite: {fileID: 21300000, guid: 46ee1ebc57a838e42b52ab0aa9661bf1, type: 3}
   pickaxePower: 1
   damage: 1
-  knockback: 10
+  knockback: 15
   placeable: 0
   solid: 0
