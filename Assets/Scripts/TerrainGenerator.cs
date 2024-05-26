@@ -19,13 +19,17 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     public void GenerateTerrain(int seed)
     {
         gameState.blocks = new Block[terrainWidth, terrainHeight];
-        for (int i = 0; i < terrainWidth; i++)
+        int size = terrainWidth * terrainHeight;
+        for (int i = 0; i < size; i++)
         {
-            float x = (float)i / terrainWidth;
-            int height = Mathf.RoundToInt(Mathf.PerlinNoise1D(x * frequency + seed) * (terrainHeight / 2) + (terrainHeight / 2));
-            for (int j = 0; j < height; j++)
+            int x = i % terrainWidth;
+            int y = Mathf.RoundToInt(i / terrainWidth) % terrainHeight;
+
+            float _x = (float)x / terrainWidth;
+            int height = Mathf.RoundToInt(Mathf.PerlinNoise1D(_x * frequency + seed) * (terrainHeight / 2) + (terrainHeight / 2));
+            if (y < height)
             {
-                float y = (float)j / height;
+                float _y = (float)y / height;
 
                 float noise = 0;
                 int octaves = 3;
@@ -38,50 +42,51 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
                     float a = Mathf.Pow(persistance, octaves);
                     persistance *= 0.5f;
                     t += a;
-                    noise += Mathf.PerlinNoise(x * f + seed, y * f + seed) * a;
+                    noise += Mathf.PerlinNoise(_x * f + seed, _y * f + seed) * a;
                 }
                 noise /= t;
-                if (j == height - 1)
+                if (y == height - 1)
                 {
-                    CreateBlock(i, j, Dirt, 1);
+                    CreateBlock(x, y, Dirt, 1);
 
                     if (noise > 0.5f)
                     {
-                        CreateTree(i, j + 1);
+                        CreateTree(x, y + 1);
                     }
                 }
-                else if (j > height * 0.8f)
+                else if (y > height * 0.8f)
                 {
-                    CreateBlock(i, j, Dirt);
+                    CreateBlock(x, y, Dirt);
                 }
                 else
                 {
                     if (noise > 0.35f)
                     {
-                        CreateBlock(i, j, Stone);
+                        CreateBlock(x, y, Stone);
                     }
                     else
                     {
                         if (noise > 0.3f)
                         {
-                            CreateBlock(i, j, Coal);
+                            CreateBlock(x, y, Coal);
                         }
                         else if (noise > 0.26f)
                         {
-                            CreateBlock(i, j, Iron);
+                            CreateBlock(x, y, Iron);
                         }
-                        else if (noise > 0.15f && noise < 0.26f && j < 20)
+                        else if (noise > 0.15f && noise < 0.26f && y < 20)
                         {
-                            CreateBlock(i, j, Gold);
+                            CreateBlock(x, y, Gold);
                         }
-                        else if (noise > 0.1f && noise < 0.15f && j < 10)
+                        else if (noise > 0.1f && noise < 0.15f && y < 10)
                         {
-                            CreateBlock(i, j, Diamond);
+                            CreateBlock(x, y, Diamond);
                         }
                     }
                 }
             }
         }
+
     }
     public void CreateBlock(int x, int y, Item item, int meta = 0, bool save = false)
     {
