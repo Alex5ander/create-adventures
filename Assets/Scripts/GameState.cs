@@ -10,4 +10,5 @@ public class GameState : ScriptableObject
     public Block selectedBlock;
     public Block[,] blocks;
     public Inventory inventory;
+    public Emitter emitter;
 }

@@ -2211,12 +2211,17 @@ MonoBehaviour:
   OptimizedBlockPrefab: {fileID: 2386666061740416500, guid: bbd5fef988ae1eb4da8760e77220ff8e, type: 3}
   Dirt: {fileID: 11400000, guid: 2a954ff063454394c8e3ebaecc495e59, type: 2}
   Stone: {fileID: 11400000, guid: bc9b22d7fd6952c4280e0411e04b2918, type: 2}
+  Sand: {fileID: 11400000, guid: ed9bc9828a665be48b61d5ee70966b02, type: 2}
+  Snow: {fileID: 11400000, guid: da0a99759ebcb214a8592394b0ae02b1, type: 2}
   Wood: {fileID: 11400000, guid: a345a9963fbbdb34faf209ac8913e143, type: 2}
   Leaves: {fileID: 11400000, guid: 4d6466e9a5e983f429c845f74ebd623d, type: 2}
   Coal: {fileID: 11400000, guid: a190232fd3d75714cb74afbf54c33d62, type: 2}
   Iron: {fileID: 11400000, guid: 10f042ed7340f7441bce99e1cc949c88, type: 2}
   Gold: {fileID: 11400000, guid: 8be4d9b1b14d42446aa0bce117cd8c20, type: 2}
   Diamond: {fileID: 11400000, guid: 5911cb9d318cb354482ca442a211e7c6, type: 2}
+  Zombie: {fileID: 11400000, guid: 0dbe6f32f3189e3469e816892382e14f, type: 2}
+  Water: {fileID: 11400000, guid: 96937f4375b6daf4c90d32893631cac1, type: 2}
+  txt: {fileID: 0}
 --- !u!1 &788454255
 GameObject:
   m_ObjectHideFlags: 0
@@ -9633,24 +9638,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6a8956db713f842a4d97f5b99c5adb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1667511034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7951174525880346532}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67046ab23c8102f409b59e017a1cef4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameState: {fileID: 11400000, guid: 180577598f03a0c4a9a95cbc9cb6c0e5, type: 2}
-  inventory: {fileID: 1011263136}
-  canvasGroup: {fileID: 4175409572102575706}
-  image: {fileID: 8675716381481967486}
-  text: {fileID: 7532139860613885157}
-  defaultSprite: {fileID: 21300000, guid: 4e0ca4562463959498eb3ae34c02707e, type: 3}
 --- !u!1001 &1715208806
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9983,6 +9970,7 @@ GameObject:
   - component: {fileID: 1797321490}
   - component: {fileID: 1797321489}
   - component: {fileID: 1797321488}
+  - component: {fileID: 1797321494}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -10078,6 +10066,14 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!222 &1797321494
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1797321487}
+  m_CullTransparentMesh: 1
 --- !u!1001 &1837418738
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10859,7 +10855,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 335.99994, y: 95}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &3871683458110950166
@@ -11023,7 +11019,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6222936900204040723}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
@@ -11117,7 +11113,7 @@ GameObject:
   - component: {fileID: 4307402321226246727}
   - component: {fileID: 8675716381481967486}
   - component: {fileID: 4175409572102575706}
-  - component: {fileID: 1667511034}
+  - component: {fileID: 8675716381481967487}
   m_Layer: 5
   m_Name: MouseFollower
   m_TagString: Untagged
@@ -11153,8 +11149,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 4e0ca4562463959498eb3ae34c02707e, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -11163,6 +11159,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8675716381481967487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7951174525880346532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67046ab23c8102f409b59e017a1cef4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameState: {fileID: 11400000, guid: 180577598f03a0c4a9a95cbc9cb6c0e5, type: 2}
+  inventory: {fileID: 1011263136}
+  canvasGroup: {fileID: 4175409572102575706}
+  image: {fileID: 8675716381481967486}
+  text: {fileID: 7532139860613885157}
+  defaultSprite: {fileID: 21300000, guid: 4e0ca4562463959498eb3ae34c02707e, type: 3}
 --- !u!114 &8872061819643670895 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7165229857009850284, guid: fe407639482210943b36960bce2ff71a, type: 3}

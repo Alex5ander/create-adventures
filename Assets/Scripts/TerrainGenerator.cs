@@ -10,83 +10,93 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     [SerializeField] OptimizedBlock OptimizedBlockPrefab;
     [SerializeField] Item Dirt;
     [SerializeField] Item Stone;
+    [SerializeField] Item Sand;
+    [SerializeField] Item Snow;
     [SerializeField] Item Wood;
     [SerializeField] Item Leaves;
     [SerializeField] Item Coal;
     [SerializeField] Item Iron;
     [SerializeField] Item Gold;
     [SerializeField] Item Diamond;
+    [SerializeField] Item Zombie;
+    [SerializeField] Item Water;
+    public Texture2D txt;
     public void GenerateTerrain(int seed)
     {
         gameState.blocks = new Block[terrainWidth, terrainHeight];
         int size = terrainWidth * terrainHeight;
+        txt = new(terrainWidth, terrainHeight);
         for (int i = 0; i < size; i++)
         {
             int x = i % terrainWidth;
             int y = Mathf.RoundToInt(i / terrainWidth) % terrainHeight;
 
             float _x = (float)x / terrainWidth;
-            int height = Mathf.RoundToInt(Mathf.PerlinNoise1D(_x * frequency + seed) * (terrainHeight / 2) + (terrainHeight / 2));
-            if (y < height)
-            {
-                float _y = (float)y / height;
+            int superfaceY = Mathf.RoundToInt(Mathf.PerlinNoise1D(_x * frequency + seed) * (terrainHeight / 2) + (terrainHeight / 2));
 
-                float noise = 0;
-                int octaves = 3;
-                float lacunarity = frequency;
-                float persistance = 50f;
-                float t = 0;
-                for (int k = 0; k < octaves; k++)
-                {
-                    float f = Mathf.Pow(lacunarity, octaves);
-                    float a = Mathf.Pow(persistance, octaves);
-                    persistance *= 0.5f;
-                    t += a;
-                    noise += Mathf.PerlinNoise(_x * f + seed, _y * f + seed) * a;
-                }
-                noise /= t;
-                if (y == height - 1)
+            float _y = (float)y / superfaceY;
+
+            float noise = 0;
+            int octaves = 3;
+            float lacunarity = 2.5f;
+            float persistance = 1.25f;
+            float t = 0;
+            for (int k = 0; k < octaves; k++)
+            {
+                float f = Mathf.Pow(lacunarity, octaves);
+                float a = Mathf.Pow(persistance, octaves);
+                persistance *= 0.5f;
+                t += a;
+                noise += Mathf.PerlinNoise(_x * f + seed, _y * f + seed) * a;
+            }
+            noise /= t;
+            txt.SetPixel(x, y, new(noise, noise, noise));
+            float seaLevel = 70;
+            if (y < superfaceY)
+            {
+                if (y == superfaceY - 1)
                 {
                     CreateBlock(x, y, Dirt, 1);
 
-                    if (noise > 0.5f)
+                    if (y < superfaceY - (noise * 4))
                     {
                         CreateTree(x, y + 1);
                     }
                 }
-                else if (y > height * 0.8f)
+                else if (y < superfaceY * .75f - (noise * 5))
                 {
-                    CreateBlock(x, y, Dirt);
-                }
-                else
-                {
-                    if (noise > 0.35f)
+                    if (noise > 0.9)
+                    {
+                        CreateBlock(x, y, Diamond);
+                    }
+                    else if (noise > 0.8f && noise < 0.82f)
+                    {
+                        CreateBlock(x, y, Gold);
+                    }
+                    else if (noise > 0.7f && noise < 0.72f)
+                    {
+                        CreateBlock(x, y, Iron);
+                    }
+                    else if (noise > 0.6f && noise < 0.62f)
+                    {
+                        CreateBlock(x, y, Coal);
+                    }
+                    else if (noise > 0.5f)
                     {
                         CreateBlock(x, y, Stone);
                     }
-                    else
-                    {
-                        if (noise > 0.3f)
-                        {
-                            CreateBlock(x, y, Coal);
-                        }
-                        else if (noise > 0.26f)
-                        {
-                            CreateBlock(x, y, Iron);
-                        }
-                        else if (noise > 0.15f && noise < 0.26f && y < 20)
-                        {
-                            CreateBlock(x, y, Gold);
-                        }
-                        else if (noise > 0.1f && noise < 0.15f && y < 10)
-                        {
-                            CreateBlock(x, y, Diamond);
-                        }
-                    }
+                }
+                else
+                {
+                    CreateBlock(x, y, Dirt);
                 }
             }
+            else if (y < seaLevel)
+            {
+                CreateBlock(x, y, Water);
+            }
         }
-
+        txt.Apply();
     }
     public void CreateBlock(int x, int y, Item item, int meta = 0, bool save = false)
     {

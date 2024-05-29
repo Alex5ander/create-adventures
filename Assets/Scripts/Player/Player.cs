@@ -49,25 +49,18 @@ public class Player : MonoBehaviour, ISaveManager
     // Update is called once per frame
     void Update()
     {
-        isGrounded = IsGrounded();
         if (MainScene.isMobile)
         {
             HandleTouch();
         }
         else
         {
+            HandleKeyBoard();
             HandleMouse();
         }
-        if (!MainScene.isMobile)
-        {
-            HandleKeyBoard();
-        }
-        if (horizontal != 0)
-        {
-            transform.rotation = Quaternion.AngleAxis(horizontal > 0 ? 180 : 0, Vector3.up);
-        }
-        animator.SetBool("Walk", horizontal != 0);
-        animator.SetBool("Jump", !isGrounded);
+
+        transform.rotation = horizontal != 0 ? Quaternion.AngleAxis(horizontal > 0 ? 180 : 0, Vector3.up) : transform.rotation;
+
         gameState.position = transform.position;
 
         World world = SaveManger.saveGame.GetWorld();
@@ -79,16 +72,16 @@ public class Player : MonoBehaviour, ISaveManager
             SaveManger.Instance.Save();
             lastSaveTime = Time.time;
         }
+        animator.SetBool("Walk", horizontal != 0);
+        animator.SetBool("Jump", !isGrounded);
     }
     private void FixedUpdate()
     {
-        if (isGrounded)
-        {
-            float targetSpeed = speed * horizontal;
-            float acceleration = targetSpeed - body.velocity.x;
-            float friction = body.velocity.x * 4f;
-            body.AddForce((acceleration - friction) * Vector2.right);
-        }
+        isGrounded = IsGrounded();
+        float targetSpeed = speed * horizontal;
+        float acceleration = targetSpeed - body.velocity.x;
+        float friction = body.velocity.x * 4f;
+        body.AddForce((acceleration - friction) * Vector2.right);
     }
     void HandleKeyBoard()
     {
@@ -181,6 +174,7 @@ public class Player : MonoBehaviour, ISaveManager
             }
         }
     }
+
 
     void Jump()
     {
