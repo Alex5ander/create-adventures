@@ -5,14 +5,17 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
 {
     int terrainWidth = 320;
     int terrainHeight = 100;
-    float frequency = 1.61803398875f * 2.5f;
+    float frequency = 0.04f;
     [SerializeField] GameState gameState;
     [SerializeField] OptimizedBlock OptimizedBlockPrefab;
+    [Header("Blocks")]
     [SerializeField] Item Dirt;
     [SerializeField] Item Stone;
     [SerializeField] Item Sand;
     [SerializeField] Item Snow;
+    [SerializeField] Item Ice;
     [SerializeField] Item Wood;
+    [SerializeField] Item Cactus;
     [SerializeField] Item Leaves;
     [SerializeField] Item Coal;
     [SerializeField] Item Iron;
@@ -20,75 +23,236 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     [SerializeField] Item Diamond;
     [SerializeField] Item Zombie;
     [SerializeField] Item Water;
-    public Texture2D txt;
-    public void GenerateTerrain(int seed)
+    [SerializeField] Item Lava;
+    [SerializeField] Item MushroomBrown;
+    [SerializeField] Item MushroomRed;
+    [SerializeField] Item MushroomTan;
+    [SerializeField] Item GreenGrass;
+    [Header("Coal")]
+    [SerializeField] float coalRarity;
+    [SerializeField] float coalSize;
+    public Texture2D coal;
+    [Header("Iron")]
+    [SerializeField] float ironRarity;
+    [SerializeField] float ironSize;
+    public Texture2D iron;
+    [Header("Gold")]
+    [SerializeField] float goldRarity;
+    [SerializeField] float goldSize;
+    public Texture2D gold;
+    [Header("Diamond")]
+    [SerializeField] float diamondRarity;
+    [SerializeField] float diamondSize;
+    public Texture2D diamond;
+    [Header("Biomes")]
+    [SerializeField] Texture2D biome;
+    [SerializeField] Gradient biomeColors;
+    [SerializeField] float biomeFrequency;
+    [Header("Cave")]
+    [SerializeField] Texture2D cave;
+    [SerializeField] float caveFrequency;
+    [SerializeField] float caveSize;
+    [Header("Feature")]
+    [SerializeField] Texture2D feature;
+    [SerializeField] float featureFrequency;
+    [SerializeField] float featureSize;
+    [SerializeField] int s;
+    // Start is called before the first frame update
+    void Start()
     {
-        gameState.blocks = new Block[terrainWidth, terrainHeight];
+
+    }
+
+    void GenerateNoiseTextures()
+    {
+        coal = GenerateNoiseTexture(coalRarity, coalSize);
+        iron = GenerateNoiseTexture(ironRarity, ironSize);
+        gold = GenerateNoiseTexture(goldRarity, goldSize);
+        diamond = GenerateNoiseTexture(diamondRarity, diamondSize);
+        cave = GenerateNoiseTexture(caveFrequency, caveSize);
+        feature = GenerateNoiseTexture(featureFrequency, featureSize);
+        biome = GenerateBiomeTexture();
+    }
+
+    void OnValidate()
+    {
+        GenerateNoiseTextures();
+    }
+
+    public float Noise(float x, float y, int seed, float fr)
+    {
+        float noise = 0;
+        int octaves = 3;
+        float lacunarity = fr;
+        float persistance = fr;
+        float t = 0;
+        for (int k = 0; k < octaves; k++)
+        {
+            float f = Mathf.Pow(lacunarity, octaves);
+            float a = Mathf.Pow(persistance, octaves);
+            persistance *= 0.5f;
+            t += a;
+            noise += Mathf.PerlinNoise((x + seed) * f, (y + seed) * f) * a;
+        }
+        noise /= t;
+        return noise;
+    }
+
+    public Texture2D GenerateNoiseTexture(float freq, float threshold)
+    {
+        Texture2D texture2D = new(terrainWidth, terrainHeight);
         int size = terrainWidth * terrainHeight;
-        txt = new(terrainWidth, terrainHeight);
         for (int i = 0; i < size; i++)
         {
             int x = i % terrainWidth;
             int y = Mathf.RoundToInt(i / terrainWidth) % terrainHeight;
 
-            float _x = (float)x / terrainWidth;
-            int superfaceY = Mathf.RoundToInt(Mathf.PerlinNoise1D(_x * frequency + seed) * (terrainHeight / 2) + (terrainHeight / 2));
-
-            float _y = (float)y / superfaceY;
-
-            float noise = 0;
-            int octaves = 3;
-            float lacunarity = 2.5f;
-            float persistance = 1.25f;
-            float t = 0;
-            for (int k = 0; k < octaves; k++)
+            float noise = Noise(x, y, s, freq);
+            if (noise > threshold)
             {
-                float f = Mathf.Pow(lacunarity, octaves);
-                float a = Mathf.Pow(persistance, octaves);
-                persistance *= 0.5f;
-                t += a;
-                noise += Mathf.PerlinNoise(_x * f + seed, _y * f + seed) * a;
+                texture2D.SetPixel(x, y, Color.white);
             }
-            noise /= t;
-            txt.SetPixel(x, y, new(noise, noise, noise));
+            else
+            {
+                texture2D.SetPixel(x, y, Color.black);
+            }
+        }
+        texture2D.Apply();
+        return texture2D;
+    }
+
+    public Texture2D GenerateBiomeTexture()
+    {
+        Texture2D texture2D = new(terrainWidth, terrainHeight);
+        int size = terrainWidth * terrainHeight;
+        for (int i = 0; i < size; i++)
+        {
+            int x = i % terrainWidth;
+            int y = Mathf.RoundToInt(i / terrainWidth) % terrainHeight;
+
+            float noise = Noise(x, y, s, biomeFrequency);
+            Color color = biomeColors.Evaluate(noise);
+            texture2D.SetPixel(x, y, color);
+        }
+        texture2D.Apply();
+        return texture2D;
+    }
+
+    public void GenerateTerrain(int seed)
+    {
+        s = seed;
+        GenerateNoiseTextures();
+
+        gameState.blocks = new Block[terrainWidth, terrainHeight];
+        int size = terrainWidth * terrainHeight;
+        for (int i = 0; i < size; i++)
+        {
+            int x = i % terrainWidth;
+            int y = Mathf.RoundToInt(i / terrainWidth) % terrainHeight;
+
+            int superfaceY = Mathf.RoundToInt(Mathf.PerlinNoise((x + seed) * frequency, (y + seed) * frequency) * (terrainHeight / 2) + (terrainHeight / 2));
+
             float seaLevel = 70;
+
+            Color color = biome.GetPixel(x, y);
+
             if (y < superfaceY)
             {
-                if (y == superfaceY - 1)
+                if (cave.GetPixel(x, y).r < 0.5f)
                 {
-                    CreateBlock(x, y, Dirt, 1);
-
-                    if (y < superfaceY - (noise * 4))
+                    if (y == superfaceY - 1)
                     {
-                        CreateTree(x, y + 1);
+                        if (color == Color.green)
+                        {
+                            if (y < seaLevel)
+                            {
+                                CreateBlock(x, y, Dirt);
+                            }
+                            else
+                            {
+                                CreateBlock(x, y, Dirt, 1);
+                                if (feature.GetPixel(x, y).r > 0.5f)
+                                {
+                                    CreateBlock(x, y + 1, GreenGrass);
+                                }
+                            }
+                        }
+                        else if (color == Color.white)
+                        {
+                            if (y < seaLevel)
+                            {
+                                CreateBlock(x, y, Snow);
+                            }
+                            else
+                            {
+                                CreateBlock(x, y, Dirt, 2);
+                            }
+                        }
+                        else
+                        {
+                            if (y < seaLevel)
+                            {
+                                CreateBlock(x, y, Sand);
+                            }
+                            else if (y == superfaceY - 1)
+                            {
+                                CreateBlock(x, y, Dirt, 3);
+                                if (feature.GetPixel(x, y).r > 0.5f)
+                                {
+                                    CreateCactus(x, y + 1);
+                                }
+                            }
+                        }
                     }
-                }
-                else if (y < superfaceY * .75f - (noise * 5))
-                {
-                    if (noise > 0.9)
+                    else if (y < superfaceY * .75f)
                     {
-                        CreateBlock(x, y, Diamond);
+                        if (coal.GetPixel(x, y).r > 0.5)
+                        {
+                            CreateBlock(x, y, Coal);
+                        }
+                        else if (iron.GetPixel(x, y).r > 0.5)
+                        {
+                            CreateBlock(x, y, Iron);
+                        }
+                        else if (gold.GetPixel(x, y).r > 0.5)
+                        {
+                            CreateBlock(x, y, Gold);
+                        }
+                        else if (diamond.GetPixel(x, y).r > 0.5)
+                        {
+                            CreateBlock(x, y, Diamond);
+                        }
+                        else
+                        {
+                            if (color == Color.green)
+                            {
+                                CreateBlock(x, y, Stone);
+                            }
+                            else if (color == Color.white)
+                            {
+                                CreateBlock(x, y, Ice);
+                            }
+                            else
+                            {
+                                CreateBlock(x, y, Sand);
+                            }
+                        }
                     }
-                    else if (noise > 0.8f && noise < 0.82f)
+                    else
                     {
-                        CreateBlock(x, y, Gold);
+                        if (color == Color.green)
+                        {
+                            CreateBlock(x, y, Dirt);
+                        }
+                        else if (color == Color.white)
+                        {
+                            CreateBlock(x, y, Snow);
+                        }
+                        else
+                        {
+                            CreateBlock(x, y, Sand);
+                        }
                     }
-                    else if (noise > 0.7f && noise < 0.72f)
-                    {
-                        CreateBlock(x, y, Iron);
-                    }
-                    else if (noise > 0.6f && noise < 0.62f)
-                    {
-                        CreateBlock(x, y, Coal);
-                    }
-                    else if (noise > 0.5f)
-                    {
-                        CreateBlock(x, y, Stone);
-                    }
-                }
-                else
-                {
-                    CreateBlock(x, y, Dirt);
                 }
             }
             else if (y < seaLevel)
@@ -96,7 +260,6 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
                 CreateBlock(x, y, Water);
             }
         }
-        txt.Apply();
     }
     public void CreateBlock(int x, int y, Item item, int meta = 0, bool save = false)
     {
@@ -160,6 +323,15 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
             {
                 CreateBlock(x, y + i, Wood, 0);
             }
+        }
+    }
+
+    void CreateCactus(int x, int y)
+    {
+        int height = 4 + Mathf.RoundToInt(Mathf.PerlinNoise(x * frequency + x, y * frequency + x)) * 4;
+        for (int i = 0; i < height; i++)
+        {
+            CreateBlock(x, y + i, Cactus, 0);
         }
     }
 
