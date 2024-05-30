@@ -247,4 +247,3 @@ MonoBehaviour:
   DropPrefab: {fileID: 3140899486705495907, guid: 8f2976a05717a804682850635a73ec8d, type: 3}
   item: {fileID: 0}
   destroy: 0
-  gameEvent: {fileID: 11400000, guid: c659f14985bad1144b13292bede1386e, type: 2}

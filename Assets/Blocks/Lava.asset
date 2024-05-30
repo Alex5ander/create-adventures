@@ -20,3 +20,4 @@ MonoBehaviour:
   knockback: 1
   placeable: 1
   solid: 0
+  liquid: 1

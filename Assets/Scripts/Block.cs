@@ -7,11 +7,15 @@ public class Block : MonoBehaviour
     public Item item;
     public bool destroy;
     SpriteRenderer spriteRenderer;
+
     // Start is called before the first frame update
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        GetComponent<BoxCollider2D>().enabled = item.solid;
+        if (!item.solid)
+        {
+            GetComponent<BoxCollider2D>().isTrigger = !item.solid;
+        }
     }
 
     // Update is called once per frame
@@ -33,6 +37,18 @@ public class Block : MonoBehaviour
         {
             spriteRenderer.color = Color.white;
         }
+    }
+
+    public void OnTriggerEnter2D(Collider2D _)
+    {
+        Color color = spriteRenderer.color;
+        color.a = 0.75f;
+        spriteRenderer.color = color;
+    }
+
+    public void OnTriggerExity2D(Collider2D _)
+    {
+        spriteRenderer.color = Color.white;
     }
 
     public void CreateDrop()
