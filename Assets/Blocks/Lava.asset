@@ -14,10 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprites:
   - {fileID: 21300000, guid: 32958727c1e316c4fbaf9e461026f7a7, type: 3}
-  dropSprite: {fileID: 21300000, guid: 32958727c1e316c4fbaf9e461026f7a7, type: 3}
+  dropSprite: {fileID: 21300000, guid: 465dfafa966ee7d4489b22e10972b7dc, type: 3}
   pickaxePower: 0
   damage: 1
   knockback: 1
   placeable: 1
   solid: 0
-  liquid: 1

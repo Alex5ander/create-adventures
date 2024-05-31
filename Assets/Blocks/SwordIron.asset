@@ -10,14 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e625a6b2b4fbe6c4db22376520df4b85, type: 3}
-  m_Name: IronPickaxe
+  m_Name: SwordIron
   m_EditorClassIdentifier: 
-  collider: {fileID: 6133495529038781233, guid: fd92d3c8f2d3568488043acc94db7b4e, type: 3}
   sprites:
-  - {fileID: 21300000, guid: 5e970ecfe1cde664f8ffc190b86b1b24, type: 3}
-  dropSprite: {fileID: 21300000, guid: 5e970ecfe1cde664f8ffc190b86b1b24, type: 3}
-  pickaxePower: 2
+  - {fileID: 21300000, guid: 46ee1ebc57a838e42b52ab0aa9661bf1, type: 3}
+  dropSprite: {fileID: 21300000, guid: 46ee1ebc57a838e42b52ab0aa9661bf1, type: 3}
+  pickaxePower: 0
   damage: 1
-  knockback: 1
+  knockback: 15
   placeable: 0
   solid: 0

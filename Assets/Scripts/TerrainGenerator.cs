@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TerrainGenerator : MonoBehaviour, ISaveManager
@@ -9,66 +10,16 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     [SerializeField] GameState gameState;
     [SerializeField] OptimizedBlock OptimizedBlockPrefab;
     [Header("Blocks")]
-    [SerializeField] Item Dirt;
-    [SerializeField] Item Stone;
-    [SerializeField] Item Sand;
-    [SerializeField] Item Snow;
-    [SerializeField] Item Ice;
     [SerializeField] Item Wood;
     [SerializeField] Item Cactus;
     [SerializeField] Item Leaves;
-    [SerializeField] Item Coal;
-    [SerializeField] Item Iron;
-    [SerializeField] Item Gold;
-    [SerializeField] Item Diamond;
-    [SerializeField] Item Zombie;
     [SerializeField] Item Water;
     [SerializeField] Item Lava;
-    [SerializeField] Item MushroomBrown;
-    [SerializeField] Item MushroomRed;
-    [SerializeField] Item MushroomTan;
-    [SerializeField] Item Grass;
-    [Header("Coal")]
-    [SerializeField] float coalFrequency;
-    [SerializeField] float coalSize;
-    public Texture2D coal;
-    [Header("Iron")]
-    [SerializeField] float ironFrequency;
-    [SerializeField] float ironSize;
-    public Texture2D iron;
-    [Header("Gold")]
-    [SerializeField] float goldFrequency;
-    [SerializeField] float goldSize;
-    public Texture2D gold;
-    [Header("Diamond")]
-    [SerializeField] float diamondFrequency;
-    [SerializeField] float diamondSize;
-    public Texture2D diamond;
     [Header("Biomes")]
     [SerializeField] Texture2D biome;
     [SerializeField] Gradient biomeColors;
     [SerializeField] float biomeFrequency;
-    [Header("Cave")]
-    [SerializeField] Texture2D cave;
-    [SerializeField] float caveFrequency;
-    [SerializeField] float caveSize;
-    [Header("Tree")]
-    [SerializeField] Texture2D tree;
-    [SerializeField] float treeFrequency;
-    [SerializeField] float treeSize;
-    [Header("Grass")]
-    [SerializeField] Texture2D grass;
-    [SerializeField] float grassFrequency;
-    [SerializeField] float grassSize;
-    [Header("Mushroom")]
-    [SerializeField] Texture2D mushroom;
-    [SerializeField] float mushroomFrequency;
-    [SerializeField] float mushroomSize;
-    [Header("Lava")]
-    [SerializeField] Texture2D lava;
-    [SerializeField] float lavaFrequency;
-    [SerializeField] float lavaSize;
-
+    [SerializeField] Biome[] biomes;
     // Start is called before the first frame update
     void Start()
     {
@@ -77,16 +28,15 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
 
     void GenerateNoiseTextures(int seed)
     {
-        coal = GenerateNoiseTexture(coalFrequency, coalSize, seed);
-        iron = GenerateNoiseTexture(ironFrequency, ironSize, seed);
-        gold = GenerateNoiseTexture(goldFrequency, goldSize, seed);
-        diamond = GenerateNoiseTexture(diamondFrequency, diamondSize, seed);
-        cave = GenerateNoiseTexture(caveFrequency, caveSize, seed);
-        tree = GenerateNoiseTexture(treeFrequency, treeSize, seed);
-        grass = GenerateNoiseTexture(grassFrequency, grassSize, seed);
-        mushroom = GenerateNoiseTexture(mushroomFrequency, mushroomSize, seed);
-        lava = GenerateNoiseTexture(lavaFrequency, lavaSize, seed);
         biome = GenerateBiomeTexture(seed);
+        foreach (Biome biome in biomes)
+        {
+            biome.texture = GenerateNoiseTexture(biome.frequency, biome.threshold, seed);
+            foreach (Ore ore in biome.ores)
+            {
+                ore.texture = GenerateNoiseTexture(ore.frequency, ore.threshold, seed);
+            }
+        }
     }
 
     void OnValidate()
@@ -156,7 +106,6 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     public void GenerateTerrain(int seed)
     {
         GenerateNoiseTextures(seed);
-
         gameState.blocks = new Block[terrainWidth, terrainHeight];
         int size = terrainWidth * terrainHeight;
         for (int i = 0; i < size; i++)
@@ -164,125 +113,48 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
             int x = i % terrainWidth;
             int y = Mathf.RoundToInt(i / terrainWidth) % terrainHeight;
 
-            int superfaceY = Mathf.RoundToInt(Mathf.PerlinNoise1D((x + seed) * frequency) * (terrainHeight / 2) + (terrainHeight / 2));
+            int superfaceY = Mathf.RoundToInt(Mathf.PerlinNoise((x + seed) * frequency, seed * frequency) * (terrainHeight / 2) + (terrainHeight / 2));
 
             float seaLevel = 70;
 
             Color color = biome.GetPixel(x, y);
+            Biome cBiome = biomes.ToList().Find(e => e.color == color);
 
-            if (y < superfaceY)
+            if (cBiome != null)
             {
-                if (y == superfaceY - 1)
+                if (y < superfaceY)
                 {
-                    Color featureColor = tree.GetPixel(x, y);
-                    Color grassColor = grass.GetPixel(x, y);
-                    Color mushroomColor = mushroom.GetPixel(x, y);
-
-                    if (color == Color.green)
+                    if (y == superfaceY - 1)
                     {
-                        CreateBlock(x, y, Dirt, 1);
-                        if (featureColor.r > 0.5f)
-                        {
-                            CreateTree(x, y + 1);
-                        }
-                        else if (grassColor.r > 0.5f)
-                        {
-                            CreateBlock(x, y + 1, Grass);
-                        }
-                        else if (mushroomColor.r > 0.5f)
-                        {
-                            CreateBlock(x, y + 1, MushroomRed);
-                        }
+                        CreateBlock(x, y, cBiome.TopDirt.item, cBiome.TopDirt.index);
                     }
-                    else if (color == Color.white)
+                    else if (y < superfaceY * .75f)
                     {
-                        CreateBlock(x, y, Dirt, 2);
-                        if (mushroomColor.r > 0.5f)
+                        bool stone = true;
+                        for (int j = 0; j < cBiome.ores.Length; j++)
                         {
-                            CreateBlock(x, y + 1, MushroomBrown);
+                            Ore ore = cBiome.ores[j];
+                            if (ore.texture.GetPixel(x, y).r > 0.5f)
+                            {
+                                CreateBlock(x, y, ore.item);
+                                stone = false;
+                                break;
+                            }
+                        }
+                        if (stone)
+                        {
+                            CreateBlock(x, y, cBiome.Stone);
                         }
                     }
                     else
                     {
-                        CreateBlock(x, y, Dirt, 3);
-                        if (featureColor.r > 0.5f)
-                        {
-                            CreateCactus(x, y + 1);
-                        }
-                        else if (grassColor.r > 0.5f)
-                        {
-                            CreateBlock(x, y + 1, Grass, 1);
-                        }
-                        else if (mushroom.GetPixel(x, y).r > 0.5f)
-                        {
-                            CreateBlock(x, y + 1, MushroomTan);
-                        }
+                        CreateBlock(x, y, cBiome.Dirt);
                     }
                 }
-                else if (y < superfaceY * .75f)
+                else if (y < seaLevel)
                 {
-                    if (cave.GetPixel(x, y).r < 0.5f)
-                    {
-                        if (coal.GetPixel(x, y).r > 0.5)
-                        {
-                            CreateBlock(x, y, Coal);
-                        }
-                        else if (iron.GetPixel(x, y).r > 0.5)
-                        {
-                            CreateBlock(x, y, Iron);
-                        }
-                        else if (gold.GetPixel(x, y).r > 0.5)
-                        {
-                            CreateBlock(x, y, Gold);
-                        }
-                        else if (diamond.GetPixel(x, y).r > 0.5)
-                        {
-                            CreateBlock(x, y, Diamond);
-                        }
-                        else
-                        {
-                            if (color == Color.green)
-                            {
-                                CreateBlock(x, y, Stone);
-                            }
-                            else if (color == Color.white)
-                            {
-                                CreateBlock(x, y, Ice);
-                            }
-                            else
-                            {
-                                CreateBlock(x, y, Sand);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        Color lavaColor = lava.GetPixel(x, y);
-                        if (lavaColor.r > 0.5f)
-                        {
-                            CreateBlock(x, y, Lava);
-                        }
-                    }
+                    CreateBlock(x, y, Water);
                 }
-                else
-                {
-                    if (color == Color.green)
-                    {
-                        CreateBlock(x, y, Dirt);
-                    }
-                    else if (color == Color.white)
-                    {
-                        CreateBlock(x, y, Snow);
-                    }
-                    else
-                    {
-                        CreateBlock(x, y, Sand);
-                    }
-                }
-            }
-            else if (y < seaLevel)
-            {
-                CreateBlock(x, y, Water);
             }
         }
     }
