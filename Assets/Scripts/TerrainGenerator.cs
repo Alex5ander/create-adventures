@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class TerrainGenerator : MonoBehaviour, ISaveManager
@@ -20,6 +21,9 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     [SerializeField] Gradient biomeColors;
     [SerializeField] float biomeFrequency;
     [SerializeField] Biome[] biomes;
+    [SerializeField] Texture2D tree;
+    [SerializeField] float treeFrequency;
+    [SerializeField] float treeThreshold;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +33,7 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     void GenerateNoiseTextures(int seed)
     {
         biome = GenerateBiomeTexture(seed);
+        tree = GenerateNoiseTexture(treeFrequency, treeThreshold, seed);
         foreach (Biome biome in biomes)
         {
             biome.texture = GenerateNoiseTexture(biome.frequency, biome.threshold, seed);
@@ -126,7 +131,18 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
                 {
                     if (y == superfaceY - 1)
                     {
-                        CreateBlock(x, y, cBiome.TopDirt.item, cBiome.TopDirt.index);
+                        CreateBlock(x, y, cBiome.SurfaceBlock.item, cBiome.SurfaceBlock.index);
+                        if (tree.GetPixel(x, y).r > 0.5f)
+                        {
+                            if (cBiome.color == Color.green)
+                            {
+                                CreateTree(x, y + 1);
+                            }
+                            else if (cBiome.color.Equals(new Color(1, 127f / 255f, 0, 1)))
+                            {
+                                CreateCactus(x, y + 1);
+                            }
+                        }
                     }
                     else if (y < superfaceY * .75f)
                     {

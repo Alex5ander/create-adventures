@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 [Serializable]
-public class TopDirt
+public class SurfaceBlock
 {
     public Item item;
     public int index;
@@ -20,7 +20,7 @@ public class Ore
 public class Biome
 {
     public Color color;
-    public TopDirt TopDirt;
+    public SurfaceBlock SurfaceBlock;
     public Item Dirt;
     public Item Stone;
     public float frequency;
