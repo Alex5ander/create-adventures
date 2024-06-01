@@ -56,7 +56,7 @@ public class MouseFollower : MonoBehaviour
             {
                 text.alpha = 1;
                 text.text = slot.amount.ToString();
-                image.sprite = item.dropSprite;
+                image.sprite = item.sprite;
             }
         }
         else

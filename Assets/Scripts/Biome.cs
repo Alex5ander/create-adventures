@@ -1,16 +1,10 @@
 using System;
 using UnityEngine;
-[Serializable]
-public class SurfaceBlock
-{
-    public Item item;
-    public int index;
-}
 
 [Serializable]
 public class Ore
 {
-    public Item item;
+    public Block block;
     public float frequency;
     public float threshold;
     public Texture2D texture;
@@ -20,9 +14,9 @@ public class Ore
 public class Biome
 {
     public Color color;
-    public SurfaceBlock SurfaceBlock;
-    public Item Dirt;
-    public Item Stone;
+    public Block SurfaceBlock;
+    public Block Dirt;
+    public Block Stone;
     public float frequency;
     public float threshold;
     public Texture2D texture;

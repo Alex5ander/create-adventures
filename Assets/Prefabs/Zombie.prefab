@@ -178,8 +178,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5359564174742257730}
   - component: {fileID: 7015724502045232739}
-  - component: {fileID: 5709922391722938268}
   - component: {fileID: 3064876215079315849}
+  - component: {fileID: 5709922391722938268}
   - component: {fileID: 8363359667196707382}
   m_Layer: 7
   m_Name: Zombie
@@ -236,28 +236,6 @@ Rigidbody2D:
   m_SleepingMode: 0
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!95 &5709922391722938268
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3452439381306380291}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5b9fb716a6ed86b4cbafb79dac4a7a19, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!70 &3064876215079315849
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -295,6 +273,28 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: -0.4472003}
   m_Size: {x: 0.5, y: 1.4}
   m_Direction: 0
+--- !u!95 &5709922391722938268
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3452439381306380291}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5b9fb716a6ed86b4cbafb79dac4a7a19, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &8363359667196707382
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -83,7 +83,7 @@ public class SaveManger : MonoBehaviour
         }
     }
 
-    static public void SaveWorld(Item type, int x, int y)
+    static public void SaveWorld(Block type, int x, int y)
     {
         World world = saveGame.GetWorld();
         ModifiedBlock modifiedBlock = world.modifiedBlocks.Find(e => e.x == x && e.y == y);

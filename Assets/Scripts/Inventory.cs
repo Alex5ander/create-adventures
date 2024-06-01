@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Inventory : MonoBehaviour, ISaveManager
 {
     public List<Slot> Slots;
-    public Action _OnChange;
+    public UnityEvent _OnChange;
     public bool Open;
     public void Add(Item item, int amount)
     {

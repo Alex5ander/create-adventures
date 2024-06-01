@@ -1,52 +1,38 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Block : MonoBehaviour
 {
-    [SerializeField] GameState gameState;
     [SerializeField] Drop DropPrefab;
     public Item item;
+    public List<Item> requiredTools;
     public bool destroy;
-    SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
 
     // Start is called before the first frame update
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        if (!item.solid)
-        {
-            GetComponent<BoxCollider2D>().isTrigger = !item.solid;
-        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (gameState.selectedBlock == this)
-        {
-            Item item = gameState.inventory.GetByIndex(gameState.hotBarSelectedIndex);
-            if (item != null)
-            {
-                spriteRenderer.color -= new Color(item.damage * Time.deltaTime, item.damage * Time.deltaTime, item.damage * Time.deltaTime, 0);
-                if (spriteRenderer.color.maxColorComponent <= 0)
-                {
-                    destroy = true;
-                }
-            }
-        }
-        else
-        {
-            spriteRenderer.color = Color.white;
-        }
+
     }
 
-    public void OnTriggerEnter2D(Collider2D _)
+    public bool CanBeMining(Item item) => requiredTools.Contains(item);
+
+    public void Mining(float miningPower)
     {
-        Color color = spriteRenderer.color;
-        color.a = 0.75f;
-        spriteRenderer.color = color;
+        spriteRenderer.color -= new Color(miningPower * Time.deltaTime, miningPower * Time.deltaTime, miningPower * Time.deltaTime, 0);
+        if (spriteRenderer.color.maxColorComponent <= 0)
+        {
+            destroy = true;
+        }
     }
 
-    public void OnTriggerExity2D(Collider2D _)
+    public void OnEndMining()
     {
         spriteRenderer.color = Color.white;
     }

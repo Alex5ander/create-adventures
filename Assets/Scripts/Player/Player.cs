@@ -10,33 +10,15 @@ public class Player : MonoBehaviour, ISaveManager
     CapsuleCollider2D capsuleCollider2D;
     Rigidbody2D body;
     float jumpPower = 15;
-    float speed = 20f;
+    float speed = 200f;
     float horizontal = 0.0f;
     bool isGrounded = false;
     Animator animator;
-    Dictionary<KeyCode, int> keyCodes = new()
-    {
-        [KeyCode.Keypad1] = 0,
-        [KeyCode.Keypad2] = 1,
-        [KeyCode.Keypad3] = 2,
-        [KeyCode.Keypad4] = 3,
-        [KeyCode.Keypad5] = 4,
-        [KeyCode.Keypad6] = 5,
-        [KeyCode.Keypad7] = 6,
-        [KeyCode.Keypad8] = 7,
-        [KeyCode.Keypad9] = 8,
-        [KeyCode.Alpha1] = 0,
-        [KeyCode.Alpha2] = 1,
-        [KeyCode.Alpha3] = 2,
-        [KeyCode.Alpha4] = 3,
-        [KeyCode.Alpha5] = 4,
-        [KeyCode.Alpha6] = 5,
-        [KeyCode.Alpha7] = 6,
-        [KeyCode.Alpha8] = 7,
-        [KeyCode.Alpha9] = 8,
-    };
+    Block selectedBlock;
+    [SerializeField] Particles particles;
     float lastSaveTime = 0;
-    float invencibleTime = 0;
+    bool invencible = false;
+    [SerializeField] Hand hand;
     // Start is called before the first frame update
     void Start()
     {
@@ -49,24 +31,16 @@ public class Player : MonoBehaviour, ISaveManager
     // Update is called once per frame
     void Update()
     {
-        if (MainScene.isMobile)
-        {
-            HandleTouch();
-        }
-        else
+        if (!MainScene.isMobile)
         {
             HandleKeyBoard();
-            HandleMouse();
         }
-
         transform.rotation = horizontal != 0 ? Quaternion.AngleAxis(horizontal > 0 ? 180 : 0, Vector3.up) : transform.rotation;
-
         gameState.position = transform.position;
 
         World world = SaveManger.saveGame.GetWorld();
         world.playerPosition = gameState.position;
         world.playerRotation = transform.rotation;
-        world.hotBarSelectedIndex = gameState.hotBarSelectedIndex;
         if (Time.time - lastSaveTime > 5)
         {
             SaveManger.Instance.Save();
@@ -78,10 +52,12 @@ public class Player : MonoBehaviour, ISaveManager
     private void FixedUpdate()
     {
         isGrounded = IsGrounded();
-        float targetSpeed = speed * horizontal;
-        float acceleration = targetSpeed - body.velocity.x;
-        float friction = body.velocity.x * 4f;
-        body.AddForce((acceleration - friction) * Vector2.right);
+        Vector2 newVelocity = body.velocity;
+        newVelocity.x = horizontal * speed * Time.fixedDeltaTime;
+        if (!invencible)
+        {
+            body.velocity = newVelocity;
+        }
     }
     void HandleKeyBoard()
     {
@@ -90,91 +66,7 @@ public class Player : MonoBehaviour, ISaveManager
         {
             Jump();
         }
-        foreach (KeyCode keyCode in keyCodes.Keys)
-        {
-            if (Input.GetKeyDown(keyCode))
-            {
-                gameState.hotBarSelectedIndex = keyCodes[keyCode];
-            }
-        }
     }
-
-    void PointerDown(Vector3 position)
-    {
-        if (!inventory.Open)
-        {
-            Vector3 vector3 = Camera.main.ScreenToWorldPoint(position);
-            int x = Mathf.RoundToInt(vector3.x);
-            int y = Mathf.RoundToInt(vector3.y);
-            float distance = Vector2.Distance(vector3, transform.position);
-            Block block = terrainGenerator.GetBlock(x, y);
-            gameState.selectedBlock = block;
-            animator.SetBool("Attack", true);
-            if (distance < 4)
-            {
-                Item item = inventory.GetByIndex(gameState.hotBarSelectedIndex);
-                if (gameState.selectedBlock == null)
-                {
-                    if (item != null && item.placeable)
-                    {
-                        terrainGenerator.CreateBlock(x, y, item, 0, true);
-                        inventory.Remove(gameState.hotBarSelectedIndex, 1);
-                    }
-                }
-                if (gameState.selectedBlock != null && gameState.selectedBlock.destroy)
-                {
-                    terrainGenerator.Remove(x, y, true);
-                    gameState.selectedBlock = null;
-                }
-            }
-            else
-            {
-                gameState.selectedBlock = null;
-            }
-        }
-        else
-        {
-            gameState.selectedBlock = null;
-            animator.SetBool("Attack", false);
-        }
-    }
-
-    void PointerUp()
-    {
-        gameState.selectedBlock = null;
-        animator.SetBool("Attack", false);
-    }
-    void HandleMouse()
-    {
-        if (Input.GetMouseButton(0))
-        {
-            PointerDown(Input.mousePosition);
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            PointerUp();
-        }
-    }
-
-    void HandleTouch()
-    {
-        for (int i = 0; i < Input.touchCount; i++)
-        {
-            Touch touch = Input.GetTouch(i);
-            if (touch.fingerId == MouseFollower.fingerId)
-            {
-                if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
-                {
-                    PointerDown(touch.position);
-                }
-                else
-                {
-                    PointerUp();
-                }
-            }
-        }
-    }
-
 
     void Jump()
     {
@@ -196,23 +88,28 @@ public class Player : MonoBehaviour, ISaveManager
     void OnTriggerStay2D(Collider2D other)
     {
         other.TryGetComponent(out Damageable damageable);
-        if (damageable != null && Time.time - invencibleTime > 1)
+        if (damageable != null && !invencible)
         {
-            gameState.life -= damageable.damage;
             animator.SetTrigger("Hurt");
+            invencible = true;
 
+            gameState.life -= damageable.damage;
             Vector2 forceDirection = -(other.transform.position - transform.position).normalized;
+            body.velocity = Vector2.zero;
             body.AddForce(forceDirection * damageable.knockback, ForceMode2D.Impulse);
-            invencibleTime = Time.time;
         }
     }
 
-    bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.bounds.size, CapsuleDirection2D.Vertical, 0, Vector2.down, 0.1f, layerMask);
+    bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.bounds.size, capsuleCollider2D.direction, 0, Vector2.down, 0.1f, layerMask);
 
     public void Load(SaveGame saveGame)
     {
         World world = saveGame.GetWorld();
         transform.SetPositionAndRotation(world.playerPosition, world.playerRotation);
-        gameState.hotBarSelectedIndex = world.hotBarSelectedIndex;
+    }
+
+    public void SetInvencible()
+    {
+        invencible = false;
     }
 }

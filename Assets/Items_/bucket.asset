@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e625a6b2b4fbe6c4db22376520df4b85, type: 3}
+  m_Name: bucket
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 21300000, guid: 78a102b87deb88440a38ed094cd6077e, type: 3}
+  miningPower: 1
+  damage: 1
+  knockback: 1
+  block: {fileID: 0}

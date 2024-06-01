@@ -10,6 +10,7 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHa
     [SerializeField] TextMeshProUGUI text;
     [SerializeField] GameState gameState;
     [SerializeField] Sprite SelectedSprite;
+    [SerializeField] Hand hand;
     int index;
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -40,18 +41,7 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHa
     // Update is called once per frame
     void Update()
     {
-        if (index < 9)
-        {
-            if (gameState.hotBarSelectedIndex == index)
-            {
-                background.sprite = SelectedSprite;
-            }
-            else
-            {
-                background.sprite = null;
-                background.color = new(1, 1, 1, 0.5f);
-            }
-        }
+
     }
 
     public void Set(int index, Sprite sprite, int amount)
@@ -63,11 +53,22 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHa
         text.text = amount.ToString();
     }
 
+    public void Select()
+    {
+        background.sprite = SelectedSprite;
+    }
+
+    public void Deselect()
+    {
+        background.sprite = null;
+        background.color = new(1, 1, 1, 0.5f);
+    }
+
     public void OnPointerClick(PointerEventData eventData)
     {
         if (index < 9)
         {
-            gameState.hotBarSelectedIndex = index;
+            hand.UpdateHotBar(index);
         }
     }
 }

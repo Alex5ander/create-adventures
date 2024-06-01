@@ -7,7 +7,7 @@ public class Drop : MonoBehaviour
     public void Set(Item item)
     {
         this.item = item;
-        GetComponent<SpriteRenderer>().sprite = item.dropSprite;
+        GetComponent<SpriteRenderer>().sprite = item.sprite;
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {

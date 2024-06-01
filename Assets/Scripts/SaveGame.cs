@@ -7,10 +7,10 @@ public class ModifiedBlock
 {
   public int x;
   public int y;
-  public Item type;
+  public Block type;
   public int meta;
 
-  public ModifiedBlock(Item type, int x, int y)
+  public ModifiedBlock(Block type, int x, int y)
   {
     this.type = type;
     this.x = x;

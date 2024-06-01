@@ -5,10 +5,10 @@ public class InvetoryUI : MonoBehaviour
 {
     [SerializeField] Inventory inventory;
     [SerializeField] CanvasGroup canvasGroup;
-    [SerializeField] List<SlotUI> SlotsUI;
+    public List<SlotUI> SlotsUI;
     void Awake()
     {
-        inventory._OnChange = OnChange;
+
     }
     // Start is called before the first frame update
     void Start()
@@ -33,13 +33,13 @@ public class InvetoryUI : MonoBehaviour
         inventory.Open = !inventory.Open;
     }
 
-    void OnChange()
+    public void OnChange()
     {
         foreach (Slot slot in inventory.Slots)
         {
             int index = inventory.Slots.IndexOf(slot);
             Item item = inventory.GetByIndex(index);
-            SlotsUI[index].Set(index, item != null ? item.dropSprite : null, slot.amount);
+            SlotsUI[index].Set(index, item != null ? item.sprite : null, slot.amount);
         }
     }
 }
