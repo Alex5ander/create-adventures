@@ -300,10 +300,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f6a8956db713f842a4d97f5b99c5adb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inventory: {fileID: 11400000, guid: bd2f62f0c70eaab4999c5ebff2140eaf, type: 2}
   background: {fileID: 8675716380925963657}
   image: {fileID: 5715568733816394664}
   text: {fileID: 7532139860054203922}
-  gameState: {fileID: 11400000, guid: 180577598f03a0c4a9a95cbc9cb6c0e5, type: 2}
   SelectedSprite: {fileID: 21300000, guid: 4e0ca4562463959498eb3ae34c02707e, type: 3}
 --- !u!225 &4175409572683752621
 CanvasGroup:

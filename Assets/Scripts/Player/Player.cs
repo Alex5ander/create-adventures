@@ -1,9 +1,7 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour, ISaveManager
+public class Player : MonoBehaviour
 {
-    [SerializeField] GameState gameState;
     [SerializeField] Inventory inventory;
     [SerializeField] LayerMask layerMask;
     [SerializeField] TerrainGenerator terrainGenerator;
@@ -14,8 +12,6 @@ public class Player : MonoBehaviour, ISaveManager
     float horizontal = 0.0f;
     bool isGrounded = false;
     Animator animator;
-    Block selectedBlock;
-    [SerializeField] Particles particles;
     float lastSaveTime = 0;
     bool invencible = false;
     [SerializeField] Hand hand;
@@ -25,21 +21,26 @@ public class Player : MonoBehaviour, ISaveManager
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        gameState.inventory = inventory;
+        World world = SaveManger.Instance.saveGame.GetWorld();
+        transform.SetPositionAndRotation(world.playerPosition, world.playerRotation);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!MainScene.isMobile)
+        if (MainScene.isMobile)
         {
+            HandleTouch();
+        }
+        else
+        {
+            HandleMouse();
             HandleKeyBoard();
         }
         transform.rotation = horizontal != 0 ? Quaternion.AngleAxis(horizontal > 0 ? 180 : 0, Vector3.up) : transform.rotation;
-        gameState.position = transform.position;
 
-        World world = SaveManger.saveGame.GetWorld();
-        world.playerPosition = gameState.position;
+        World world = SaveManger.Instance.saveGame.GetWorld();
+        world.playerPosition = transform.position;
         world.playerRotation = transform.rotation;
         if (Time.time - lastSaveTime > 5)
         {
@@ -68,6 +69,64 @@ public class Player : MonoBehaviour, ISaveManager
         }
     }
 
+    void PointerDown(Vector3 position)
+    {
+        if (!inventory.Open)
+        {
+            Vector3 vector3 = Camera.main.ScreenToWorldPoint(position);
+            int x = Mathf.RoundToInt(vector3.x);
+            int y = Mathf.RoundToInt(vector3.y);
+            float distance = Vector2.Distance(vector3, transform.position);
+            animator.SetBool("Attack", true);
+            if (distance < 4)
+            {
+                Block block = terrainGenerator.GetBlock(x, y);
+                hand.Use(block);
+            }
+        }
+        else
+        {
+            hand.Use(null);
+            animator.SetBool("Attack", false);
+        }
+    }
+
+    void PointerUp()
+    {
+        hand.Use(null);
+        animator.SetBool("Attack", false);
+    }
+    void HandleMouse()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            PointerDown(Input.mousePosition);
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            PointerUp();
+        }
+    }
+
+    void HandleTouch()
+    {
+        for (int i = 0; i < Input.touchCount; i++)
+        {
+            Touch touch = Input.GetTouch(i);
+            if (touch.fingerId == MouseFollower.fingerId)
+            {
+                if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
+                {
+                    PointerDown(touch.position);
+                }
+                else
+                {
+                    PointerUp();
+                }
+            }
+        }
+    }
+
     void Jump()
     {
         if (isGrounded && body.velocity.y == 0)
@@ -93,7 +152,6 @@ public class Player : MonoBehaviour, ISaveManager
             animator.SetTrigger("Hurt");
             invencible = true;
 
-            gameState.life -= damageable.damage;
             Vector2 forceDirection = -(other.transform.position - transform.position).normalized;
             body.velocity = Vector2.zero;
             body.AddForce(forceDirection * damageable.knockback, ForceMode2D.Impulse);

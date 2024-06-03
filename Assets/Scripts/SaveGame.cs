@@ -7,12 +7,11 @@ public class ModifiedBlock
 {
   public int x;
   public int y;
-  public Block type;
-  public int meta;
+  public Block block;
 
-  public ModifiedBlock(Block type, int x, int y)
+  public ModifiedBlock(Block block, int x, int y)
   {
-    this.type = type;
+    this.block = block;
     this.x = x;
     this.y = y;
   }
@@ -23,7 +22,7 @@ public class World
 {
   public int seed = 0;
   public List<Slot> Slots = new();
-  public int hotBarSelectedIndex = 0;
+  public int hotBarIndex = 0;
   public Vector2 playerPosition = new(20, 100);
   public Quaternion playerRotation = Quaternion.identity;
   public List<ModifiedBlock> modifiedBlocks = new();
@@ -45,7 +44,8 @@ public class World
 }
 
 [Serializable]
-public class SaveGame
+[CreateAssetMenu]
+public class SaveGame : ScriptableObject
 {
   public int worldIndex = 0;
   public List<World> worlds = new();

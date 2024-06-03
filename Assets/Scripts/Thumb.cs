@@ -4,7 +4,6 @@ using UnityEngine.EventSystems;
 
 public class Thumb : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
-    [SerializeField] GameState gameState;
     [SerializeField] GameObject Parent;
     [SerializeField] UnityEvent<float, float> _OnDrag;
     public static int fingerId = -1;
@@ -33,7 +32,7 @@ public class Thumb : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDra
         for (int i = 0; i < Input.touchCount; i++)
         {
             Touch touch = Input.GetTouch(i);
-            if (touch.fingerId != MouseFollower.fingerId && (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Stationary))
+            if (touch.fingerId != MouseFollower.fingerId && touch.phase == TouchPhase.Began)
             {
                 fingerId = touch.fingerId;
                 transform.position = touch.position;

@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class Inventory : MonoBehaviour, ISaveManager
+[CreateAssetMenu]
+public class Inventory : ScriptableObject
 {
-    public List<Slot> Slots;
-    public UnityEvent _OnChange;
+    public List<Slot> Slots = new();
+    public event Action<int> OnChange;
     public bool Open;
     public void Add(Item item, int amount)
     {
@@ -16,13 +16,15 @@ public class Inventory : MonoBehaviour, ISaveManager
         if (availableSlot != null)
         {
             availableSlot.amount += amount;
-            OnChange();
+            Save();
+            OnChange.Invoke(Slots.IndexOf(availableSlot));
         }
         else
         {
             emptySlot.item = item;
             emptySlot.amount = amount;
-            OnChange();
+            Save();
+            OnChange.Invoke(Slots.IndexOf(emptySlot));
         }
     }
     public void Remove(int index, int amount)
@@ -35,38 +37,25 @@ public class Inventory : MonoBehaviour, ISaveManager
             {
                 availableSlot.item = null;
             }
-            OnChange();
+            Save();
+            OnChange.Invoke(Slots.IndexOf(availableSlot));
         }
     }
-
-    public Item GetByIndex(int index) => Slots[index].item;
 
     public void Swap(int old, int slot)
     {
         (Slots[slot], Slots[old]) = (Slots[old], Slots[slot]);
-        OnChange();
+        Save();
+        OnChange.Invoke(old);
+        OnChange.Invoke(slot);
     }
-    public void OnChange()
+    public void Save()
     {
-        _OnChange.Invoke();
-        World world = SaveManger.saveGame.GetWorld();
+        World world = SaveManger.Instance.saveGame.GetWorld();
         world.Slots = Slots;
     }
-    public void Load(SaveGame saveGame)
+    public void Load()
     {
-        Slots = saveGame.GetWorld().Slots;
-        _OnChange.Invoke();
-    }
-}
-
-[Serializable]
-public class Slot
-{
-    public Item item;
-    public int amount;
-    public Slot(Item item, int amount)
-    {
-        this.item = item;
-        this.amount = amount;
+        Slots = SaveManger.Instance.saveGame.GetWorld().Slots;
     }
 }

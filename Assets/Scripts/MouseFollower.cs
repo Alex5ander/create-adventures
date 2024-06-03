@@ -4,9 +4,6 @@ using UnityEngine.UI;
 
 public class MouseFollower : MonoBehaviour
 {
-    [SerializeField] GameState gameState;
-    [SerializeField] Inventory inventory;
-    [SerializeField] CanvasGroup canvasGroup;
     [SerializeField] Image image;
     [SerializeField] TextMeshProUGUI text;
     [SerializeField] Sprite defaultSprite;
@@ -25,12 +22,9 @@ public class MouseFollower : MonoBehaviour
             for (int i = 0; i < Input.touchCount; i++)
             {
                 Touch touch = Input.GetTouch(i);
-                if (touch.fingerId != Thumb.fingerId && fingerId == -1)
+                if (touch.fingerId != Thumb.fingerId && fingerId == -1 && touch.phase == TouchPhase.Began)
                 {
-                    if (touch.phase == TouchPhase.Began)
-                    {
-                        fingerId = touch.fingerId;
-                    }
+                    fingerId = touch.fingerId;
                 }
 
                 if (touch.fingerId == fingerId)
@@ -48,21 +42,12 @@ public class MouseFollower : MonoBehaviour
         {
             transform.position = Input.mousePosition;
         }
-        if (inventory.Open && gameState.inventorySelectedIndex != -1)
-        {
-            Slot slot = inventory.Slots[gameState.inventorySelectedIndex];
-            Item item = inventory.GetByIndex(gameState.inventorySelectedIndex);
-            if (item != null && slot.amount > 0)
-            {
-                text.alpha = 1;
-                text.text = slot.amount.ToString();
-                image.sprite = item.sprite;
-            }
-        }
-        else
-        {
-            text.alpha = 0;
-            image.sprite = defaultSprite;
-        }
+    }
+
+    public void SetData(Sprite sprite, string text)
+    {
+        this.text.alpha = sprite ? 1 : 0;
+        this.text.text = text;
+        image.sprite = sprite ? sprite : defaultSprite;
     }
 }

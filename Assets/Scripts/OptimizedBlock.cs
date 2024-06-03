@@ -25,6 +25,6 @@ public class OptimizedBlock : MonoBehaviour
 
     void OnBecameInvisible()
     {
-        // block.gameObject.SetActive(false);
+        block.gameObject.SetActive(false);
     }
 }

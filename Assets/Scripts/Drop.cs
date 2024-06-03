@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Drop : MonoBehaviour
 {
-    [SerializeField] GameState gameState;
+    [SerializeField] Inventory inventory;
     Item item;
     public void Set(Item item)
     {
@@ -13,7 +13,7 @@ public class Drop : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            gameState.inventory.Add(item, 1);
+            inventory.Add(item, 1);
             Destroy(gameObject);
         }
     }

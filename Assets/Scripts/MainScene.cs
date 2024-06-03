@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainScene : MonoBehaviour, ISaveManager
+public class MainScene : MonoBehaviour
 {
 #if !UNITY_ANDROID
     [DllImport("__Internal")]
@@ -20,6 +20,12 @@ public class MainScene : MonoBehaviour, ISaveManager
 #if UNITY_ANDROID
         isMobile = true;
 #endif
+        for (int i = 0; i < SaveManger.Instance.saveGame.worlds.Count; i++)
+        {
+            WorldButton worldButton = Instantiate(ButtonPrefab);
+            worldButton.Init(i);
+            worldButton.transform.SetParent(verticalLayoutGroup.transform, false);
+        }
     }
 
     // Update is called once per frame
@@ -40,14 +46,5 @@ public class MainScene : MonoBehaviour, ISaveManager
     static public void DeleteWorld(int index)
     {
         SaveManger.Instance.DeleteWorld(index);
-    }
-    public void Load(SaveGame saveGame)
-    {
-        for (int i = 0; i < saveGame.worlds.Count; i++)
-        {
-            WorldButton worldButton = Instantiate(ButtonPrefab);
-            worldButton.Init(i);
-            worldButton.transform.SetParent(verticalLayoutGroup.transform, false);
-        }
     }
 }

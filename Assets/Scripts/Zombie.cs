@@ -3,8 +3,6 @@ using UnityEngine;
 public class Zombie : MonoBehaviour
 {
     [SerializeField]
-    GameState gameState;
-    [SerializeField]
     Rigidbody2D body;
     [SerializeField]
     Animator animator;
@@ -27,16 +25,16 @@ public class Zombie : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float targetDistance = Vector2.Distance(transform.position, gameState.position);
-        if (targetDistance < 15)
-        {
-            direction = gameState.position.normalized.x - transform.position.normalized.x;
-        }
-        else if (Time.time - randomDirectionTime > 4f)
-        {
-            direction = RandomDirection();
-            randomDirectionTime = Time.time;
-        }
+        // float targetDistance = Vector2.Distance(transform.position, gameState.position);
+        // if (targetDistance < 15)
+        // {
+        //     direction = gameState.position.normalized.x - transform.position.normalized.x;
+        // }
+        // else if (Time.time - randomDirectionTime > 4f)
+        // {
+        //     direction = RandomDirection();
+        //     randomDirectionTime = Time.time;
+        // }
         transform.rotation = Quaternion.AngleAxis(direction > 0 ? 180 : 0, Vector3.up);
         animator.SetBool("Jump", !isGrounded);
         animator.SetBool("Walk", isGrounded && Mathf.Abs(body.velocity.x) > 0.1f);

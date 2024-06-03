@@ -9,12 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3466b332e87db54fb435d813d56c843, type: 3}
-  m_Name: GameState
+  m_Script: {fileID: 11500000, guid: b1eed4c34f80c5546934a03632110615, type: 3}
+  m_Name: SaveGame
   m_EditorClassIdentifier: 
-  life: 100
-  position: {x: 10.387857, y: 73.65344, z: 0}
-  hotBarSelectedIndex: 0
-  inventorySelectedIndex: -1
-  selectedBlock: {fileID: 0}
-  inventory: {fileID: 0}
+  worldIndex: 0
+  worlds: []

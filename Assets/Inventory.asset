@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e925e72a7286ca44a1d92c6c267b0ce, type: 3}
+  m_Name: Inventory
+  m_EditorClassIdentifier: 
+  Slots:
+  - item: {fileID: 11400000, guid: 96937f4375b6daf4c90d32893631cac1, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 6555530b12894234c9d95272b66cfe72, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: c2703156de0cae8468d5a062e6aedaf3, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: c701ea3b922d58c49a02494b138dbd81, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 214e07e8d01345a4dabbe856172165b3, type: 2}
+    amount: 1
+  - item: {fileID: 11400000, guid: 7ad47390667e61940a27855a3fcfb0b9, type: 2}
+    amount: 1
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  - item: {fileID: 0}
+    amount: 0
+  _OnChange:
+    m_PersistentCalls:
+      m_Calls: []
+  Open: 0

@@ -15,7 +15,7 @@ public class SaveManger : MonoBehaviour
 #endif
     string json = null;
     [SerializeField] Item[] InitialItems;
-    static public SaveGame saveGame;
+    public SaveGame saveGame;
     static public SaveManger Instance;
     void Awake()
     {
@@ -41,7 +41,6 @@ public class SaveManger : MonoBehaviour
         saveGame = data;
 #endif
         saveGame ??= new();
-        LoadGame();
     }
     public void Save()
     {
@@ -74,26 +73,17 @@ public class SaveManger : MonoBehaviour
         Save();
     }
 
-    static public void LoadGame()
+    static public void SaveWorld(Block block, int x, int y)
     {
-        List<ISaveManager> saveManagers = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ISaveManager>().ToList();
-        foreach (ISaveManager saveManager in saveManagers)
-        {
-            saveManager.Load(saveGame);
-        }
-    }
-
-    static public void SaveWorld(Block type, int x, int y)
-    {
-        World world = saveGame.GetWorld();
+        World world = Instance.saveGame.GetWorld();
         ModifiedBlock modifiedBlock = world.modifiedBlocks.Find(e => e.x == x && e.y == y);
         if (modifiedBlock == null)
         {
-            world.modifiedBlocks.Add(new(type, x, y));
+            world.modifiedBlocks.Add(new(block, x, y));
         }
         else
         {
-            modifiedBlock.type = type;
+            modifiedBlock.block = block;
         }
     }
 }

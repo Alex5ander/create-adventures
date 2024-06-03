@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class TerrainGenerator : MonoBehaviour, ISaveManager
+public class TerrainGenerator : MonoBehaviour
 {
     int terrainWidth = 320;
     int terrainHeight = 100;
     float frequency = 0.04f;
-    [SerializeField] GameState gameState;
+    Block[,] blocks;
     [SerializeField] OptimizedBlock OptimizedBlockPrefab;
     [Header("Blocks")]
     [SerializeField] Block WoodMid;
@@ -27,7 +27,24 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     // Start is called before the first frame update
     void Start()
     {
-
+        World world = SaveManger.Instance.saveGame.GetWorld();
+        List<ModifiedBlock> modifiedBlocks = world.modifiedBlocks;
+        GenerateTerrain(world.seed);
+        foreach (ModifiedBlock modifiedBlock in modifiedBlocks)
+        {
+            Block block = blocks[modifiedBlock.x, modifiedBlock.y];
+            if (modifiedBlock.block == null)
+            {
+                if (block != null)
+                {
+                    Remove(modifiedBlock.x, modifiedBlock.y);
+                }
+            }
+            else if (block == null)
+            {
+                CreateBlock(modifiedBlock.x, modifiedBlock.y, modifiedBlock.block);
+            }
+        }
     }
 
     void GenerateNoiseTextures(int seed)
@@ -111,7 +128,7 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     public void GenerateTerrain(int seed)
     {
         GenerateNoiseTextures(seed);
-        gameState.blocks = new Block[terrainWidth, terrainHeight];
+        blocks = new Block[terrainWidth, terrainHeight];
         int size = terrainWidth * terrainHeight;
         for (int i = 0; i < size; i++)
         {
@@ -176,14 +193,14 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     }
     public void CreateBlock(int x, int y, Block block, bool save = false)
     {
-        if (x < 0 || x > gameState.blocks.GetLength(0) - 1 || y < 0 || y > gameState.blocks.GetLength(1) - 1) { return; }
-        if (gameState.blocks[x, y] == null)
+        if (x < 0 || x > blocks.GetLength(0) - 1 || y < 0 || y > blocks.GetLength(1) - 1) { return; }
+        if (blocks[x, y] == null)
         {
             OptimizedBlock optimizer = Instantiate(OptimizedBlockPrefab, new(x, y, 0), Quaternion.identity);
             optimizer.block = Instantiate(block, new(x, y), Quaternion.identity);
             optimizer.block.gameObject.SetActive(false);
             optimizer.block.transform.SetParent(optimizer.transform);
-            gameState.blocks[x, y] = optimizer.block;
+            blocks[x, y] = optimizer.block;
             if (save)
             {
                 SaveManger.SaveWorld(block, x, y);
@@ -192,24 +209,24 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
     }
     public Block GetBlock(int x, int y)
     {
-        if (x >= 0 && x < gameState.blocks.GetLength(0) && y >= 0 && y < gameState.blocks.GetLength(1))
+        if (x >= 0 && x < blocks.GetLength(0) && y >= 0 && y < blocks.GetLength(1))
         {
-            return gameState.blocks[x, y];
+            return blocks[x, y];
         }
         return null;
     }
     public void Remove(int x, int y, bool save = false)
     {
-        if (gameState.blocks[x, y])
+        if (blocks[x, y])
         {
-            Block block = gameState.blocks[x, y];
+            Block block = blocks[x, y];
             if (save)
             {
                 block.CreateDrop();
                 SaveManger.SaveWorld(null, x, y);
             }
             Destroy(block.transform.parent.gameObject);
-            gameState.blocks[x, y] = null;
+            blocks[x, y] = null;
         }
     }
 
@@ -245,28 +262,6 @@ public class TerrainGenerator : MonoBehaviour, ISaveManager
         for (int i = 0; i < height; i++)
         {
             CreateBlock(x, y + i, Cactus);
-        }
-    }
-
-    public void Load(SaveGame saveGame)
-    {
-        World world = saveGame.GetWorld();
-        List<ModifiedBlock> modifiedBlocks = world.modifiedBlocks;
-        GenerateTerrain(world.seed);
-        foreach (ModifiedBlock modifiedBlock in modifiedBlocks)
-        {
-            Block block = gameState.blocks[modifiedBlock.x, modifiedBlock.y];
-            if (modifiedBlock.type == null)
-            {
-                if (block != null)
-                {
-                    Remove(modifiedBlock.x, modifiedBlock.y);
-                }
-            }
-            else if (block == null)
-            {
-                // CreateBlock(modifiedBlock.x, modifiedBlock.y, modifiedBlock);
-            }
         }
     }
 }
