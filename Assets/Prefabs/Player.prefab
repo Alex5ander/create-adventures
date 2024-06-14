@@ -267,7 +267,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ddb7f6e351309c459fb2bb9c4d70f74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameState: {fileID: 11400000, guid: 180577598f03a0c4a9a95cbc9cb6c0e5, type: 2}
+  inventory: {fileID: 11400000, guid: bd2f62f0c70eaab4999c5ebff2140eaf, type: 2}
+  invetoryUI: {fileID: 0}
   spriteRenderer: {fileID: 455599975935190603}
   damageable: {fileID: 7014158256781279450}
 --- !u!114 &7014158256781279450
@@ -550,12 +551,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06969c5d18797d94bbceaf65cb6b6e5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameState: {fileID: 11400000, guid: 180577598f03a0c4a9a95cbc9cb6c0e5, type: 2}
-  inventory: {fileID: 0}
+  inventory: {fileID: 11400000, guid: bd2f62f0c70eaab4999c5ebff2140eaf, type: 2}
   layerMask:
     serializedVersion: 2
     m_Bits: 136
   terrainGenerator: {fileID: 0}
+  hand: {fileID: 5373788749701938428}
 --- !u!1 &3633879882509548798
 GameObject:
   m_ObjectHideFlags: 0
