@@ -51,11 +51,11 @@ public class Inventory : ScriptableObject
     }
     public void Save()
     {
-        World world = SaveManger.Instance.saveGame.GetWorld();
+        World world = SaveManger.Instance.GetWorld();
         world.Slots = Slots;
     }
     public void Load()
     {
-        Slots = SaveManger.Instance.saveGame.GetWorld().Slots;
+        Slots = SaveManger.Instance.GetWorld().Slots;
     }
 }

@@ -39,7 +39,7 @@ public class InvetoryUI : MonoBehaviour
     {
         inventory.Load();
         inventory.OnChange += OnChange;
-        HotBarIndex = SaveManger.Instance.saveGame.GetWorld().hotBarIndex;
+        HotBarIndex = SaveManger.Instance.GetWorld().hotBarIndex;
         for (int i = 0; i < inventory.Slots.Count; i++)
         {
             Slot slot = inventory.Slots[i];
@@ -72,7 +72,7 @@ public class InvetoryUI : MonoBehaviour
         {
             if (Input.GetKeyDown(keyCode))
             {
-                World world = SaveManger.Instance.saveGame.GetWorld();
+                World world = SaveManger.Instance.GetWorld();
                 world.hotBarIndex = keyCodes[keyCode];
 
                 SlotUI slotUI = SlotsUI[HotBarIndex];

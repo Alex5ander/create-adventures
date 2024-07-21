@@ -37,7 +37,7 @@ public class Zombie : MonoBehaviour
         // }
         transform.rotation = Quaternion.AngleAxis(direction > 0 ? 180 : 0, Vector3.up);
         animator.SetBool("Jump", !isGrounded);
-        animator.SetBool("Walk", isGrounded && Mathf.Abs(body.velocity.x) > 0.1f);
+        animator.SetBool("Walk", isGrounded && Mathf.Abs(body.linearVelocity.x) > 0.1f);
     }
 
     void FixedUpdate()
@@ -45,9 +45,9 @@ public class Zombie : MonoBehaviour
         isGrounded = IsGrounded();
         if (isGrounded && !invencible)
         {
-            Vector2 newVelocity = body.velocity;
+            Vector2 newVelocity = body.linearVelocity;
             newVelocity.x = Mathf.Sign(direction) * speed * Time.deltaTime;
-            body.velocity = newVelocity;
+            body.linearVelocity = newVelocity;
             RaycastHit2D raycastHit2D = Physics2D.CircleCast(transform.position, 0.5f, new Vector3(direction, 0), layerMask);
             print(raycastHit2D.collider.gameObject);
             if (raycastHit2D)
@@ -68,7 +68,7 @@ public class Zombie : MonoBehaviour
             life -= damageable.damage;
 
             Vector2 forceDirection = -(other.transform.position - transform.position).normalized;
-            body.velocity = Vector2.zero;
+            body.linearVelocity = Vector2.zero;
             body.AddForce(forceDirection * damageable.knockback, ForceMode2D.Impulse);
             if (life <= 0)
             {

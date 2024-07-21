@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        World world = SaveManger.Instance.saveGame.GetWorld();
+        World world = SaveManger.Instance.GetWorld();
         transform.SetPositionAndRotation(world.playerPosition, world.playerRotation);
     }
 
@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
         }
         transform.rotation = horizontal != 0 ? Quaternion.AngleAxis(horizontal > 0 ? 180 : 0, Vector3.up) : transform.rotation;
 
-        World world = SaveManger.Instance.saveGame.GetWorld();
+        World world = SaveManger.Instance.GetWorld();
         world.playerPosition = transform.position;
         world.playerRotation = transform.rotation;
         if (Time.time - lastSaveTime > 5)
@@ -53,11 +53,11 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         isGrounded = IsGrounded();
-        Vector2 newVelocity = body.velocity;
+        Vector2 newVelocity = body.linearVelocity;
         newVelocity.x = horizontal * speed * Time.fixedDeltaTime;
         if (!invencible)
         {
-            body.velocity = newVelocity;
+            body.linearVelocity = newVelocity;
         }
     }
     void HandleKeyBoard()
@@ -129,7 +129,7 @@ public class Player : MonoBehaviour
 
     void Jump()
     {
-        if (isGrounded && body.velocity.y == 0)
+        if (isGrounded && body.linearVelocity.y == 0)
         {
             body.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
         }
@@ -153,16 +153,16 @@ public class Player : MonoBehaviour
             invencible = true;
 
             Vector2 forceDirection = -(other.transform.position - transform.position).normalized;
-            body.velocity = Vector2.zero;
+            body.linearVelocity = Vector2.zero;
             body.AddForce(forceDirection * damageable.knockback, ForceMode2D.Impulse);
         }
     }
 
     bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.bounds.size, capsuleCollider2D.direction, 0, Vector2.down, 0.1f, layerMask);
 
-    public void Load(SaveGame saveGame)
+    public void Load()
     {
-        World world = saveGame.GetWorld();
+        World world = SaveManger.Instance.GetWorld();
         transform.SetPositionAndRotation(world.playerPosition, world.playerRotation);
     }
 

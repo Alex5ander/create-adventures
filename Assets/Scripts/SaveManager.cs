@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[Serializable]
 public class SaveManger : MonoBehaviour
 {
 #if !UNITY_ANDROID
@@ -13,15 +14,26 @@ public class SaveManger : MonoBehaviour
     [DllImport("__Internal")]
     private static extern string SaveData(string saveGame);
 #endif
-    string json = null;
     [SerializeField] Item[] InitialItems;
-    public SaveGame saveGame;
+    public int worldIndex = 0;
+    public List<World> worlds = new();
+    public World GetWorld() => worlds[worldIndex];
     static public SaveManger Instance;
+
     void Awake()
     {
-        Instance = this;
-        Load();
+        if (Instance == null)
+        {
+            Instance = this;
+            Load();
+            DontDestroyOnLoad(gameObject);
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
     }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,15 +48,12 @@ public class SaveManger : MonoBehaviour
     public void Load()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        json = LoadData();
-        SaveGame data = JsonUtility.FromJson<SaveGame>(json);
-        saveGame = data;
+        JsonUtility.FromJsonOverwrite<SaveManger>(LoadData());
 #endif
-        saveGame ??= new();
     }
     public void Save()
     {
-        string json = JsonUtility.ToJson(saveGame);
+        string json = JsonUtility.ToJson(Instance);
 #if UNITY_EDITOR
         Debug.Log(json);
 #endif
@@ -56,26 +65,26 @@ public class SaveManger : MonoBehaviour
 
     public void NewWorld()
     {
-        saveGame.worlds.Add(new World(Random.Range(-1000, 1000), InitialItems));
-        saveGame.worldIndex = saveGame.worlds.Count - 1;
+        worlds.Add(new World(UnityEngine.Random.Range(-1000, 1000), InitialItems));
+        worldIndex = worlds.Count - 1;
         SceneManager.LoadScene(1);
     }
 
     public void SelectWorld(int windex)
     {
-        saveGame.worldIndex = windex;
+        worldIndex = windex;
         SceneManager.LoadScene(1);
     }
 
     public void DeleteWorld(int index)
     {
-        saveGame.worlds.RemoveAt(index);
+        worlds.RemoveAt(index);
         Save();
     }
 
     static public void SaveWorld(Block block, int x, int y)
     {
-        World world = Instance.saveGame.GetWorld();
+        World world = Instance.GetWorld();
         ModifiedBlock modifiedBlock = world.modifiedBlocks.Find(e => e.x == x && e.y == y);
         if (modifiedBlock == null)
         {
@@ -84,6 +93,47 @@ public class SaveManger : MonoBehaviour
         else
         {
             modifiedBlock.block = block;
+        }
+    }
+}
+
+[Serializable]
+public class ModifiedBlock
+{
+    public int x;
+    public int y;
+    public Block block;
+
+    public ModifiedBlock(Block block, int x, int y)
+    {
+        this.block = block;
+        this.x = x;
+        this.y = y;
+    }
+}
+
+[Serializable]
+public class World
+{
+    public int seed = 0;
+    public List<Slot> Slots = new();
+    public int hotBarIndex = 0;
+    public Vector2 playerPosition = new(20, 100);
+    public Quaternion playerRotation = Quaternion.identity;
+    public List<ModifiedBlock> modifiedBlocks = new();
+    public World(int seed, Item[] items)
+    {
+        this.seed = seed;
+        for (int i = 0; i < 36; i++)
+        {
+            if (i < items.Length)
+            {
+                Slots.Add(new Slot(items[i], 1));
+            }
+            else
+            {
+                Slots.Add(new Slot(null, 0));
+            }
         }
     }
 }

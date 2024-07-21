@@ -27,7 +27,7 @@ public class TerrainGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        World world = SaveManger.Instance.saveGame.GetWorld();
+        World world = SaveManger.Instance.GetWorld();
         List<ModifiedBlock> modifiedBlocks = world.modifiedBlocks;
         GenerateTerrain(world.seed);
         foreach (ModifiedBlock modifiedBlock in modifiedBlocks)
