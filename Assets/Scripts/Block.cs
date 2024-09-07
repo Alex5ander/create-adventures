@@ -23,17 +23,17 @@ public class Block : MonoBehaviour
 
     }
 
-    public virtual void StartMining()
-    {
-        particles.gameObject.SetActive(true);
-    }
-
     public virtual void Mining(float miningPower)
     {
+        if (!particles.gameObject.activeSelf)
+        {
+            particles.gameObject.SetActive(true);
+            particles.Play();
+        }
         spriteRenderer.color -= new Color(miningPower * Time.deltaTime, miningPower * Time.deltaTime, miningPower * Time.deltaTime, 0);
         if (spriteRenderer.color.maxColorComponent <= 0)
         {
-            destroy = true;
+            CreateDrop();
         }
     }
 
@@ -45,6 +45,7 @@ public class Block : MonoBehaviour
 
     public virtual void CreateDrop()
     {
+        Destroy(gameObject.transform.parent.gameObject);
         Drop drop = Instantiate(DropPrefab, transform.position, Quaternion.identity);
         drop.Set(item);
     }

@@ -47,12 +47,7 @@ public class Hand : MonoBehaviour
                 selectedBlock.EndMining();
                 selectedBlock = null;
             }
-        }
-
-        if (selectedBlock == null && block)
-        {
             selectedBlock = block;
-            selectedBlock.StartMining();
         }
 
         if (selectedBlock)

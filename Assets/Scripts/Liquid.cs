@@ -16,11 +16,6 @@ public class Liquid : Block
 
     }
 
-    public override void StartMining()
-    {
-
-    }
-
     override public void Mining(float miningPower)
     {
 
