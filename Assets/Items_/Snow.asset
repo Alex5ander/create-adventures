@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Snow
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 6045ae493555ee04298cbf93c1df8144, type: 3}
-  pickaxePower: 0
-  axePower: 0
+  miningPower: 0
   damage: 1
   knockback: 1
-  block: {fileID: 8738710622537529439, guid: 3693c0c1e48296b41aa8b89576dc9c0c, type: 3}
+  block: {fileID: 8738710622537529439, guid: e353920cdf7a4ba4ebe0d1ffe5bbc404, type: 3}

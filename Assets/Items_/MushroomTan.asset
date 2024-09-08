@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: MushroomTan
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 11868175b489c564ab2bcdc957b49e05, type: 3}
-  pickaxePower: 0
+  miningPower: 0
   damage: 1
   knockback: 1
-  placeable: 1
-  solid: 0
+  block: {fileID: 8738710622537529439, guid: b7a19c8d33874194aa010a148d4152d0, type: 3}

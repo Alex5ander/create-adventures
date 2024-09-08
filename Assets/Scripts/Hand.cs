@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class Hand : MonoBehaviour
 {
+    [SerializeField] TerrainGenerator terrainGenerator;
     [SerializeField] Inventory inventory;
-    [SerializeField] InvetoryUI invetoryUI;
+    [SerializeField] InventoryUI inventoryUI;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] Damageable damageable;
     [SerializeField] ParticleSystem particles;
@@ -37,34 +38,39 @@ public class Hand : MonoBehaviour
             spriteRenderer.sprite = null;
         }
     }
-
-    Block selectedBlock;
-    public void Use(Block block)
+    float tt = 0;
+    void StartMining(Texture2D texture)
     {
-        Item item = inventory.Slots[invetoryUI.HotBarIndex].item;
-        if (selectedBlock != block)
+        if (!particles.gameObject.activeSelf)
         {
-            if (selectedBlock)
+            tt = Time.time;
+            particles.gameObject.SetActive(true);
+            particlesRenderer.material.mainTexture = texture;
+        }
+    }
+
+    public void Use(int x, int y)
+    {
+        Block block = terrainGenerator.GetBlock(x, y);
+        Item item = inventory.Slots[inventoryUI.HotBarIndex].item;
+        if (item && item.block && block == null)
+        {
+            inventory.Remove(inventoryUI.HotBarIndex, 1);
+            terrainGenerator.CreateBlock(x, y, item.block, true);
+        }
+        else if (item && item.block == null && block)
+        {
+            particles.transform.position = new(x, y);
+            StartMining(block.item.sprite.texture);
+            if (Time.time - tt > 1.5f)
             {
-                particles.gameObject.SetActive(false);
-                selectedBlock = null;
+                terrainGenerator.Remove(x, y, true);
             }
         }
+    }
 
-        if (selectedBlock == null && block)
-        {
-            selectedBlock = block;
-            if (!particles.gameObject.activeSelf)
-            {
-                particles.transform.position = selectedBlock.transform.position;
-                particles.gameObject.SetActive(true);
-                particlesRenderer.material.mainTexture = selectedBlock.item.sprite.texture;
-            }
-        }
-
-        if (selectedBlock)
-        {
-            float damage = !item ? 0 : item.miningPower;
-        }
+    public void Use()
+    {
+        particles.gameObject.SetActive(false);
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TerrainGenerator : MonoBehaviour
 {
-    int terrainWidth = 320;
+    int terrainWidth = 640;
     int terrainHeight = 100;
     float frequency = 0.04f;
     Block[,] blocks;
@@ -212,7 +212,6 @@ public class TerrainGenerator : MonoBehaviour
             Block block = Instantiate(blockPrefab, new(x, y), Quaternion.identity);
             blocks[x, y] = block;
             int chunkIndex = Mathf.FloorToInt(x / (float)terrainWidth * 10);
-            print(chunkIndex);
             if (!chunks.ContainsKey(chunkIndex))
             {
                 chunk = new GameObject();

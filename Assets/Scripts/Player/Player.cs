@@ -4,7 +4,6 @@ public class Player : MonoBehaviour
 {
     [SerializeField] Inventory inventory;
     [SerializeField] LayerMask layerMask;
-    [SerializeField] TerrainGenerator terrainGenerator;
     CapsuleCollider2D capsuleCollider2D;
     Rigidbody2D body;
     float jumpPower = 15;
@@ -80,20 +79,19 @@ public class Player : MonoBehaviour
             animator.SetBool("Attack", true);
             if (distance < 4)
             {
-                Block block = terrainGenerator.GetBlock(x, y);
-                hand.Use(block);
+                hand.Use(x, y);
             }
         }
         else
         {
-            hand.Use(null);
+            hand.Use();
             animator.SetBool("Attack", false);
         }
     }
 
     void PointerUp()
     {
-        hand.Use(null);
+        hand.Use();
         animator.SetBool("Attack", false);
     }
     void HandleMouse()

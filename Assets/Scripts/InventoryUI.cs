@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InvetoryUI : MonoBehaviour
+public class InventoryUI : MonoBehaviour
 {
     [SerializeField] Inventory inventory;
     [SerializeField] CanvasGroup canvasGroup;
