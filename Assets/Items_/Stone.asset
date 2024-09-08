@@ -16,4 +16,4 @@ MonoBehaviour:
   miningPower: 0
   damage: 0
   knockback: 1
-  block: {fileID: 8738710622537529439, guid: 7008832d104b498489aa35c687c0c8ef, type: 3}
+  block: {fileID: 8738710622537529439, guid: 7529ab36860d8f0449e422880a37a41e, type: 3}

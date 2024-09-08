@@ -65,6 +65,7 @@ public class Hand : MonoBehaviour
             if (Time.time - tt > 1.5f)
             {
                 terrainGenerator.Remove(x, y, true);
+                particles.gameObject.SetActive(false);
             }
         }
     }

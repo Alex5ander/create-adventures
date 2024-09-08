@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Grass
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: c7a3efce8b8ab684e8bb269bec975d1e, type: 3}
-  pickaxePower: 0
-  axePower: 0
+  miningPower: 0
   damage: 1
   knockback: 1
-  block: {fileID: 8738710622537529439, guid: 2893bf5d18af01f4fa4578985a25f900, type: 3}
+  block: {fileID: 8738710622537529439, guid: a5c1b1b92580c5947a6f365d511d2869, type: 3}
