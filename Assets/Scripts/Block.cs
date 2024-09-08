@@ -3,6 +3,7 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     [SerializeField] Drop DropPrefab;
+    public float resistence;
     public Item item;
     // Start is called before the first frame update
     void Start()
@@ -16,10 +17,15 @@ public class Block : MonoBehaviour
 
     }
 
+    public void Mining()
+    {
+
+    }
+
     public virtual void CreateDrop()
     {
-        Destroy(gameObject);
         Drop drop = Instantiate(DropPrefab, transform.position, Quaternion.identity);
         drop.Set(item);
+        Destroy(gameObject);
     }
 }

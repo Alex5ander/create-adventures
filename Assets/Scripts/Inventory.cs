@@ -49,6 +49,12 @@ public class Inventory : ScriptableObject
         OnChange.Invoke(old);
         OnChange.Invoke(slot);
     }
+    public void Set(int index, Item item, int amount = 1)
+    {
+        Slots[index] = new Slot(item, amount);
+        Save();
+        OnChange.Invoke(index);
+    }
     public void Save()
     {
         World world = SaveManger.Instance.GetWorld();

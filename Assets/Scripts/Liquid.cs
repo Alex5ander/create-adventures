@@ -3,7 +3,6 @@ using UnityEngine;
 public class Liquid : Block
 {
     [SerializeField] Inventory inventory;
-    [SerializeField] Item bucketEmpty;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,5 +13,10 @@ public class Liquid : Block
     void Update()
     {
 
+    }
+
+    public override void CreateDrop()
+    {
+        Destroy(gameObject);
     }
 }

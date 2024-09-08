@@ -79,19 +79,18 @@ public class Player : MonoBehaviour
             animator.SetBool("Attack", true);
             if (distance < 4)
             {
-                hand.Use(x, y);
+
             }
         }
         else
         {
-            hand.Use();
+
             animator.SetBool("Attack", false);
         }
     }
 
     void PointerUp()
     {
-        hand.Use();
         animator.SetBool("Attack", false);
     }
     void HandleMouse()
