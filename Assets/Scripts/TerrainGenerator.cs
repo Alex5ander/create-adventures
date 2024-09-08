@@ -8,7 +8,6 @@ public class TerrainGenerator : MonoBehaviour
     int terrainHeight = 100;
     float frequency = 0.04f;
     Block[,] blocks;
-    [SerializeField] OptimizedBlock OptimizedBlockPrefab;
     [Header("Blocks")]
     [SerializeField] Block WoodMid;
     [SerializeField] Block WoodBottom;
@@ -24,6 +23,8 @@ public class TerrainGenerator : MonoBehaviour
     [SerializeField] Texture2D tree;
     [SerializeField] float treeFrequency;
     [SerializeField] float treeThreshold;
+    readonly Dictionary<int, GameObject> chunks = new();
+    [SerializeField] Transform playerTransform;
     // Start is called before the first frame update
     void Start()
     {
@@ -44,6 +45,17 @@ public class TerrainGenerator : MonoBehaviour
             {
                 CreateBlock(modifiedBlock.x, modifiedBlock.y, modifiedBlock.block);
             }
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        int x = Mathf.FloorToInt(playerTransform.position.x / terrainWidth * 10);
+        foreach (int i in chunks.Keys)
+        {
+            GameObject chunk = chunks[i];
+            chunk.SetActive(x == i || x == i + 1 || x == i - 1);
         }
     }
 
@@ -191,16 +203,25 @@ public class TerrainGenerator : MonoBehaviour
             }
         }
     }
-    public void CreateBlock(int x, int y, Block block, bool save = false)
+    public void CreateBlock(int x, int y, Block blockPrefab, bool save = false)
     {
         if (x < 0 || x > blocks.GetLength(0) - 1 || y < 0 || y > blocks.GetLength(1) - 1) { return; }
         if (blocks[x, y] == null)
         {
-            OptimizedBlock optimizer = Instantiate(OptimizedBlockPrefab, new(x, y, 0), Quaternion.identity);
-            optimizer.block = Instantiate(block, new(x, y), Quaternion.identity);
-            optimizer.block.gameObject.SetActive(false);
-            optimizer.block.transform.SetParent(optimizer.transform);
-            blocks[x, y] = optimizer.block;
+            GameObject chunk;
+            Block block = Instantiate(blockPrefab, new(x, y), Quaternion.identity);
+            blocks[x, y] = block;
+            int chunkIndex = Mathf.FloorToInt(x / (float)terrainWidth * 10);
+            print(chunkIndex);
+            if (!chunks.ContainsKey(chunkIndex))
+            {
+                chunk = new GameObject();
+                chunk.SetActive(false);
+                chunk.transform.position = new(x, 0);
+                chunks.Add(chunkIndex, chunk);
+            }
+            chunk = chunks[chunkIndex];
+            block.transform.SetParent(chunk.transform);
             if (save)
             {
                 SaveManger.SaveWorld(block, x, y);
@@ -225,7 +246,6 @@ public class TerrainGenerator : MonoBehaviour
                 block.CreateDrop();
                 SaveManger.SaveWorld(null, x, y);
             }
-            Destroy(block.transform.parent.gameObject);
             blocks[x, y] = null;
         }
     }

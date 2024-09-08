@@ -6,10 +6,12 @@ public class Hand : MonoBehaviour
     [SerializeField] InvetoryUI invetoryUI;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] Damageable damageable;
+    [SerializeField] ParticleSystem particles;
+    Renderer particlesRenderer;
     // Start is called before the first frame update
     void Start()
     {
-
+        particlesRenderer = particles.GetComponent<Renderer>();
     }
 
     // Update is called once per frame
@@ -44,15 +46,25 @@ public class Hand : MonoBehaviour
         {
             if (selectedBlock)
             {
-                selectedBlock.EndMining();
+                particles.gameObject.SetActive(false);
                 selectedBlock = null;
             }
+        }
+
+        if (selectedBlock == null && block)
+        {
             selectedBlock = block;
+            if (!particles.gameObject.activeSelf)
+            {
+                particles.transform.position = selectedBlock.transform.position;
+                particles.gameObject.SetActive(true);
+                particlesRenderer.material.mainTexture = selectedBlock.item.sprite.texture;
+            }
         }
 
         if (selectedBlock)
         {
-            selectedBlock.Mining(!item ? 0 : item.miningPower);
+            float damage = !item ? 0 : item.miningPower;
         }
     }
 }

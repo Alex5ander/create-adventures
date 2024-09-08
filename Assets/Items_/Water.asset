@@ -13,8 +13,7 @@ MonoBehaviour:
   m_Name: Water
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 8322e5058d6f88147b4df5b2b16d5c5f, type: 3}
-  pickaxePower: 0
-  axePower: 0
+  miningPower: 0
   damage: 1
   knockback: 1
-  block: {fileID: 8738710622537529439, guid: cebd04455650488438ed112112201460, type: 3}
+  block: {fileID: 6428940138805137412, guid: 1328dd6bd452b5549a430c1084ae2ffb, type: 3}
