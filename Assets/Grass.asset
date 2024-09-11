@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65f264e7e4e4e8e4cbaa53204f3e2546, type: 3}
+  m_Name: Grass
+  m_EditorClassIdentifier: 
+  color: {r: 0, g: 1, b: 0, a: 1}
+  SurfaceBlock: {fileID: 8738710622537529439, guid: 6228541cec9bf4b409785c7007710bfb, type: 3}
+  Dirt: {fileID: 8738710622537529439, guid: b980fbacdcde38143abf42958c874807, type: 3}
+  Stone: {fileID: 8738710622537529439, guid: cf66562ff077f10478b9035b5f213e75, type: 3}
+  frequency: 0.18
+  threshold: 0.33
+  texture: {fileID: 0}
+  ores:
+  - block: {fileID: 8738710622537529439, guid: b61262ef9c2e7ce4b9911ddccd05ddc3, type: 3}
+    frequency: 0.37
+    threshold: 0.21
+    texture: {fileID: 0}
+  - block: {fileID: 8738710622537529439, guid: 5fb3358c2ac4c0242bcc5880b3536c2f, type: 3}
+    frequency: 0.51
+    threshold: 0.51
+    texture: {fileID: 0}

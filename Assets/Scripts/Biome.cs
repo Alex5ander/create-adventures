@@ -10,8 +10,9 @@ public class Ore
     public Texture2D texture;
 }
 
+[CreateAssetMenu]
 [Serializable]
-public class Biome
+public class Biome : ScriptableObject
 {
     public Color color;
     public Block SurfaceBlock;

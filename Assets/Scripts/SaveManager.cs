@@ -19,7 +19,7 @@ public class SaveManger : MonoBehaviour
     public List<World> worlds = new();
     public World GetWorld() => worlds[worldIndex];
     static public SaveManger Instance;
-
+    [SerializeField] Inventory inventory;
     void Awake()
     {
         if (Instance == null)
@@ -67,12 +67,14 @@ public class SaveManger : MonoBehaviour
     {
         worlds.Add(new World(UnityEngine.Random.Range(-1000, 1000), InitialItems));
         worldIndex = worlds.Count - 1;
+        inventory.Load();
         SceneManager.LoadScene(1);
     }
 
     public void SelectWorld(int windex)
     {
         worldIndex = windex;
+        inventory.Load();
         SceneManager.LoadScene(1);
     }
 

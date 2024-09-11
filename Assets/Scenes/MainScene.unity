@@ -1383,6 +1383,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7ad47390667e61940a27855a3fcfb0b9, type: 2}
   worldIndex: 0
   worlds: []
+  inventory: {fileID: 11400000, guid: bd2f62f0c70eaab4999c5ebff2140eaf, type: 2}
 --- !u!1 &835230722
 GameObject:
   m_ObjectHideFlags: 0

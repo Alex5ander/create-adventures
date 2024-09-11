@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65f264e7e4e4e8e4cbaa53204f3e2546, type: 3}
+  m_Name: Ice
+  m_EditorClassIdentifier: 
+  color: {r: 1, g: 1, b: 1, a: 1}
+  SurfaceBlock: {fileID: 8738710622537529439, guid: d43bf2633d314354f81c106004f92cb3, type: 3}
+  Dirt: {fileID: 8738710622537529439, guid: 168010f92d3147848be07a9c63fd0a84, type: 3}
+  Stone: {fileID: 8738710622537529439, guid: cadc21e4b702084489c8ca3be7c4740e, type: 3}
+  frequency: 0.09
+  threshold: 0.15
+  texture: {fileID: 0}
+  ores:
+  - block: {fileID: 8738710622537529439, guid: b1c2049d133f3124a8e85bee15abfc64, type: 3}
+    frequency: 0.24
+    threshold: 0.07
+    texture: {fileID: 0}
+  - block: {fileID: 8738710622537529439, guid: 372fc49fb90dc294d8b8f52e98b7a790, type: 3}
+    frequency: 0.05
+    threshold: 0.09
+    texture: {fileID: 0}

@@ -10,7 +10,6 @@ public class Item : ScriptableObject
   public float miningPower;
   public int damage = 1;
   public float knockback = 1;
-  public Block block;
 }
 
 #if UNITY_EDITOR

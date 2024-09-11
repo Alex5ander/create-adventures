@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class Inventory : ScriptableObject
 {
-    public List<Slot> Slots = new();
+    public List<Slot> Slots { get; private set; }
     public event Action<int> OnChange;
     public bool Open;
     public void Add(Item item, int amount)
@@ -62,6 +62,7 @@ public class Inventory : ScriptableObject
     }
     public void Load()
     {
+        Open = false;
         Slots = SaveManger.Instance.GetWorld().Slots;
     }
 }
