@@ -1,8 +1,7 @@
 using UnityEngine;
-
 public class Liquid : Block
 {
-    [SerializeField] Inventory inventory;
+    [SerializeField] Item miningItem;
     // Start is called before the first frame update
     void Start()
     {
@@ -15,8 +14,17 @@ public class Liquid : Block
 
     }
 
+    public override void Mining(ref Item item)
+    {
+        if (item == miningItem)
+        {
+            life = 0;
+            item = this.item;
+        }
+    }
+
     public override void CreateDrop()
     {
-        Destroy(gameObject);
+        // Destroy(gameObject);
     }
 }

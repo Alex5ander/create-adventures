@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class SlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IDropHandler
 {
-    [SerializeField] Inventory inventory;
     [SerializeField] Image background;
     public Image image;
     public TextMeshProUGUI text;

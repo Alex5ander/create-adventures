@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e625a6b2b4fbe6c4db22376520df4b85, type: 3}
   m_Name: MushroomTan
   m_EditorClassIdentifier: 
+  block: {fileID: 8738710622537529439, guid: bda2e6bd7083e1a4b8a8c3822555d4a5, type: 3}
   sprite: {fileID: 21300000, guid: 11868175b489c564ab2bcdc957b49e05, type: 3}
   miningPower: 0
   damage: 1
   knockback: 1
-  block: {fileID: 8738710622537529439, guid: 586ee7f17576aad48b9c9f6f377b8a76, type: 3}

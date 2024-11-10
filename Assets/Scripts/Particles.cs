@@ -18,13 +18,10 @@ public class Particles : MonoBehaviour
 
     public void Play(Vector2 position, Sprite sprite)
     {
-        if (!gameObject.activeSelf)
-        {
-            particlesRenderer = particles.GetComponent<Renderer>();
-            transform.position = position;
-            particlesRenderer.material.mainTexture = sprite.texture;
-            gameObject.SetActive(true);
-        }
+        particlesRenderer = particles.GetComponent<Renderer>();
+        transform.position = position;
+        particlesRenderer.material.mainTexture = sprite.texture;
+        gameObject.SetActive(true);
     }
 
     public void Stop()

@@ -6,6 +6,7 @@ using UnityEngine;
 [CreateAssetMenu]
 public class Item : ScriptableObject
 {
+  public Block block;
   public Sprite sprite;
   public float miningPower;
   public int damage = 1;

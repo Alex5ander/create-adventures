@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu]
-public class Inventory : ScriptableObject
+// [CreateAssetMenu]
+public class Inventory : MonoBehaviour
 {
     public List<Slot> Slots { get; private set; }
     public event Action<int> OnChange;
     public bool Open;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        Load();
+    }
     public void Add(Item item, int amount)
     {
         Slot availableSlot = Slots.Find(Slot => Slot.item == item);

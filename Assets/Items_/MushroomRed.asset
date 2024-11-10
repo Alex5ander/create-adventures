@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e625a6b2b4fbe6c4db22376520df4b85, type: 3}
   m_Name: MushroomRed
   m_EditorClassIdentifier: 
+  block: {fileID: 8738710622537529439, guid: 34e6bd5fb3ea6334bb1572b129528378, type: 3}
   sprite: {fileID: 21300000, guid: 898f5ec9225db384f9987f3d71e4b7c9, type: 3}
   miningPower: 0
   damage: 1
   knockback: 1
-  block: {fileID: 8738710622537529439, guid: e25a1957e08daf849ae3b2a9117279e5, type: 3}

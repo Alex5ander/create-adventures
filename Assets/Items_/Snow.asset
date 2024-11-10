@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e625a6b2b4fbe6c4db22376520df4b85, type: 3}
   m_Name: Snow
   m_EditorClassIdentifier: 
+  block: {fileID: 8738710622537529439, guid: e1b26033cf5b81b4aba4425bac063f0d, type: 3}
   sprite: {fileID: 21300000, guid: 6045ae493555ee04298cbf93c1df8144, type: 3}
   miningPower: 0
   damage: 1
   knockback: 1
-  block: {fileID: 8738710622537529439, guid: 168010f92d3147848be07a9c63fd0a84, type: 3}

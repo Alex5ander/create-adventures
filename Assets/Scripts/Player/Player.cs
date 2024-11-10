@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] TerrainGenerator terrainGenerator;
+    [SerializeField] Particles particles;
+    [SerializeField] InventoryUI inventoryUI;
     [SerializeField] Inventory inventory;
     [SerializeField] LayerMask layerMask;
     CapsuleCollider2D capsuleCollider2D;
@@ -13,7 +16,6 @@ public class Player : MonoBehaviour
     Animator animator;
     float lastSaveTime = 0;
     bool invencible = false;
-    [SerializeField] Hand hand;
     // Start is called before the first frame update
     void Start()
     {
@@ -67,7 +69,39 @@ public class Player : MonoBehaviour
             Jump();
         }
     }
+    Block selectedBlock;
+    void Mining(Block block, int x, int y)
+    {
+        if (block != selectedBlock)
+        {
+            if (block)
+            {
+                particles.Play(new Vector2(x, y), block.GetComponent<SpriteRenderer>().sprite);
+            }
+            else
+            {
+                particles.Stop();
+            }
 
+            if (selectedBlock)
+            {
+                selectedBlock.life = 100;
+            }
+        }
+
+        selectedBlock = block;
+
+        if (selectedBlock)
+        {
+            particles.Play(new Vector2(x, y), selectedBlock.GetComponent<SpriteRenderer>().sprite);
+            selectedBlock.Mining(ref inventory.Slots[inventoryUI.index].item);
+            if (selectedBlock.life <= 0)
+            {
+                terrainGenerator.RemoveBlock(x, y, true);
+                inventoryUI.OnChange(inventoryUI.index);
+            }
+        }
+    }
     void PointerDown(Vector3 position)
     {
         if (!inventory.Open)
@@ -79,19 +113,48 @@ public class Player : MonoBehaviour
             animator.SetBool("Attack", true);
             if (distance < 4)
             {
+                Block block = terrainGenerator.GetBlock(x, y);
+                Slot slot = inventory.Slots[inventoryUI.index];
+                Item item = slot.item;
 
+
+                if (slot.amount > 0 && item.block && !block)
+                {
+                    terrainGenerator.CreateBlock(x, y, item.block, true);
+                    inventory.Remove(inventoryUI.index, 1);
+                }
+                else if (block)
+                {
+                    Mining(block, x, y);
+                }
+                else { particles.Stop(); }
+            }
+            else
+            {
+                particles.Stop();
             }
         }
         else
         {
-
+            if (selectedBlock)
+            {
+                selectedBlock.life = 100;
+            }
+            selectedBlock = null;
             animator.SetBool("Attack", false);
+            particles.Stop();
         }
     }
 
     void PointerUp()
     {
+        if (selectedBlock)
+        {
+            selectedBlock.life = 100;
+        }
+        selectedBlock = null;
         animator.SetBool("Attack", false);
+        particles.Stop();
     }
     void HandleMouse()
     {
@@ -152,6 +215,16 @@ public class Player : MonoBehaviour
             Vector2 forceDirection = -(other.transform.position - transform.position).normalized;
             body.linearVelocity = Vector2.zero;
             body.AddForce(forceDirection * damageable.knockback, ForceMode2D.Impulse);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        collision.TryGetComponent(out Drop drop);
+        if (drop)
+        {
+            inventory.Add(drop.item, 1);
+            Destroy(drop.gameObject);
         }
     }
 

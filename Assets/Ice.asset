@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Ice
   m_EditorClassIdentifier: 
   color: {r: 1, g: 1, b: 1, a: 1}
-  SurfaceBlock: {fileID: 8738710622537529439, guid: d43bf2633d314354f81c106004f92cb3, type: 3}
-  Dirt: {fileID: 8738710622537529439, guid: 168010f92d3147848be07a9c63fd0a84, type: 3}
-  Stone: {fileID: 8738710622537529439, guid: cadc21e4b702084489c8ca3be7c4740e, type: 3}
+  SurfaceBlock: {fileID: 8738710622537529439, guid: 4827c03ef66128245a9f0f759dd373aa, type: 3}
+  Dirt: {fileID: 8738710622537529439, guid: e1b26033cf5b81b4aba4425bac063f0d, type: 3}
+  Stone: {fileID: 8738710622537529439, guid: ea12cbbad8c8c9246982faad7f10cd41, type: 3}
   frequency: 0.09
   threshold: 0.15
   texture: {fileID: 0}
   ores:
-  - block: {fileID: 8738710622537529439, guid: b1c2049d133f3124a8e85bee15abfc64, type: 3}
+  - block: {fileID: 8738710622537529439, guid: a75898081a22ff041bd4436b7fc31b06, type: 3}
     frequency: 0.24
     threshold: 0.07
     texture: {fileID: 0}
-  - block: {fileID: 8738710622537529439, guid: 372fc49fb90dc294d8b8f52e98b7a790, type: 3}
+  - block: {fileID: 8738710622537529439, guid: 5f196ecdd1c70834b95b999aabeaa8e7, type: 3}
     frequency: 0.05
     threshold: 0.09
     texture: {fileID: 0}

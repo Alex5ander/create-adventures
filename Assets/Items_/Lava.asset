@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e625a6b2b4fbe6c4db22376520df4b85, type: 3}
   m_Name: Lava
   m_EditorClassIdentifier: 
+  block: {fileID: 8738710622537529439, guid: f0c642f39260e70479313a60ddb4927a, type: 3}
   sprite: {fileID: 21300000, guid: 465dfafa966ee7d4489b22e10972b7dc, type: 3}
   miningPower: 0
   damage: 1
   knockback: 1
-  block: {fileID: 8738710622537529439, guid: 5021469e48f0baf449648b42380f1016, type: 3}

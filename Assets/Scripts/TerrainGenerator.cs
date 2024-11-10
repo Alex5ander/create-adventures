@@ -38,7 +38,7 @@ public class TerrainGenerator : MonoBehaviour
             {
                 if (block != null)
                 {
-                    Remove(modifiedBlock.x, modifiedBlock.y);
+                    RemoveBlock(modifiedBlock.x, modifiedBlock.y);
                 }
             }
             else if (block == null)
@@ -223,7 +223,7 @@ public class TerrainGenerator : MonoBehaviour
             block.transform.SetParent(chunk.transform);
             if (save)
             {
-                SaveManger.SaveWorld(block, x, y);
+                SaveManger.SaveWorld(blockPrefab, x, y);
             }
         }
     }
@@ -235,14 +235,14 @@ public class TerrainGenerator : MonoBehaviour
         }
         return null;
     }
-    public void Remove(int x, int y, bool save = false)
+    public void RemoveBlock(int x, int y, bool save = false)
     {
-        if (blocks[x, y])
+        Block block = blocks[x, y];
+        if (block)
         {
-            Block block = blocks[x, y];
+            Destroy(block.gameObject);
             if (save)
             {
-                block.CreateDrop();
                 SaveManger.SaveWorld(null, x, y);
             }
             blocks[x, y] = null;
