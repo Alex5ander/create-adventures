@@ -227,20 +227,15 @@ public class TerrainGenerator : MonoBehaviour
             }
         }
     }
-    public Block GetBlock(int x, int y)
+    public T GetBlock<T>(int x, int y) where T : Block
     {
         if (x >= 0 && x < blocks.GetLength(0) && y >= 0 && y < blocks.GetLength(1))
         {
-            return blocks[x, y];
-        }
-        return null;
-    }
-    public Liquid GetLiquid(int x, int y)
-    {
-        Block block = GetBlock(x, y);
-        if (block && block.GetType() == typeof(Liquid))
-        {
-            return (Liquid)block;
+            Block block = blocks[x, y];
+            if (block is T typedBlock)
+            {
+                return typedBlock;
+            }
         }
         return null;
     }

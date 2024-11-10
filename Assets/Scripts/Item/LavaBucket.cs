@@ -9,7 +9,7 @@ public class LavaBucketItem : BlockItem
   [SerializeField] BucketItem bucketItem;
   public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain)
   {
-    Block block = terrain.GetBlock(x, y);
+    Block block = terrain.GetBlock<Block>(x, y);
     if (block == null)
     {
       inventory.Set(inventory.index, bucketItem, 1);

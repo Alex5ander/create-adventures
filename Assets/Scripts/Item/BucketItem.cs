@@ -9,7 +9,7 @@ public class BucketItem : Item
 {
   public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain)
   {
-    Liquid liquid = terrain.GetLiquid(x, y);
+    Liquid liquid = terrain.GetBlock<Liquid>(x, y);
     if (liquid)
     {
       liquid.Mining(x, y, inventory, terrain);

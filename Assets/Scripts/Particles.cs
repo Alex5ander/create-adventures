@@ -13,7 +13,10 @@ public class Particles : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetMouseButtonUp(0))
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     public void Play(Vector2 position, Sprite sprite)
@@ -22,10 +25,5 @@ public class Particles : MonoBehaviour
         transform.position = position;
         particlesRenderer.material.mainTexture = sprite.texture;
         gameObject.SetActive(true);
-    }
-
-    public void Stop()
-    {
-        gameObject.SetActive(false);
     }
 }

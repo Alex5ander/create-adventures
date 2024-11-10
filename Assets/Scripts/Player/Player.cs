@@ -79,6 +79,11 @@ public class Player : MonoBehaviour
             {
                 Slot slot = inventory.Slots[inventory.index];
                 Item item = slot.item;
+                Block block = terrainGenerator.GetBlock<Block>(x, y);
+                if (block)
+                {
+                    particles.Play(new(x, y), block.GetComponent<SpriteRenderer>().sprite);
+                }
                 if (item)
                 {
                     item.Use(x, y, inventory, terrainGenerator);

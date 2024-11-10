@@ -8,10 +8,10 @@ public class ToolItem : Item
 {
   public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain)
   {
-    Block block = terrain.GetBlock(x, y);
+    Solid block = terrain.GetBlock<Solid>(x, y);
     if (block)
     {
-      block.Mining(x, y, this, terrain);
+      block.Mining(x, y, inventory, terrain);
     }
   }
 }
