@@ -18,21 +18,19 @@ public class Block : MonoBehaviour
 
     }
 
-    public virtual void Mining(ref Item item)
+    public virtual void Mining(int x, int y, Item item, TerrainGenerator terrain)
     {
-        if (item)
+        life -= item.miningPower;
+        if (life < 0)
         {
-            life -= item.miningPower;
-            if (life < 0)
-            {
-                CreateDrop();
-            }
+            Drop drop = Instantiate(DropPrefab, transform.position, Quaternion.identity);
+            drop.Set(this.item);
+            terrain.RemoveBlock(x, y, true);
         }
     }
 
-    public virtual void CreateDrop()
+    public virtual void Mining(int x, int y, Inventory inventory, TerrainGenerator terrain)
     {
-        Drop drop = Instantiate(DropPrefab, transform.position, Quaternion.identity);
-        drop.Set(item);
+
     }
 }

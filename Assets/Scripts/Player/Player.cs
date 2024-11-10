@@ -69,102 +69,56 @@ public class Player : MonoBehaviour
             Jump();
         }
     }
-    Block selectedBlock;
-    void Mining(Block block, int x, int y)
-    {
-        if (block != selectedBlock)
-        {
-            if (block)
-            {
-                particles.Play(new Vector2(x, y), block.GetComponent<SpriteRenderer>().sprite);
-            }
-            else
-            {
-                particles.Stop();
-            }
-
-            if (selectedBlock)
-            {
-                selectedBlock.life = 100;
-            }
-        }
-
-        selectedBlock = block;
-
-        if (selectedBlock)
-        {
-            particles.Play(new Vector2(x, y), selectedBlock.GetComponent<SpriteRenderer>().sprite);
-            selectedBlock.Mining(ref inventory.Slots[inventoryUI.index].item);
-            if (selectedBlock.life <= 0)
-            {
-                terrainGenerator.RemoveBlock(x, y, true);
-                inventoryUI.OnChange(inventoryUI.index);
-            }
-        }
-    }
-    void PointerDown(Vector3 position)
+    void PointerDown(int x, int y)
     {
         if (!inventory.Open)
         {
-            Vector3 vector3 = Camera.main.ScreenToWorldPoint(position);
-            int x = Mathf.RoundToInt(vector3.x);
-            int y = Mathf.RoundToInt(vector3.y);
-            float distance = Vector2.Distance(vector3, transform.position);
+            float distance = Vector2.Distance(new(x, y), transform.position);
             animator.SetBool("Attack", true);
             if (distance < 4)
             {
-                Block block = terrainGenerator.GetBlock(x, y);
-                Slot slot = inventory.Slots[inventoryUI.index];
+                Slot slot = inventory.Slots[inventory.index];
                 Item item = slot.item;
-
-
-                if (slot.amount > 0 && item.block && !block)
+                if (item)
                 {
-                    terrainGenerator.CreateBlock(x, y, item.block, true);
-                    inventory.Remove(inventoryUI.index, 1);
+                    item.Use(x, y, inventory, terrainGenerator);
                 }
-                else if (block)
-                {
-                    Mining(block, x, y);
-                }
-                else { particles.Stop(); }
-            }
-            else
-            {
-                particles.Stop();
             }
         }
         else
         {
-            if (selectedBlock)
-            {
-                selectedBlock.life = 100;
-            }
-            selectedBlock = null;
             animator.SetBool("Attack", false);
-            particles.Stop();
         }
     }
 
-    void PointerUp()
+    void PointerUp(int x, int y)
     {
-        if (selectedBlock)
-        {
-            selectedBlock.life = 100;
-        }
-        selectedBlock = null;
         animator.SetBool("Attack", false);
-        particles.Stop();
+        Slot slot = inventory.Slots[inventory.index];
+        Item item = slot.item;
+
+        if (item)
+        {
+            item.Use(x, y, inventory, terrainGenerator);
+        }
+    }
+    (int x, int y) ScreenToWorldPoint(Vector2 position)
+    {
+        Vector3 vector3 = Camera.main.ScreenToWorldPoint(position);
+        int x = Mathf.RoundToInt(vector3.x);
+        int y = Mathf.RoundToInt(vector3.y);
+        return (x, y);
     }
     void HandleMouse()
     {
+        (int x, int y) = ScreenToWorldPoint(Input.mousePosition);
         if (Input.GetMouseButton(0))
         {
-            PointerDown(Input.mousePosition);
+            PointerDown(x, y);
         }
         if (Input.GetMouseButtonUp(0))
         {
-            PointerUp();
+            PointerUp(x, y);
         }
     }
 
@@ -175,13 +129,14 @@ public class Player : MonoBehaviour
             Touch touch = Input.GetTouch(i);
             if (touch.fingerId == MouseFollower.fingerId)
             {
+                (int x, int y) = ScreenToWorldPoint(touch.position);
                 if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
                 {
-                    PointerDown(touch.position);
+                    PointerDown(x, y);
                 }
                 else
                 {
-                    PointerUp();
+                    PointerUp(x, y);
                 }
             }
         }

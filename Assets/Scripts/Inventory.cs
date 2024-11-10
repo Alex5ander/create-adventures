@@ -6,6 +6,7 @@ using UnityEngine;
 // [CreateAssetMenu]
 public class Inventory : MonoBehaviour
 {
+    public int index = 0;
     public List<Slot> Slots { get; private set; }
     public event Action<int> OnChange;
     public bool Open;
@@ -48,6 +49,21 @@ public class Inventory : MonoBehaviour
         }
     }
 
+    public void Remove(Item item, int amount)
+    {
+        Slot availableSlot = Slots.FirstOrDefault(e => e.item == item);
+        if (availableSlot != null)
+        {
+            availableSlot.amount -= amount;
+            if (availableSlot.amount == 0)
+            {
+                availableSlot.item = null;
+            }
+            Save();
+            OnChange.Invoke(Slots.IndexOf(availableSlot));
+        }
+    }
+
     public void Swap(int old, int slot)
     {
         (Slots[slot], Slots[old]) = (Slots[old], Slots[slot]);
@@ -69,6 +85,8 @@ public class Inventory : MonoBehaviour
     public void Load()
     {
         Open = false;
-        Slots = SaveManger.Instance.GetWorld().Slots;
+        World world = SaveManger.Instance.GetWorld();
+        index = world.hotBarIndex;
+        Slots = world.Slots;
     }
 }

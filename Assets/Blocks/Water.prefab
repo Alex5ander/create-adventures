@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 388602383150436382}
   - component: {fileID: 8468411329575893221}
   - component: {fileID: 3907038860346997853}
-  - component: {fileID: 6428940138805137412}
+  - component: {fileID: 3490235859914406198}
   m_Layer: 0
   m_Name: Water
   m_TagString: Untagged
@@ -135,7 +135,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &6428940138805137412
+--- !u!114 &3490235859914406198
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -150,5 +150,4 @@ MonoBehaviour:
   DropPrefab: {fileID: 3140899486705495907, guid: 8f2976a05717a804682850635a73ec8d, type: 3}
   resistence: 0
   life: 100
-  item: {fileID: 11400000, guid: 96937f4375b6daf4c90d32893631cac1, type: 2}
-  miningItem: {fileID: 11400000, guid: 7ad47390667e61940a27855a3fcfb0b9, type: 2}
+  item: {fileID: 11400000, guid: c70f0a5360c18d54ab21436f831ef5bb, type: 2}

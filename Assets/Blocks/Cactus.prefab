@@ -101,4 +101,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DropPrefab: {fileID: 3140899486705495907, guid: 8f2976a05717a804682850635a73ec8d, type: 3}
-  item: {fileID: 11400000, guid: 89a01bac753b0494b8adb3b4674821eb, type: 2}
+  resistence: 0
+  life: 100
+  item: {fileID: 11400000, guid: 10e0b3514ef7dd64aafd9fd1f796a2dc, type: 2}

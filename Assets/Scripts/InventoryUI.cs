@@ -4,7 +4,6 @@ using UnityEngine.Events;
 
 public class InventoryUI : MonoBehaviour
 {
-    public int index = 0;
     [SerializeField] Transform hotbarTransform;
     [SerializeField] Inventory inventory;
     [SerializeField] CanvasGroup canvasGroup;
@@ -37,7 +36,6 @@ public class InventoryUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        index = SaveManger.Instance.GetWorld().hotBarIndex;
         for (int i = 0; i < SlotsUI.Count; i++)
         {
             SlotUI slotUI = SlotsUI[i];
@@ -47,7 +45,7 @@ public class InventoryUI : MonoBehaviour
             slotUI.OnItemBeginDrag += OnItemBeginDrag;
             slotUI.OnItemDrop += OnItemDrop;
             slotUI.OnItemEndDrag += OnItemEndDrag;
-            if (index == i)
+            if (inventory.index == i)
             {
                 slotUI.Select();
                 UpdateHandSprite();
@@ -70,10 +68,10 @@ public class InventoryUI : MonoBehaviour
                 World world = SaveManger.Instance.GetWorld();
                 world.hotBarIndex = keyCodes[keyCode];
 
-                SlotUI slotUI = SlotsUI[index];
+                SlotUI slotUI = SlotsUI[inventory.index];
                 slotUI.Deselect();
-                index = world.hotBarIndex;
-                slotUI = SlotsUI[index];
+                inventory.index = world.hotBarIndex;
+                slotUI = SlotsUI[inventory.index];
                 slotUI.Select();
                 UpdateHandSprite();
             }
@@ -93,7 +91,7 @@ public class InventoryUI : MonoBehaviour
         Slot slot = inventory.Slots[index];
         Item item = slot.item;
         SlotsUI[index].SetData(item ? item.sprite : null, slot.amount);
-        if (index == this.index)
+        if (index == inventory.index)
         {
             UpdateHandSprite();
         }
@@ -119,6 +117,6 @@ public class InventoryUI : MonoBehaviour
 
     public void UpdateHandSprite()
     {
-        ChangeHandSprite.Invoke(inventory.Slots[index].item ? inventory.Slots[index].item.sprite : null);
+        ChangeHandSprite.Invoke(inventory.Slots[inventory.index].item ? inventory.Slots[inventory.index].item.sprite : null);
     }
 }

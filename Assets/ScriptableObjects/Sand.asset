@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fde0f26f66b5865409f54076bf2527cb, type: 3}
+  m_Name: Sand
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 21300000, guid: b33cc1774354d5f47bfa6a1611dcb91d, type: 3}
+  miningPower: 0
+  damage: 1
+  knockback: 1
+  block: {fileID: 8738710622537529439, guid: cf1e9d3c15d95814dbdc2ab5e0595fd5, type: 3}

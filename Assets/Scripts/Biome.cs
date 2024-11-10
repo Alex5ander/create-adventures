@@ -10,7 +10,7 @@ public class Ore
     public Texture2D texture;
 }
 
-[CreateAssetMenu]
+[CreateAssetMenu(fileName = "Biome", menuName = "Scriptable Objects/Biome")]
 [Serializable]
 public class Biome : ScriptableObject
 {

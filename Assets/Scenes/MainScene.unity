@@ -1375,15 +1375,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InitialItems:
-  - {fileID: 11400000, guid: 0a40a9c1086441749a6075edfebb47f7, type: 2}
-  - {fileID: 11400000, guid: 6555530b12894234c9d95272b66cfe72, type: 2}
-  - {fileID: 11400000, guid: c2703156de0cae8468d5a062e6aedaf3, type: 2}
-  - {fileID: 11400000, guid: c701ea3b922d58c49a02494b138dbd81, type: 2}
-  - {fileID: 11400000, guid: 214e07e8d01345a4dabbe856172165b3, type: 2}
-  - {fileID: 11400000, guid: 7ad47390667e61940a27855a3fcfb0b9, type: 2}
+  - {fileID: 11400000, guid: a321c21436d3b584d8b77bc4b74fcce3, type: 2}
+  - {fileID: 11400000, guid: a18bdf3968ec89d4a8f7e0b75dc2ddda, type: 2}
+  - {fileID: 11400000, guid: d36191f1b47e6574d9bb57eaf3d6a77a, type: 2}
+  - {fileID: 11400000, guid: 90b39dd76dacf2343916b59e3f684074, type: 2}
   worldIndex: 0
   worlds: []
-  inventory: {fileID: 11400000, guid: bd2f62f0c70eaab4999c5ebff2140eaf, type: 2}
 --- !u!1 &835230722
 GameObject:
   m_ObjectHideFlags: 0

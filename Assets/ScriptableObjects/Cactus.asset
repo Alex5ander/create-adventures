@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fde0f26f66b5865409f54076bf2527cb, type: 3}
+  m_Name: Cactus
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 21300000, guid: de9989df164405341ae8fd0cc859db3f, type: 3}
+  miningPower: 0
+  damage: 1
+  knockback: 1
+  block: {fileID: 8738710622537529439, guid: 2f9ad215e4bd81c4aa81cff6a1c8153c, type: 3}
