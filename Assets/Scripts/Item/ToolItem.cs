@@ -11,7 +11,11 @@ public class ToolItem : Item
     Solid block = terrain.GetBlock<Solid>(x, y);
     if (block)
     {
-      block.Mining(x, y, inventory, terrain);
+      block.Mining(miningPower);
+      if (block.life <= 0)
+      {
+        terrain.RemoveBlock(x, y, true);
+      }
     }
   }
 }

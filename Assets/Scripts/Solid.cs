@@ -20,30 +20,28 @@ public class Solid : Block
         }
     }
     bool isMining;
-    public IEnumerator MiningCoroutine(int x, int y, Inventory inventory, TerrainGenerator terrain)
+    public IEnumerator MiningCoroutine(float miningPower)
     {
         isMining = true;
 
         while (isMining)
         {
-            Item item = inventory.Slots[inventory.index].item;
-            life -= item.miningPower;
-            if (life < 0)
+            life -= miningPower;
+            if (life <= 0)
             {
                 isMining = false;
                 Drop drop = Instantiate(DropPrefab, transform.position, Quaternion.identity);
-                drop.Set(this.item);
-                terrain.RemoveBlock(x, y, true);
+                drop.Set(item);
             }
             yield return new WaitForSeconds(0.1f);
         }
     }
 
-    public override void Mining(int x, int y, Inventory inventory, TerrainGenerator terrain)
+    public void Mining(float miningPower)
     {
         if (!isMining && life == 100)
         {
-            StartCoroutine(MiningCoroutine(x, y, inventory, terrain));
+            StartCoroutine(MiningCoroutine(miningPower));
         }
     }
 }

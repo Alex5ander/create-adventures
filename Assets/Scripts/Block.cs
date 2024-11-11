@@ -16,6 +16,4 @@ public abstract class Block : MonoBehaviour
     {
 
     }
-
-    public abstract void Mining(int x, int y, Inventory inventory, TerrainGenerator terrain);
 }

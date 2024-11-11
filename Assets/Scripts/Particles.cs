@@ -15,7 +15,7 @@ public class Particles : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
-            gameObject.SetActive(false);
+
         }
     }
 
@@ -25,5 +25,10 @@ public class Particles : MonoBehaviour
         transform.position = position;
         particlesRenderer.material.mainTexture = sprite.texture;
         gameObject.SetActive(true);
+    }
+
+    public void Stop()
+    {
+        gameObject.SetActive(false);
     }
 }

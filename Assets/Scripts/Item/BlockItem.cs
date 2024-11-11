@@ -10,7 +10,7 @@ public class BlockItem : Item
   public Block block;
   public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain)
   {
-    if (terrain.GetBlock<Block>(x, y) == null || terrain.GetBlock<Liquid>(x, y) == null)
+    if (!terrain.GetBlock<Block>(x, y))
     {
       terrain.CreateBlock(x, y, block);
       inventory.Remove(this, 1);

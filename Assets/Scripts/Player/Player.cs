@@ -79,12 +79,16 @@ public class Player : MonoBehaviour
             {
                 Slot slot = inventory.Slots[inventory.index];
                 Item item = slot.item;
-                Block block = terrainGenerator.GetBlock<Block>(x, y);
+                Solid block = terrainGenerator.GetBlock<Solid>(x, y);
                 if (block)
                 {
                     particles.Play(new(x, y), block.GetComponent<SpriteRenderer>().sprite);
                 }
-                if (item)
+                else
+                {
+                    particles.Stop();
+                }
+                if (item && item is not BucketItem && item is not WaterBucketItem && item is not LavaBucketItem)
                 {
                     item.Use(x, y, inventory, terrainGenerator);
                 }
@@ -98,11 +102,12 @@ public class Player : MonoBehaviour
 
     void PointerUp(int x, int y)
     {
+        particles.Stop();
         animator.SetBool("Attack", false);
         Slot slot = inventory.Slots[inventory.index];
         Item item = slot.item;
 
-        if (item)
+        if (item && item is BucketItem || item is LavaBucketItem || item is WaterBucketItem)
         {
             item.Use(x, y, inventory, terrainGenerator);
         }

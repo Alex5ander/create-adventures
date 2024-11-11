@@ -12,7 +12,8 @@ public class BucketItem : Item
     Liquid liquid = terrain.GetBlock<Liquid>(x, y);
     if (liquid)
     {
-      liquid.Mining(x, y, inventory, terrain);
+      inventory.Set(inventory.index, liquid.item, 1);
+      terrain.RemoveBlock(x, y, true);
     }
   }
 }
