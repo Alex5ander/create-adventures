@@ -16,25 +16,27 @@ public class Zombie : MonoBehaviour
     float speed = 100;
     float life = 10;
     bool invencible = false;
+    Transform target;
     // Start is called before the first frame update
     void Start()
     {
-
+        target = FindAnyObjectByType<Player>().transform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // float targetDistance = Vector2.Distance(transform.position, gameState.position);
-        // if (targetDistance < 15)
-        // {
-        //     direction = gameState.position.normalized.x - transform.position.normalized.x;
-        // }
-        // else if (Time.time - randomDirectionTime > 4f)
-        // {
-        //     direction = RandomDirection();
-        //     randomDirectionTime = Time.time;
-        // }
+        float targetDistance = target.position.x - transform.position.x;
+        if (Mathf.Abs(targetDistance) < 10)
+        {
+            direction = target.position.x - transform.position.x > 0 ? 1 : -1;
+            randomDirectionTime = Time.time;
+        }
+        else if (Time.time - randomDirectionTime > 4f)
+        {
+            direction = RandomDirection();
+            randomDirectionTime = Time.time;
+        }
         transform.rotation = Quaternion.AngleAxis(direction > 0 ? 180 : 0, Vector3.up);
         animator.SetBool("Jump", !isGrounded);
         animator.SetBool("Walk", isGrounded && Mathf.Abs(body.linearVelocity.x) > 0.1f);
@@ -43,16 +45,14 @@ public class Zombie : MonoBehaviour
     void FixedUpdate()
     {
         isGrounded = IsGrounded();
+        Vector2 newVelocity = body.linearVelocity;
+        newVelocity.x = Mathf.Sign(direction) * speed * Time.deltaTime;
+        body.linearVelocity = newVelocity;
         if (isGrounded && !invencible)
         {
-            Vector2 newVelocity = body.linearVelocity;
-            newVelocity.x = Mathf.Sign(direction) * speed * Time.deltaTime;
-            body.linearVelocity = newVelocity;
-            RaycastHit2D raycastHit2D = Physics2D.CircleCast(transform.position, 0.5f, new Vector3(direction, 0), layerMask);
-            print(raycastHit2D.collider.gameObject);
+            RaycastHit2D raycastHit2D = Physics2D.CircleCast(transform.position, 0.5f, new Vector2(direction, 0), 0.1f, layerMask);
             if (raycastHit2D)
             {
-                print(isGrounded);
                 body.AddForceY(jumpPower, ForceMode2D.Impulse);
             }
         }
@@ -77,7 +77,7 @@ public class Zombie : MonoBehaviour
         }
     }
     bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.size, capsuleCollider2D.direction, 0, Vector2.down, 0.1f, layerMask);
-    float RandomDirection() => Mathf.Sign(Random.Range(-1, 0));
+    float RandomDirection() => Mathf.Sign(Random.Range(-1, 1));
     public void SetInvencible()
     {
         invencible = false;

@@ -32,7 +32,7 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHa
     public void SetData(Sprite sprite, int amount)
     {
         image.gameObject.SetActive(amount > 0);
-        text.enabled = image.gameObject.activeSelf;
+        text.gameObject.SetActive(image.gameObject.activeSelf);
 
         image.sprite = sprite;
         text.text = amount.ToString();
