@@ -3,14 +3,14 @@ using UnityEditor;
 # endif
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "WaterBucket", menuName = "Scriptable Objects/WaterBucket")]
-public class WaterBucketItem : BlockItem
+[CreateAssetMenu(fileName = "FullBucket", menuName = "Scriptable Objects/FullBucket")]
+public class FullBucketItem : BlockItem
 {
   [SerializeField] BucketItem bucketItem;
-  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain)
+  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false)
   {
     Block block = terrain.GetBlock<Block>(x, y);
-    if (block == null)
+    if (!block && !pointerDown)
     {
       inventory.Set(inventory.index, bucketItem, 1);
       terrain.CreateBlock(x, y, this.block, true);
@@ -19,8 +19,8 @@ public class WaterBucketItem : BlockItem
 }
 
 #if UNITY_EDITOR
-[CustomEditor(typeof(WaterBucketItem))]
-class WaterBucketItemEditor : Editor
+[CustomEditor(typeof(FullBucketItem))]
+class FullBucketItemEditor : Editor
 {
   public override Texture2D RenderStaticPreview(string assetPath, Object[] subAssets, int width, int height)
   {

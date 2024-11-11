@@ -147,7 +147,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7120f41cd6204c141b9246ed4369338d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DropPrefab: {fileID: 3140899486705495907, guid: 8f2976a05717a804682850635a73ec8d, type: 3}
   resistence: 0
   life: 100
-  item: {fileID: 11400000, guid: d36191f1b47e6574d9bb57eaf3d6a77a, type: 2}
+  item: {fileID: 11400000, guid: 91b68c4feab14204195fe0dea1fed335, type: 2}

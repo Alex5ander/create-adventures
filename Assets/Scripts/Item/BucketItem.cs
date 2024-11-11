@@ -7,10 +7,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BucketItem", menuName = "Scriptable Objects/BucketItem")]
 public class BucketItem : Item
 {
-  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain)
+  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false)
   {
     Liquid liquid = terrain.GetBlock<Liquid>(x, y);
-    if (liquid)
+    if (liquid && !pointerDown)
     {
       inventory.Set(inventory.index, liquid.item, 1);
       terrain.RemoveBlock(x, y, true);

@@ -9,7 +9,7 @@ public abstract class Item : ScriptableObject
   public float miningPower;
   public int damage = 1;
   public float knockback = 1;
-  public abstract void Use(int x, int y, Inventory inventory, TerrainGenerator terrain);
+  public abstract void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false);
 }
 
 #if UNITY_EDITOR

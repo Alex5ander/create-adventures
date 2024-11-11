@@ -4,7 +4,6 @@ public class Player : MonoBehaviour
 {
     [SerializeField] TerrainGenerator terrainGenerator;
     [SerializeField] Particles particles;
-    [SerializeField] InventoryUI inventoryUI;
     [SerializeField] Inventory inventory;
     [SerializeField] LayerMask layerMask;
     CapsuleCollider2D capsuleCollider2D;
@@ -71,10 +70,10 @@ public class Player : MonoBehaviour
     }
     void PointerDown(int x, int y)
     {
+        animator.SetBool("Attack", !inventory.Open);
         if (!inventory.Open)
         {
             float distance = Vector2.Distance(new(x, y), transform.position);
-            animator.SetBool("Attack", true);
             if (distance < 4)
             {
                 Slot slot = inventory.Slots[inventory.index];
@@ -88,15 +87,11 @@ public class Player : MonoBehaviour
                 {
                     particles.Stop();
                 }
-                if (item && item is not BucketItem && item is not WaterBucketItem && item is not LavaBucketItem)
+                if (item)
                 {
-                    item.Use(x, y, inventory, terrainGenerator);
+                    item.Use(x, y, inventory, terrainGenerator, true);
                 }
             }
-        }
-        else
-        {
-            animator.SetBool("Attack", false);
         }
     }
 
@@ -106,8 +101,7 @@ public class Player : MonoBehaviour
         animator.SetBool("Attack", false);
         Slot slot = inventory.Slots[inventory.index];
         Item item = slot.item;
-
-        if (item && item is BucketItem || item is LavaBucketItem || item is WaterBucketItem)
+        if (item)
         {
             item.Use(x, y, inventory, terrainGenerator);
         }

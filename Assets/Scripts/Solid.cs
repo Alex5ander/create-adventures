@@ -13,13 +13,9 @@ public class Solid : Block
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonUp(0))
-        {
-            isMining = false;
-            life = 100;
-        }
+
     }
-    bool isMining;
+    public bool isMining;
     public IEnumerator MiningCoroutine(float miningPower)
     {
         isMining = true;

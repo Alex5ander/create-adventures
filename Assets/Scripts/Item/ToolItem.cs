@@ -6,15 +6,39 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ToolItem", menuName = "Scriptable Objects/ToolItem")]
 public class ToolItem : Item
 {
-  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain)
+  Solid solid;
+  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false)
   {
     Solid block = terrain.GetBlock<Solid>(x, y);
-    if (block)
+    if (pointerDown)
     {
-      block.Mining(miningPower);
-      if (block.life <= 0)
+      if (!solid)
       {
-        terrain.RemoveBlock(x, y, true);
+        solid = block;
+      }
+      else if (solid != block)
+      {
+        solid.isMining = false;
+        solid.life = 100;
+        solid = block;
+      }
+
+      if (solid)
+      {
+        solid.Mining(miningPower);
+        if (solid.life <= 0)
+        {
+          terrain.RemoveBlock(x, y, true);
+        }
+      }
+    }
+    else
+    {
+      if (solid)
+      {
+        solid.isMining = false;
+        solid.life = 100;
+        solid = null;
       }
     }
   }

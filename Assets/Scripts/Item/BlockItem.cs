@@ -8,7 +8,7 @@ using UnityEngine;
 public class BlockItem : Item
 {
   public Block block;
-  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain)
+  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false)
   {
     if (!terrain.GetBlock<Block>(x, y))
     {
