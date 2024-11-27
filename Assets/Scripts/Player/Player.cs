@@ -1,7 +1,9 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    InputAction moveAction;
     [SerializeField] TerrainGenerator terrainGenerator;
     [SerializeField] Particles particles;
     [SerializeField] Inventory inventory;
@@ -23,6 +25,10 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         World world = SaveManger.Instance.GetWorld();
         transform.SetPositionAndRotation(world.playerPosition, world.playerRotation);
+
+        moveAction = InputSystem.actions.FindAction("Move");
+        moveAction.performed += Move;
+        moveAction.canceled += Move;
     }
 
     // Update is called once per frame
@@ -35,20 +41,13 @@ public class Player : MonoBehaviour
         else
         {
             HandleMouse();
-            HandleKeyBoard();
         }
-        transform.rotation = horizontal != 0 ? Quaternion.AngleAxis(horizontal > 0 ? 180 : 0, Vector3.up) : transform.rotation;
-
-        World world = SaveManger.Instance.GetWorld();
-        world.playerPosition = transform.position;
-        world.playerRotation = transform.rotation;
+        animator.SetBool("Jump", !isGrounded);
         if (Time.time - lastSaveTime > 5)
         {
             SaveManger.Instance.Save();
             lastSaveTime = Time.time;
         }
-        animator.SetBool("Walk", horizontal != 0);
-        animator.SetBool("Jump", !isGrounded);
     }
     private void FixedUpdate()
     {
@@ -60,13 +59,22 @@ public class Player : MonoBehaviour
             body.linearVelocity = newVelocity;
         }
     }
-    void HandleKeyBoard()
+
+    void Move(InputAction.CallbackContext e)
     {
-        horizontal = Input.GetAxis("Horizontal");
-        if (Input.GetButtonDown("Jump"))
+        Vector2 value = e.ReadValue<Vector2>();
+        horizontal = value.x;
+        if (value.y > 0)
         {
             Jump();
         }
+
+        transform.rotation = horizontal != 0 ? Quaternion.AngleAxis(horizontal > 0 ? 180 : 0, Vector3.up) : transform.rotation;
+
+        World world = SaveManger.Instance.GetWorld();
+        world.playerPosition = transform.position;
+        world.playerRotation = transform.rotation;
+        animator.SetBool("Walk", horizontal != 0);
     }
     void PointerDown(int x, int y)
     {
@@ -134,7 +142,7 @@ public class Player : MonoBehaviour
             if (touch.fingerId == MouseFollower.fingerId)
             {
                 (int x, int y) = ScreenToWorldPoint(touch.position);
-                if (touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
+                if (touch.phase == UnityEngine.TouchPhase.Began || touch.phase == UnityEngine.TouchPhase.Moved || touch.phase == UnityEngine.TouchPhase.Stationary)
                 {
                     PointerDown(x, y);
                 }
