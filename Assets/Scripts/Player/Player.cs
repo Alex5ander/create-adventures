@@ -4,11 +4,12 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     InputAction moveAction;
+    InputAction jumpAction;
     [SerializeField] TerrainGenerator terrainGenerator;
     [SerializeField] Particles particles;
     [SerializeField] Inventory inventory;
     [SerializeField] LayerMask layerMask;
-    CapsuleCollider2D capsuleCollider2D;
+    BoxCollider2D collider2d;
     Rigidbody2D body;
     float jumpPower = 15;
     float speed = 200f;
@@ -20,7 +21,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        capsuleCollider2D = GetComponent<CapsuleCollider2D>();
+        collider2d = GetComponent<BoxCollider2D>();
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         World world = SaveManger.Instance.GetWorld();
@@ -29,6 +30,9 @@ public class Player : MonoBehaviour
         moveAction = InputSystem.actions.FindAction("Move");
         moveAction.performed += Move;
         moveAction.canceled += Move;
+
+        jumpAction = InputSystem.actions.FindAction("Jump");
+        jumpAction.performed += (e) => Jump();
     }
 
     // Update is called once per frame
@@ -78,12 +82,12 @@ public class Player : MonoBehaviour
     }
     void PointerDown(int x, int y)
     {
-        animator.SetBool("Attack", !inventory.Open);
         if (!inventory.Open)
         {
             float distance = Vector2.Distance(new(x, y), transform.position);
             if (distance < 4)
             {
+                animator.SetBool("Attack", !inventory.Open);
                 Slot slot = inventory.Slots[inventory.index];
                 Item item = slot.item;
                 Solid block = terrainGenerator.GetBlock<Solid>(x, y);
@@ -95,10 +99,14 @@ public class Player : MonoBehaviour
                 {
                     particles.Stop();
                 }
-                if (item)
+                if (item && item is IUsable)
                 {
-                    item.Use(x, y, inventory, terrainGenerator, true);
+                    (item as IUsable).Use(x, y, inventory, terrainGenerator, true);
                 }
+            }
+            else
+            {
+                animator.SetBool("Attack", false);
             }
         }
     }
@@ -109,9 +117,9 @@ public class Player : MonoBehaviour
         animator.SetBool("Attack", false);
         Slot slot = inventory.Slots[inventory.index];
         Item item = slot.item;
-        if (item)
+        if (item && item is IUsable)
         {
-            item.Use(x, y, inventory, terrainGenerator);
+            (item as IUsable).Use(x, y, inventory, terrainGenerator);
         }
     }
     (int x, int y) ScreenToWorldPoint(Vector2 position)
@@ -162,27 +170,18 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void OnDrag(float x, float y)
-    {
-        horizontal = x;
-        if (y > 0.5f)
-        {
-            Jump();
-        }
-    }
-
     void OnTriggerStay2D(Collider2D other)
     {
-        other.TryGetComponent(out Damageable damageable);
-        if (damageable != null && !invencible)
-        {
-            animator.SetTrigger("Hurt");
-            invencible = true;
+        // other.TryGetComponent(out Damageable damageable);
+        // if (damageable != null && !invencible)
+        // {
+        //     animator.SetTrigger("Hurt");
+        //     invencible = true;
 
-            Vector2 forceDirection = -(other.transform.position - transform.position).normalized;
-            body.linearVelocity = Vector2.zero;
-            body.AddForce(forceDirection * damageable.knockback, ForceMode2D.Impulse);
-        }
+        //     Vector2 forceDirection = -(other.transform.position - transform.position).normalized;
+        //     body.linearVelocity = Vector2.zero;
+        //     body.AddForce(forceDirection * damageable.knockback, ForceMode2D.Impulse);
+        // }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -195,7 +194,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.bounds.size, capsuleCollider2D.direction, 0, Vector2.down, 0.1f, layerMask);
+    bool IsGrounded() => Physics2D.BoxCast(collider2d.bounds.center, collider2d.bounds.size, 0, Vector2.down, 0.1f, layerMask);
 
     public void Load()
     {

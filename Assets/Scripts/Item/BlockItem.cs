@@ -5,10 +5,10 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "BlockItem", menuName = "Scriptable Objects/BlockItem")]
-public class BlockItem : Item
+public class BlockItem : Item, IUsable
 {
   public Block block;
-  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false)
+  public virtual void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false)
   {
     if (!terrain.GetBlock<Block>(x, y))
     {

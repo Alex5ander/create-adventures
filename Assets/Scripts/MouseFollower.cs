@@ -22,10 +22,10 @@ public class MouseFollower : MonoBehaviour
             for (int i = 0; i < Input.touchCount; i++)
             {
                 Touch touch = Input.GetTouch(i);
-                if (touch.fingerId != Thumb.fingerId && fingerId == -1 && touch.phase == TouchPhase.Began)
-                {
-                    fingerId = touch.fingerId;
-                }
+                // if (touch.fingerId != Thumb.fingerId && fingerId == -1 && touch.phase == TouchPhase.Began)
+                // {
+                //     fingerId = touch.fingerId;
+                // }
 
                 if (touch.fingerId == fingerId)
                 {

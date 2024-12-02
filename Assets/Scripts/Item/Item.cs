@@ -3,13 +3,17 @@ using UnityEditor;
 # endif
 using UnityEngine;
 
+public interface IUsable
+{
+  public void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false);
+}
+
 public abstract class Item : ScriptableObject
 {
   public Sprite sprite;
   public float miningPower;
   public int damage = 1;
   public float knockback = 1;
-  public abstract void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false);
 }
 
 #if UNITY_EDITOR

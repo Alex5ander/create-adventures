@@ -5,9 +5,9 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "BucketItem", menuName = "Scriptable Objects/BucketItem")]
-public class BucketItem : Item
+public class BucketItem : Item, IUsable
 {
-  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false)
+  public void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false)
   {
     Liquid liquid = terrain.GetBlock<Liquid>(x, y);
     if (liquid && !pointerDown)

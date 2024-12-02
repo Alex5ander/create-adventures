@@ -4,10 +4,10 @@ using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ToolItem", menuName = "Scriptable Objects/ToolItem")]
-public class ToolItem : Item
+public class ToolItem : Item, IUsable
 {
   Solid solid;
-  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false)
+  public void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false)
   {
     Solid block = terrain.GetBlock<Solid>(x, y);
     if (pointerDown)

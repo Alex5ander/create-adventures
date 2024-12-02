@@ -8,10 +8,6 @@ using UnityEngine;
 public class MaterialItem : Item
 {
   public Block block;
-  public override void Use(int x, int y, Inventory inventory, TerrainGenerator terrain, bool pointerDown = false)
-  {
-
-  }
 }
 
 #if UNITY_EDITOR

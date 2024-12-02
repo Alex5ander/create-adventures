@@ -1,25 +1,28 @@
 using UnityEngine;
 
-public class Zombie : MonoBehaviour
+public class Zombie : MonoBehaviour, IDamageable
 {
     [SerializeField]
     Rigidbody2D body;
     [SerializeField]
     Animator animator;
     [SerializeField] LayerMask layerMask;
-    [SerializeField] CapsuleCollider2D capsuleCollider2D;
+    BoxCollider2D collider2d;
     [SerializeField] float direction = 0;
     float randomDirectionTime = 0;
     bool isGrounded = false;
     [Header("Stats")]
     float jumpPower = 15f;
     float speed = 100;
-    float life = 10;
     bool invencible = false;
     Transform target;
+    public float Health { get; set; }
+    public int Defense { get; set; }
+
     // Start is called before the first frame update
     void Start()
     {
+        collider2d = GetComponent<BoxCollider2D>();
         target = FindAnyObjectByType<Player>().transform;
     }
 
@@ -27,7 +30,7 @@ public class Zombie : MonoBehaviour
     void Update()
     {
         float targetDistance = target.position.x - transform.position.x;
-        if (Mathf.Abs(targetDistance) < 10)
+        if (Mathf.Abs(targetDistance) > 1 && Mathf.Abs(targetDistance) < 10)
         {
             direction = target.position.x - transform.position.x > 0 ? 1 : -1;
             randomDirectionTime = Time.time;
@@ -58,28 +61,28 @@ public class Zombie : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        other.TryGetComponent(out Damageable damageable);
-        if (damageable && !invencible)
-        {
-            animator.SetTrigger("Hurt");
-            invencible = true;
-            life -= damageable.damage;
-
-            Vector2 forceDirection = -(other.transform.position - transform.position).normalized;
-            body.linearVelocity = Vector2.zero;
-            body.AddForce(forceDirection * damageable.knockback, ForceMode2D.Impulse);
-            if (life <= 0)
-            {
-                Destroy(gameObject);
-            }
-        }
-    }
-    bool IsGrounded() => Physics2D.CapsuleCast(capsuleCollider2D.bounds.center, capsuleCollider2D.size, capsuleCollider2D.direction, 0, Vector2.down, 0.1f, layerMask);
+    bool IsGrounded() => Physics2D.BoxCast(collider2d.bounds.center, collider2d.bounds.size, 0, Vector2.down, 0.1f, layerMask);
     float RandomDirection() => Mathf.Sign(Random.Range(-1, 1));
     public void SetInvencible()
     {
         invencible = false;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        float damageAfterDefense = damage - Defense;
+        if (damageAfterDefense > 0)
+        {
+            Health -= damageAfterDefense;
+        }
+        if (Health <= 0)
+        {
+            Die();
+        }
+    }
+
+    public void Die()
+    {
+        Debug.Log("die");
     }
 }
