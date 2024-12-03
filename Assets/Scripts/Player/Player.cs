@@ -1,9 +1,12 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
     InputAction moveAction;
+    InputAction clickAction;
+    InputAction pointAction;
     InputAction jumpAction;
     [SerializeField] TerrainGenerator terrainGenerator;
     [SerializeField] Particles particles;
@@ -27,25 +30,43 @@ public class Player : MonoBehaviour
         World world = SaveManger.Instance.GetWorld();
         transform.SetPositionAndRotation(world.playerPosition, world.playerRotation);
 
-        moveAction = InputSystem.actions.FindAction("Move");
+        moveAction = InputSystem.actions.FindAction("Player/Move");
         moveAction.performed += Move;
         moveAction.canceled += Move;
 
-        jumpAction = InputSystem.actions.FindAction("Jump");
-        jumpAction.performed += (e) => Jump();
+        jumpAction = InputSystem.actions.FindAction("Player/Jump");
+        jumpAction.performed += Jump;
+
+        pointAction = InputSystem.actions.FindAction("UI/Point");
+
+        clickAction = InputSystem.actions.FindAction("UI/Click");
+
+        clickAction.performed += Click;
+    }
+
+    void OnDisable()
+    {
+        moveAction.performed -= Move;
+        moveAction.canceled -= Move;
+        jumpAction.performed -= Jump;
+        clickAction.performed -= Click;
+    }
+
+    IEnumerator HandlePoint()
+    {
+        while (clickAction.ReadValue<float>() == 1)
+        {
+            (int x, int y) = ScreenToWorldPoint(pointAction.ReadValue<Vector2>());
+            PointerDown(x, y);
+            yield return new WaitForSeconds(0.1f);
+        }
+        (int _x, int _y) = ScreenToWorldPoint(pointAction.ReadValue<Vector2>());
+        PointerUp(_x, _y);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (MainScene.isMobile)
-        {
-            HandleTouch();
-        }
-        else
-        {
-            HandleMouse();
-        }
         animator.SetBool("Jump", !isGrounded);
         if (Time.time - lastSaveTime > 5)
         {
@@ -70,7 +91,7 @@ public class Player : MonoBehaviour
         horizontal = value.x;
         if (value.y > 0)
         {
-            Jump();
+            Jump(e);
         }
 
         transform.rotation = horizontal != 0 ? Quaternion.AngleAxis(horizontal > 0 ? 180 : 0, Vector3.up) : transform.rotation;
@@ -87,20 +108,22 @@ public class Player : MonoBehaviour
             float distance = Vector2.Distance(new(x, y), transform.position);
             if (distance < 4)
             {
-                animator.SetBool("Attack", !inventory.Open);
                 Slot slot = inventory.Slots[inventory.index];
                 Item item = slot.item;
                 Solid block = terrainGenerator.GetBlock<Solid>(x, y);
                 if (block)
                 {
+                    animator.SetBool("Attack", !inventory.Open);
                     particles.Play(new(x, y), block.GetComponent<SpriteRenderer>().sprite);
                 }
                 else
                 {
+                    animator.SetBool("Attack", false);
                     particles.Stop();
                 }
                 if (item && item is IUsable)
                 {
+                    animator.SetBool("Attack", !inventory.Open);
                     (item as IUsable).Use(x, y, inventory, terrainGenerator, true);
                 }
             }
@@ -129,45 +152,18 @@ public class Player : MonoBehaviour
         int y = Mathf.RoundToInt(vector3.y);
         return (x, y);
     }
-    void HandleMouse()
-    {
-        (int x, int y) = ScreenToWorldPoint(Input.mousePosition);
-        if (Input.GetMouseButton(0))
-        {
-            PointerDown(x, y);
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            PointerUp(x, y);
-        }
-    }
 
-    void HandleTouch()
-    {
-        for (int i = 0; i < Input.touchCount; i++)
-        {
-            Touch touch = Input.GetTouch(i);
-            if (touch.fingerId == MouseFollower.fingerId)
-            {
-                (int x, int y) = ScreenToWorldPoint(touch.position);
-                if (touch.phase == UnityEngine.TouchPhase.Began || touch.phase == UnityEngine.TouchPhase.Moved || touch.phase == UnityEngine.TouchPhase.Stationary)
-                {
-                    PointerDown(x, y);
-                }
-                else
-                {
-                    PointerUp(x, y);
-                }
-            }
-        }
-    }
-
-    void Jump()
+    void Jump(InputAction.CallbackContext e)
     {
         if (isGrounded && body.linearVelocity.y == 0)
         {
             body.AddForce(new Vector2(0, jumpPower), ForceMode2D.Impulse);
         }
+    }
+
+    void Click(InputAction.CallbackContext e)
+    {
+        StartCoroutine(HandlePoint());
     }
 
     void OnTriggerStay2D(Collider2D other)

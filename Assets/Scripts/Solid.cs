@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class Solid : Block
@@ -15,29 +14,14 @@ public class Solid : Block
     {
 
     }
-    public bool isMining;
-    public IEnumerator MiningCoroutine(float miningPower)
-    {
-        isMining = true;
-
-        while (isMining)
-        {
-            life -= miningPower;
-            if (life <= 0)
-            {
-                isMining = false;
-                Drop drop = Instantiate(DropPrefab, transform.position, Quaternion.identity);
-                drop.Set(item);
-            }
-            yield return new WaitForSeconds(0.1f);
-        }
-    }
 
     public void Mining(float miningPower)
     {
-        if (!isMining && life == 100)
+        life -= miningPower;
+        if (life <= 0)
         {
-            StartCoroutine(MiningCoroutine(miningPower));
+            Drop drop = Instantiate(DropPrefab, transform.position, Quaternion.identity);
+            drop.Set(item);
         }
     }
 }

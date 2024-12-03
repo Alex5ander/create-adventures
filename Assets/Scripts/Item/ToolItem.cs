@@ -18,7 +18,6 @@ public class ToolItem : Item, IUsable
       }
       else if (solid != block)
       {
-        solid.isMining = false;
         solid.life = 100;
         solid = block;
       }
@@ -36,7 +35,6 @@ public class ToolItem : Item, IUsable
     {
       if (solid)
       {
-        solid.isMining = false;
         solid.life = 100;
         solid = null;
       }

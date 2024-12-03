@@ -1,9 +1,12 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class MouseFollower : MonoBehaviour
 {
+
+    InputAction pointAction;
     [SerializeField] Image image;
     [SerializeField] TextMeshProUGUI text;
     [SerializeField] Sprite defaultSprite;
@@ -11,37 +14,24 @@ public class MouseFollower : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        pointAction = InputSystem.actions.FindAction("UI/Point");
+        pointAction.performed += Move;
+    }
 
+    void OnDisable()
+    {
+        pointAction.performed -= Move;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (MainScene.isMobile)
-        {
-            for (int i = 0; i < Input.touchCount; i++)
-            {
-                Touch touch = Input.GetTouch(i);
-                // if (touch.fingerId != Thumb.fingerId && fingerId == -1 && touch.phase == TouchPhase.Began)
-                // {
-                //     fingerId = touch.fingerId;
-                // }
 
-                if (touch.fingerId == fingerId)
-                {
-                    transform.position = touch.position;
-                    if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-                    {
-                        fingerId = -1;
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            transform.position = Input.mousePosition;
-        }
+    }
+
+    void Move(InputAction.CallbackContext e)
+    {
+        transform.position = e.ReadValue<Vector2>();
     }
 
     public void SetData(Sprite sprite, string text)
