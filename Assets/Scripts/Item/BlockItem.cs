@@ -3,7 +3,6 @@ using UnityEditor;
 # endif
 using UnityEngine;
 
-
 [CreateAssetMenu(fileName = "BlockItem", menuName = "Scriptable Objects/BlockItem")]
 public class BlockItem : Item, IUsable
 {
@@ -12,7 +11,7 @@ public class BlockItem : Item, IUsable
   {
     if (!terrain.GetBlock<Block>(x, y))
     {
-      terrain.CreateBlock(x, y, block);
+      terrain.CreateBlock(x, y, block, true);
       inventory.Remove(this, 1);
     }
   }

@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class MouseFollower : MonoBehaviour
 {
-
     InputAction pointAction;
     [SerializeField] Image image;
     [SerializeField] TextMeshProUGUI text;

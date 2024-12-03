@@ -1,0 +1,5 @@
+C:/Users/Cliente/Desktop/create-adventures/.utmp/RelWithDebInfo/5u304n6c/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/Cliente/Desktop/create-adventures/.utmp/RelWithDebInfo/5u304n6c/armeabi-v7a/CMakeFiles/rebuild_cache.dir
+C:/Users/Cliente/Desktop/create-adventures/.utmp/RelWithDebInfo/5u304n6c/armeabi-v7a/FramePacing/CMakeFiles/swappywrapper.dir
+C:/Users/Cliente/Desktop/create-adventures/.utmp/RelWithDebInfo/5u304n6c/armeabi-v7a/FramePacing/CMakeFiles/edit_cache.dir
+C:/Users/Cliente/Desktop/create-adventures/.utmp/RelWithDebInfo/5u304n6c/armeabi-v7a/FramePacing/CMakeFiles/rebuild_cache.dir

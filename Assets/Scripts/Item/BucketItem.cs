@@ -3,7 +3,6 @@ using UnityEditor;
 # endif
 using UnityEngine;
 
-
 [CreateAssetMenu(fileName = "BucketItem", menuName = "Scriptable Objects/BucketItem")]
 public class BucketItem : Item, IUsable
 {

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8468411329575893221}
   - component: {fileID: 3907038860346997853}
   - component: {fileID: 8738710622537529439}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ BoxCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_CompositeOperation: 0
+  m_CompositeOperation: 1
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a955725d1cfc5db4fbafc39f49e50781, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DropPrefab: {fileID: 3140899486705495907, guid: 8f2976a05717a804682850635a73ec8d, type: 3}
   resistence: 19
   life: 100
   item: {fileID: 11400000, guid: 90b39dd76dacf2343916b59e3f684074, type: 2}
+  DropPrefab: {fileID: 3140899486705495907, guid: 8f2976a05717a804682850635a73ec8d, type: 3}

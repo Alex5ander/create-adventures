@@ -8,6 +8,7 @@ public class TerrainGenerator : MonoBehaviour
     int terrainHeight = 100;
     float frequency = 0.04f;
     Block[,] blocks;
+    [SerializeField] GameObject ChunkPrefab;
     [Header("Blocks")]
     [SerializeField] Block WoodMid;
     [SerializeField] Block WoodBottom;
@@ -29,21 +30,19 @@ public class TerrainGenerator : MonoBehaviour
     void Start()
     {
         World world = SaveManger.Instance.GetWorld();
-        List<ModifiedBlock> modifiedBlocks = world.modifiedBlocks;
-        GenerateTerrain(world.seed);
-        foreach (ModifiedBlock modifiedBlock in modifiedBlocks)
+        Block[,] terrain = GenerateTerrain(world.seed);
+        foreach (ModifiedBlock modifiedBlock in world.modifiedBlocks)
         {
-            Block block = blocks[modifiedBlock.x, modifiedBlock.y];
-            if (modifiedBlock.block == null)
+            terrain[modifiedBlock.x, modifiedBlock.y] = modifiedBlock.block;
+        }
+        for (int x = 0; x < terrain.GetLength(0); x++)
+        {
+            for (int y = 0; y < terrain.GetLength(1); y++)
             {
-                if (block != null)
+                if (terrain[x, y])
                 {
-                    RemoveBlock(modifiedBlock.x, modifiedBlock.y);
+                    CreateBlock(x, y, terrain[x, y]);
                 }
-            }
-            else if (block == null)
-            {
-                CreateBlock(modifiedBlock.x, modifiedBlock.y, modifiedBlock.block);
             }
         }
     }
@@ -56,6 +55,10 @@ public class TerrainGenerator : MonoBehaviour
         {
             GameObject chunk = chunks[i];
             chunk.SetActive(x == i || x == i + 1 || x == i - 1);
+            if (chunk.activeSelf)
+            {
+
+            }
         }
     }
 
@@ -137,9 +140,10 @@ public class TerrainGenerator : MonoBehaviour
         return texture2D;
     }
 
-    public void GenerateTerrain(int seed)
+    public Block[,] GenerateTerrain(int seed)
     {
         GenerateNoiseTextures(seed);
+        Block[,] terrain = new Block[terrainWidth, terrainHeight];
         blocks = new Block[terrainWidth, terrainHeight];
         int size = terrainWidth * terrainHeight;
         for (int i = 0; i < size; i++)
@@ -160,16 +164,16 @@ public class TerrainGenerator : MonoBehaviour
                 {
                     if (y == superfaceY - 1)
                     {
-                        CreateBlock(x, y, cBiome.SurfaceBlock);
+                        terrain[x, y] = cBiome.SurfaceBlock;
                         if (tree.GetPixel(x, y).r > 0.5f)
                         {
                             if (cBiome.color == Color.green)
                             {
-                                CreateTree(x, y + 1);
+                                // CreateTree(x, y + 1, terrain);
                             }
                             else if (cBiome.color.Equals(new Color(1, 127f / 255f, 0, 1)))
                             {
-                                CreateCactus(x, y + 1);
+                                // CreateCactus(x, y + 1);
                             }
                         }
                     }
@@ -181,52 +185,57 @@ public class TerrainGenerator : MonoBehaviour
                             Ore ore = cBiome.ores[j];
                             if (ore.texture.GetPixel(x, y).r > 0.5f)
                             {
-                                CreateBlock(x, y, ore.block);
+                                terrain[x, y] = ore.block;
                                 stone = false;
                                 break;
                             }
                         }
                         if (stone)
                         {
-                            CreateBlock(x, y, cBiome.Stone);
+                            terrain[x, y] = cBiome.Stone;
                         }
                     }
                     else
                     {
-                        CreateBlock(x, y, cBiome.Dirt);
+                        terrain[x, y] = cBiome.Dirt;
                     }
                 }
                 else if (y < seaLevel)
                 {
-                    CreateBlock(x, y, Water);
+                    // terrain[x, y] = Water;
                 }
             }
         }
+        return terrain;
     }
     public void CreateBlock(int x, int y, Block blockPrefab, bool save = false)
     {
         if (x < 0 || x > blocks.GetLength(0) - 1 || y < 0 || y > blocks.GetLength(1) - 1) { return; }
         if (blocks[x, y] == null)
         {
-            GameObject chunk;
             Block block = Instantiate(blockPrefab, new(x, y), Quaternion.identity);
             blocks[x, y] = block;
             int chunkIndex = Mathf.FloorToInt(x / (float)terrainWidth * 10);
             if (!chunks.ContainsKey(chunkIndex))
             {
-                chunk = new GameObject();
-                chunk.SetActive(false);
-                chunk.transform.position = new(x, 0);
+                GameObject chunk;
+                chunk = CreateChunk(x);
                 chunks.Add(chunkIndex, chunk);
             }
-            chunk = chunks[chunkIndex];
-            block.transform.SetParent(chunk.transform);
+            block.transform.SetParent(chunks[chunkIndex].transform);
             if (save)
             {
                 SaveManger.SaveWorld(blockPrefab, x, y);
             }
         }
     }
+
+    public GameObject CreateChunk(int x)
+    {
+        GameObject chunk = Instantiate(ChunkPrefab, new Vector3(x, 0, 0), Quaternion.identity);
+        return chunk;
+    }
+
     public T GetBlock<T>(int x, int y) where T : Block
     {
         if (x >= 0 && x < blocks.GetLength(0) && y >= 0 && y < blocks.GetLength(1))
@@ -253,28 +262,28 @@ public class TerrainGenerator : MonoBehaviour
         }
     }
 
-    void CreateTree(int x, int y)
+    void CreateTree(int x, int y, Block[,] terrain)
     {
         int height = 4 + Mathf.RoundToInt(Mathf.PerlinNoise(x * frequency + x, y * frequency + x)) * 4;
-        CreateBlock(x, y + height, Leaves);
-        CreateBlock(x + 1, y + height, Leaves);
-        CreateBlock(x - 1, y + height, Leaves);
+        terrain[x, y + height] = Leaves;
+        terrain[x + 1, y + height] = Leaves;
+        terrain[x - 1, y + height] = Leaves;
 
-        CreateBlock(x, y + height + 1, Leaves);
-        CreateBlock(x + 1, y + height + 1, Leaves);
-        CreateBlock(x - 1, y + height + 1, Leaves);
+        terrain[x, y + height + 1] = Leaves;
+        terrain[x + 1, y + height + 1] = Leaves;
+        terrain[x - 1, y + height + 1] = Leaves;
 
-        CreateBlock(x, y + height + 2, Leaves);
+        terrain[x, y + height + 2] = Leaves;
 
         for (int i = 0; i < height; i++)
         {
             if (i == 0)
             {
-                CreateBlock(x, y + i, WoodBottom);
+                terrain[x, y + i] = WoodBottom;
             }
             else
             {
-                CreateBlock(x, y + i, WoodMid);
+                terrain[x, y + i] = WoodMid;
             }
         }
     }
