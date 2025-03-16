@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: Desert
   m_EditorClassIdentifier: 
   color: {r: 1, g: 0.49803922, b: 0, a: 1}
-  SurfaceBlock: {fileID: 8738710622537529439, guid: 6abd50dc45f83a14c9aa7db27e42ee8b, type: 3}
-  Dirt: {fileID: 8738710622537529439, guid: 11b50e06157dc18419cd216c6cfa7d91, type: 3}
-  Stone: {fileID: 8738710622537529439, guid: cf1e9d3c15d95814dbdc2ab5e0595fd5, type: 3}
+  SurfaceBlock: {fileID: 8738710622537529439, guid: 07b5d29d40a4b1b4ebaffec7d9d9b639, type: 3}
+  Dirt: {fileID: 8738710622537529439, guid: 6f4d92f070774c5489cb16f2e2d302c6, type: 3}
+  Stone: {fileID: 8738710622537529439, guid: c9aa34f7434c8334ebaef21c9063c6f0, type: 3}
   frequency: 0.39
   threshold: 0.06
   texture: {fileID: 0}
   ores:
-  - block: {fileID: 8738710622537529439, guid: 9d08e49ad6d92a647ada006f0225aa0b, type: 3}
+  - block: {fileID: 8738710622537529439, guid: c8dafc395e7eb2542a3f4f8c47b78226, type: 3}
     frequency: 0.03
     threshold: -0.12
     texture: {fileID: 0}
-  - block: {fileID: 8738710622537529439, guid: a75898081a22ff041bd4436b7fc31b06, type: 3}
+  - block: {fileID: 8738710622537529439, guid: bd27cc38fe3aa2b4fa81c3792cdcca49, type: 3}
     frequency: 0.23
     threshold: -0.53
     texture: {fileID: 0}

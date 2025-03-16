@@ -16,5 +16,4 @@ MonoBehaviour:
   miningPower: 0
   damage: 1
   knockback: 1
-  harvestTools: []
-  block: {fileID: 8738710622537529439, guid: 11b50e06157dc18419cd216c6cfa7d91, type: 3}
+  block: {fileID: 8738710622537529439, guid: 05816df71a41f214a9494a5880de9ab9, type: 3}
